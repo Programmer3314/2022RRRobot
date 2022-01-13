@@ -11,6 +11,24 @@ import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMSparkMaxMotorController;
 
+/*
+Main TODO List:
+- Additional Motor Controller settings 
+- Drive the robot with joysticks including scaling the inputs to appropriate units (probably code only)
+- Correct the revsPerFoot constant (and make it a constant) - this will need to wait for a driving chassis
+- Convert turn to be degrees per second - this will require additional drivetrain geometry info
+- When possible start tuning the test chassis pids. 
+
+- Start on shooter code:
+  This will likely be a question of adjusting the speed of the shooter and the release angle.
+  We don't know the final configuration, but there will probably be some number of shooter motors, 
+  and some number of hood adjust motors. Hopefully, Falcon500s. 
+  I would like the shoot method to take a distance as the primary input parameter. How will the 
+  adjustments take place from there? 
+
+*/
+
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
