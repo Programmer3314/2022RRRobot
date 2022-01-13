@@ -21,7 +21,7 @@ public class MMSparkMaxMotorController extends MMMotorController {
 
     public MMSparkMaxMotorController(int canid, MotorType type) {
         mc = new CANSparkMax(canid, type);
-        //mc.restoreFactoryDefaults();
+        mc.restoreFactoryDefaults();
         pid = mc.getPIDController();
         enc = mc.getEncoder();
     }

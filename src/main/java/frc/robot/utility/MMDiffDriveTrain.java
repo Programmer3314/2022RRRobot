@@ -5,17 +5,22 @@
 package frc.robot.utility;
 
 /** Add your docs here. */
-public class MMDifDriveTrain {
+public class MMDiffDriveTrain {
     MMMotorGroup leftMG;
     MMMotorGroup rightMG;
     double revPerFoot;
 
-    public MMDifDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot){
+    public MMDiffDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot){
         this.leftMG = leftMG;
         this.rightMG = rightMG;
         this.revPerFoot = revPerFoot;
     }
 
+    /**
+     * Drive 
+     * @param speed in feet/sec
+     * @param turn  in feet/sec
+     */
     public void Drive(double speed, double turn){
         
         double speedRPM = speed*60*revPerFoot;

@@ -10,11 +10,17 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-/** Add your docs here. */
+/**
+ * TalonFX Motor Controller built into a Falcon500 motor
+ */
 public class MMFXMotorController extends MMMotorController {
 
     public TalonFX mc;
 
+    /**
+     * Create a TalonFX Motor Controller built into a Falcon500 motor
+     * @param canid
+     */
     public MMFXMotorController(int canid) {
         mc = new TalonFX(canid);
         mc.configFactoryDefault();

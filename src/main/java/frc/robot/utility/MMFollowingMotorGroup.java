@@ -6,23 +6,30 @@ package frc.robot.utility;
 
 import java.util.ArrayList;
 
-/** Add your docs here. */
+/**
+ * Motor group in which all motors follow the first
+ */
 public class MMFollowingMotorGroup extends MMMotorGroup {
 
     ArrayList<MMMotorController> motors = new ArrayList<>();
     MMMotorController lead;
     MMMotorController enc;
 
+    /**
+     * Create a motor group in which all motors follow the first
+     * 
+     * @param motors list of motors
+     */
     public MMFollowingMotorGroup(MMMotorController... motors) {
         boolean first = true;
-        for(MMMotorController m:motors) {
+        for (MMMotorController m : motors) {
             this.motors.add(m);
-            if(first) {
+            if (first) {
                 lead = m;
                 enc = m;
             } else {
-              m.follow(lead);  
-            } 
+                m.follow(lead);
+            }
         }
     }
 
