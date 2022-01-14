@@ -9,32 +9,36 @@ package frc.robot.utility;
  * and a group of motor.
  */
 public abstract class MMMotorGroup {
-    
+
     /**
      * Set motor power ranging from -1 to 1
+     * 
      * @param power
      */
     public abstract void setPower(double power);
 
     /**
      * Set the motor velocity in RPM
+     * 
      * @param rpm
      */
     public abstract void setVelocity(double rpm);
 
     /**
      * Get the Revolutions since last Reset
+     * 
      * @return
      */
     public abstract double getRevolutions();
-    
+
     /**
      * Reset Encoders
      */
     public abstract void resetEncoders();
-    
+
     /**
      * Get velocity in RPM
+     * 
      * @return
      */
     public abstract double getVelocity();

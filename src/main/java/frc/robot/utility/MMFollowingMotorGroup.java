@@ -16,7 +16,8 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
     MMMotorController enc;
 
     /**
-     * Create a motor group in which all motors follow the first
+     * Create a motor group in which all motors follow the first.
+     * Fully spec the lead motor, others can generally be minimally spec'd.
      * 
      * @param motors list of motors
      */
@@ -29,8 +30,8 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
                 enc = m;
             } else {
                 m.follow(lead);
-            } 
-            first=false; 
+            }
+            first = false;
         }
     }
 

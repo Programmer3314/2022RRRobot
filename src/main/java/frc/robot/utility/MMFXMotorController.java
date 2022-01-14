@@ -19,6 +19,7 @@ public class MMFXMotorController extends MMMotorController {
 
     /**
      * Create a TalonFX Motor Controller built into a Falcon500 motor
+     * 
      * @param canid
      */
     public MMFXMotorController(int canid) {
@@ -26,16 +27,16 @@ public class MMFXMotorController extends MMMotorController {
         mc.configFactoryDefault();
 
         /**
-		 * Phase sensor accordingly. 
+         * Phase sensor accordingly.
          * Positive Sensor Reading should match Green (blinking) Leds on Talon
          */
-		mc.setSensorPhase(true);
+        mc.setSensorPhase(true);
 
-		/* Config the peak and nominal outputs */
-		mc.configNominalOutputForward(0, kMMTimeoutMs);
-		mc.configNominalOutputReverse(0, kMMTimeoutMs);
-		mc.configPeakOutputForward(1, kMMTimeoutMs);
-		mc.configPeakOutputReverse(-1, kMMTimeoutMs);
+        /* Config the peak and nominal outputs */
+        mc.configNominalOutputForward(0, kMMTimeoutMs);
+        mc.configNominalOutputReverse(0, kMMTimeoutMs);
+        mc.configPeakOutputForward(1, kMMTimeoutMs);
+        mc.configPeakOutputReverse(-1, kMMTimeoutMs);
 
     }
 
@@ -45,14 +46,13 @@ public class MMFXMotorController extends MMMotorController {
     }
 
     public MMFXMotorController setPIDFParameters(double p, double i, double d, double f) {
-		/* Config the Velocity closed loop gains in slot0 */
-		mc.config_kF(0, f, kMMTimeoutMs);
-		mc.config_kP(0, p, kMMTimeoutMs);
-		mc.config_kI(0, i, kMMTimeoutMs);
-		mc.config_kD(0, d, kMMTimeoutMs);
-        return this;     
+        /* Config the Velocity closed loop gains in slot0 */
+        mc.config_kF(0, f, kMMTimeoutMs);
+        mc.config_kP(0, p, kMMTimeoutMs);
+        mc.config_kI(0, i, kMMTimeoutMs);
+        mc.config_kD(0, d, kMMTimeoutMs);
+        return this;
     }
-
 
     @Override
     public void setPower(double power) {
@@ -62,28 +62,28 @@ public class MMFXMotorController extends MMMotorController {
     @Override
     public void setVelocity(double rpm) {
         // controller specific RPM to velocity conversion
-        double velocity = rpm/600*kMMFalconTicksPerRev;
+        double velocity = rpm / 600 * kMMFalconTicksPerRev;
         mc.set(TalonFXControlMode.Velocity, velocity);
     }
 
     @Override
     public double getVelocity() {
-        return mc.getSelectedSensorVelocity()*600/kMMFalconTicksPerRev;
+        return mc.getSelectedSensorVelocity() * 600 / kMMFalconTicksPerRev;
     }
 
     @Override
     public void follow(MMMotorController lead) {
-        mc.follow(((MMFXMotorController)lead).mc);        
+        mc.follow(((MMFXMotorController) lead).mc);
     }
 
     @Override
     public double getRevolutions() {
-        return mc.getSelectedSensorPosition()/kMMFalconTicksPerRev;
+        return mc.getSelectedSensorPosition() / kMMFalconTicksPerRev;
     }
 
     @Override
     public void resetEncoder() {
-        mc.setSelectedSensorPosition(0);        
+        mc.setSelectedSensorPosition(0);
     }
 
 }

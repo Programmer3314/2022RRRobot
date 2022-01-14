@@ -31,21 +31,21 @@ public class MMSparkMaxMotorController extends MMMotorController {
         return this;
     }
 
-    public MMSparkMaxMotorController setPIDFParameters(double p, double i, double d, double f, double iz, double min, double max) {
+    public MMSparkMaxMotorController setPIDFParameters(double p, double i, double d, double f, double iz, double min,
+            double max) {
         pid.setP(p);
         pid.setI(i);
         pid.setD(d);
         pid.setFF(f);
         pid.setIZone(iz);
         pid.setOutputRange(min, max);
-        return this;     
+        return this;
     }
 
     public MMSparkMaxMotorController setCurrentLimit(int stallLimit, int freeLimit) {
         mc.setSmartCurrentLimit(stallLimit, freeLimit);
         return this;
     }
-
 
     @Override
     public void setPower(double power) {
@@ -64,7 +64,7 @@ public class MMSparkMaxMotorController extends MMMotorController {
 
     @Override
     public void follow(MMMotorController lead) {
-        mc.follow(((MMSparkMaxMotorController)lead).mc);
+        mc.follow(((MMSparkMaxMotorController) lead).mc);
     }
 
     @Override
@@ -74,7 +74,6 @@ public class MMSparkMaxMotorController extends MMMotorController {
 
     @Override
     public void resetEncoder() {
-        enc.setPosition(0);        
+        enc.setPosition(0);
     }
-
 }

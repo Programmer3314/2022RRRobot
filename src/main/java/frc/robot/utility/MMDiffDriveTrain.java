@@ -4,35 +4,49 @@
 
 package frc.robot.utility;
 
-/** Add your docs here. */
+/**
+ * Differential Drive Train
+ */
 public class MMDiffDriveTrain {
     MMMotorGroup leftMG;
     MMMotorGroup rightMG;
     double revPerFoot;
 
-    public MMDiffDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot){
+    /**
+     * Differential Drive Train
+     * 
+     * @param leftMG     left side motor group
+     * @param rightMG    right side motor group
+     * @param revPerFoot motor revolutions/foot of drivetrain travel
+     */
+    public MMDiffDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot) {
         this.leftMG = leftMG;
         this.rightMG = rightMG;
         this.revPerFoot = revPerFoot;
     }
 
     /**
-     * Drive 
+     * Drive
+     * 
      * @param speed in feet/sec
      * @param turn  in feet/sec
      */
-    public void Drive(double speed, double turn){
-        
-        double speedRPM = speed*60*revPerFoot;
-        double turnRPM = turn*60*revPerFoot;
-        leftMG.setVelocity(speedRPM+turnRPM);
-        rightMG.setVelocity(speedRPM-turnRPM);
-        
-    } 
+    public void Drive(double speed, double turn) {
+        double speedRPM = speed * 60 * revPerFoot;
+        double turnRPM = turn * 60 * revPerFoot;
+        leftMG.setVelocity(speedRPM + turnRPM);
+        rightMG.setVelocity(speedRPM - turnRPM);
+    }
 
-    public double getRevolutions(){
-        return (leftMG.getRevolutions() + rightMG.getRevolutions())/2.0;
-        
+    /**
+     * Get (average) Revolutions from each motor group
+     * 
+     * @return revolutions
+     */
+    public double getRevolutions() {
+        return (leftMG.getRevolutions() + rightMG.getRevolutions()) / 2.0;
     };
+
+    // TODO add a funtion that returns distance in feet (based on getRevolutions)
 
 }

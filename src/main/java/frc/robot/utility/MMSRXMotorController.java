@@ -4,6 +4,7 @@
 
 package frc.robot.utility;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -20,22 +21,20 @@ public class MMSRXMotorController extends MMMotorController {
         mc = new TalonSRX(canid);
         mc.configFactoryDefault();
 
-		/* Config sensor used for Primary PID [Velocity] */
-        // _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
-        //                                     Constants.kPIDLoopIdx, 
-        //                                     Constants.kTimeoutMs);
+        /* Config sensor used for Primary PID [Velocity] */
+        mc.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, kMMTimeoutMs);
 
         /**
-		 * Phase sensor accordingly. 
+         * Phase sensor accordingly.
          * Positive Sensor Reading should match Green (blinking) Leds on Talon
          */
-		mc.setSensorPhase(true);
+        mc.setSensorPhase(true);
 
-		/* Config the peak and nominal outputs */
-		mc.configNominalOutputForward(0, kMMTimeoutMs);
-		mc.configNominalOutputReverse(0, kMMTimeoutMs);
-		mc.configPeakOutputForward(1, kMMTimeoutMs);
-		mc.configPeakOutputReverse(-1, kMMTimeoutMs);
+        /* Config the peak and nominal outputs */
+        mc.configNominalOutputForward(0, kMMTimeoutMs);
+        mc.configNominalOutputReverse(0, kMMTimeoutMs);
+        mc.configPeakOutputForward(1, kMMTimeoutMs);
+        mc.configPeakOutputReverse(-1, kMMTimeoutMs);
 
     }
 
@@ -50,14 +49,13 @@ public class MMSRXMotorController extends MMMotorController {
     }
 
     public MMSRXMotorController setPIDFParameters(double p, double i, double d, double f) {
-		/* Config the Velocity closed loop gains in slot0 */
-		mc.config_kF(0, f, kMMTimeoutMs);
-		mc.config_kP(0, p, kMMTimeoutMs);
-		mc.config_kI(0, i, kMMTimeoutMs);
-		mc.config_kD(0, d, kMMTimeoutMs);
-        return this;     
+        /* Config the Velocity closed loop gains in slot0 */
+        mc.config_kF(0, f, kMMTimeoutMs);
+        mc.config_kP(0, p, kMMTimeoutMs);
+        mc.config_kI(0, i, kMMTimeoutMs);
+        mc.config_kD(0, d, kMMTimeoutMs);
+        return this;
     }
-
 
     @Override
     public void setPower(double power) {
@@ -66,28 +64,28 @@ public class MMSRXMotorController extends MMMotorController {
 
     @Override
     public void setVelocity(double rpm) {
-        double velocity = rpm/600.0*encoderTicksPerRev;
+        double velocity = rpm / 600.0 * encoderTicksPerRev;
         mc.set(TalonSRXControlMode.Velocity, velocity);
     }
 
     @Override
     public double getVelocity() {
-        return mc.getSelectedSensorVelocity()*600.0/encoderTicksPerRev;
+        return mc.getSelectedSensorVelocity() * 600.0 / encoderTicksPerRev;
     }
 
     @Override
     public void follow(MMMotorController lead) {
-        mc.follow(((MMSRXMotorController)lead).mc);        
+        mc.follow(((MMSRXMotorController) lead).mc);
     }
 
     @Override
     public double getRevolutions() {
-        return mc.getSelectedSensorPosition()/encoderTicksPerRev;
+        return mc.getSelectedSensorPosition() / encoderTicksPerRev;
     }
 
     @Override
     public void resetEncoder() {
-        mc.setSelectedSensorPosition(0);        
+        mc.setSelectedSensorPosition(0);
     }
 
 }

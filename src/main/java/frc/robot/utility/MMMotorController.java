@@ -9,19 +9,22 @@ public abstract class MMMotorController {
 
     /**
      * Set the Motor Power on a scale from -1 to 1
+     * 
      * @param power
      */
     public abstract void setPower(double power);
 
     /**
      * Set Velocity in RPM
+     * 
      * @param rpm
      */
     public abstract void setVelocity(double rpm);
 
     /**
      * Get Velocity in RPM
-     * @return 
+     * 
+     * @return
      */
     public abstract double getVelocity();
 
@@ -32,13 +35,13 @@ public abstract class MMMotorController {
 
     /**
      * Set the lead for this controller to follow.
+     * 
      * @param lead
      */
     public abstract void follow(MMMotorController lead);
 
     /**
-     * Reset then controller's encoder
+     * Reset the controller's encoder
      */
     public abstract void resetEncoder();
 }
-

@@ -4,7 +4,9 @@
 
 package frc.robot.utility;
 
-/** Add your docs here. */
+/**
+ * MM utility constants
+ */
 public class MMConstants {
     public static final double kMMFalconTicksPerRev = 2048;
     public static final double kMMNeoTicksPerRev = 42;
