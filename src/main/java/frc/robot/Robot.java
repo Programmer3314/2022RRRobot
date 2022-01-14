@@ -6,7 +6,10 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMSparkMaxMotorController;
@@ -40,6 +43,7 @@ Main TODO List:
  */
 public class Robot extends TimedRobot {
   MMDiffDriveTrain driveTrain;
+  Joystick controllerDriver;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -48,23 +52,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    controllerDriver = new Joystick(4);
+  
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(4, MotorType.kBrushless)
             // TODO consider these additional settings
             // for the lead motor of each motor group
-            // .setCurrentLimit(stallLimit, freeLimit)
-            // .setInverted(inverted)
-            // .setPIDFParameters(p, i, d, f, iz, min, max)
+            .setCurrentLimit(40, 40)
+            .setInverted(true)
+            .setPIDFParameters(0, 0, 0, 0.0002, 0, -1, 1)
             ,
             new MMSparkMaxMotorController(5, MotorType.kBrushless),
             new MMSparkMaxMotorController(6, MotorType.kBrushless)),
         new MMFollowingMotorGroup(
-            new MMSparkMaxMotorController(1, MotorType.kBrushless),
+            new MMSparkMaxMotorController(1, MotorType.kBrushless)
+            .setCurrentLimit(40, 40)
+            .setInverted(false)
+            .setPIDFParameters(0, 0, 0, 0.0002, 0, -1, 1),
             new MMSparkMaxMotorController(2, MotorType.kBrushless),
             new MMSparkMaxMotorController(3, MotorType.kBrushless)),
-        0.1 // just a wrong guess TODO figure out what this should be
+        4.67 // just a wrong guess TODO figure out what this should be
     );
 
   }
@@ -88,6 +97,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // TODO drive the robot using joysticks
+    
+    
+   double vertical = controllerDriver.getRawAxis(1);
+   double horizonal=controllerDriver.getRawAxis(4);
+driveTrain.Drive(-10*vertical, 10*horizonal);
+ SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
+
   }
 
   @Override

@@ -30,6 +30,9 @@ public class MMDiffDriveTrain {
         
     } 
 
-    
+    public double getRevolutions(){
+        return (leftMG.getRevolutions() + rightMG.getRevolutions())/2.0;
+        
+    };
 
 }

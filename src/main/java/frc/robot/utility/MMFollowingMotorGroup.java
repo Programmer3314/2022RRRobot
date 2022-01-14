@@ -29,7 +29,8 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
                 enc = m;
             } else {
                 m.follow(lead);
-            }
+            } 
+            first=false; 
         }
     }
 
