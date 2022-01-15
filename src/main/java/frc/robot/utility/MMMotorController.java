@@ -22,6 +22,14 @@ public abstract class MMMotorController {
     public abstract void setVelocity(double rpm);
 
     /**
+     * Set Position in Revolutions
+     * 
+     * 
+     * @param position
+     */
+    public abstract void setPosition(double position);
+
+    /**
      * Get Velocity in RPM
      * 
      * @return

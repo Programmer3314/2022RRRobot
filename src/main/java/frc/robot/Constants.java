@@ -17,6 +17,29 @@ public class Constants {
     public static int kNeoDriveTrainStallLimit = 40;
     public static int kNeoDriveTrainFreeLimit = 40;
 
+    public static double kNeoShooterCAMP = 0;
+    public static double kNeoShooterCAMI = 0;
+    public static double kNeoShooterCAMD = 0;
+    public static double kNeoShooterCAMF = 0.0002;
+    public static double kNeoShooterCAMIZ = 0;
+    public static double kNeoShooterCAMMin = -1;
+    public static double kNeoShooterCAMMax = +1;
+
+    public static int kNeoShooterCAMStallLimit = 40;
+    public static int kNeoShooterCAMFreeLimit = 40;
+
+    
+    public static double kNeoShooterWheelsP = 0;
+    public static double kNeoShooterWheelsI = 0;
+    public static double kNeoShooterWheelsD = 0;
+    public static double kNeoShooterWheelsF = 0.0002;
+    public static double kNeoShooterWheelsIZ = 0;
+    public static double kNeoShooterWheelsMin = -1;
+    public static double kNeoShooterWheelsMax = +1;
+
+    public static int kNeoShooterWheelsStallLimit = 40;
+    public static int kNeoShooterWheelsFreeLimit = 40;
+
     public static double kMaxSpeed = -10;
     public static double kMaxTurnRate = 180;
 }

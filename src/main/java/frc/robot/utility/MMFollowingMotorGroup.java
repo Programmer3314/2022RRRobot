@@ -59,4 +59,10 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
     public double getVelocity() {
         return enc.getVelocity();
     }
+
+    @Override
+    public void setPosition(double position) {
+        lead.setPosition(position);
+        
+    }
 }

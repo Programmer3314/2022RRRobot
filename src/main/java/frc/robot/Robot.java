@@ -12,8 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
+import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMSparkMaxMotorController;
 import static frc.robot.Constants.*;
+
+import javax.naming.spi.DirStateFactory.Result;
 
 /*
 Main TODO List:
@@ -29,6 +32,11 @@ Main TODO List:
 
 */
 
+//Control RPM of motors
+//Control position of CAM
+//Look at linear interpilation to determine firing solution
+//dream plan- have firing solution always at the ready during a match
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -42,6 +50,9 @@ public class Robot extends TimedRobot {
   MMDiffDriveTrain driveTrain;
   Joystick controllerDriver;
   MMJoystickAxis speed, turn;
+  MMMotorGroup shooterWheels;
+  MMMotorGroup shooterCAM;
+  ShooterFormula shooterFormula;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -53,6 +64,29 @@ public class Robot extends TimedRobot {
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
+
+    /**
+    shooterCAM = new MMFollowingMotorGroup(
+      new MMSparkMaxMotorController(11, MotorType.kBrushless)
+      .setCurrentLimit(kNeoShooterCAMStallLimit, kNeoShooterCAMFreeLimit)
+      .setInverted(false)
+      .setPIDFParameters(kNeoShooterCAMP, kNeoShooterCAMI, kNeoShooterCAMD, kNeoShooterCAMF, kNeoShooterCAMIZ, kNeoShooterCAMMin, kNeoShooterCAMMax)
+    );
+
+    
+    shooterWheels = new MMFollowingMotorGroup(
+      new MMSparkMaxMotorController(10, MotorType.kBrushless)
+      .setCurrentLimit(kNeoShooterWheelsStallLimit, kNeoShooterWheelsFreeLimit)
+      .setInverted(false)
+      .setPIDFParameters(kNeoShooterWheelsP, kNeoShooterWheelsI, kNeoShooterWheelsD, kNeoShooterWheelsF, kNeoShooterWheelsIZ, kNeoShooterWheelsMin,
+       kNeoShooterWheelsMax)
+    );
+     */
+    
+    shooterFormula = new ShooterFormula();
+
+    SmartDashboard.putNumber("Target Distance", 0);
+
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(4, MotorType.kBrushless)
@@ -95,6 +129,22 @@ public class Robot extends TimedRobot {
     // double vertical = controllerDriver.getRawAxis(1);
     // double horizonal = controllerDriver.getRawAxis(4);
     driveTrain.Drive(speed.get(), turn.get());
+    double shooterRPM=0; 
+    double shooterAngle=0;
+    
+    //input distance via smartdashboard and then 
+    double test = SmartDashboard.getNumber("Target Distance", 0);
+    TargetPoint firingSolution = shooterFormula.calculate(test);
+    if (firingSolution == null) {
+      SmartDashboard.putNumber("TargetRPM", -1);
+      SmartDashboard.putNumber("TargetAngle", -1);      
+    }else{
+      SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
+      SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
+
+    }
+    
+
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
 
   }

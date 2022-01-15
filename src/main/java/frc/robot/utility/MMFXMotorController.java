@@ -6,6 +6,7 @@ package frc.robot.utility;
 
 import static frc.robot.utility.MMConstants.*;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -84,6 +85,13 @@ public class MMFXMotorController extends MMMotorController {
     @Override
     public void resetEncoder() {
         mc.setSelectedSensorPosition(0);
+    }
+
+    @Override
+    public void setPosition(double position) {
+        double ticks = kMMFalconTicksPerRev*position;
+        mc.set(ControlMode.Position, ticks);
+        
     }
 
 }

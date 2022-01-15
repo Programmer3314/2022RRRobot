@@ -24,6 +24,15 @@ public abstract class MMMotorGroup {
      */
     public abstract void setVelocity(double rpm);
 
+    
+    /**
+     * Set Position in Revolutions
+     * 
+     * 
+     * @param position
+     */
+    public abstract void setPosition(double position);
+    
     /**
      * Get the Revolutions since last Reset
      * 
