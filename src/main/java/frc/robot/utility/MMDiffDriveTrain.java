@@ -36,7 +36,7 @@ public class MMDiffDriveTrain {
     public void Drive(double speed, double turn) {
         double DegToFeet = (turn*ChassiRadius*Math.PI)/180;
         double speedRPM = speed * 60 * revPerFoot;
-        double turnRPM = turn * 60 * revPerFoot;
+        double turnRPM = turn * 60 * revPerFoot * DegToFeet;
         leftMG.setVelocity(speedRPM + turnRPM);
         rightMG.setVelocity(speedRPM - turnRPM);
     }
