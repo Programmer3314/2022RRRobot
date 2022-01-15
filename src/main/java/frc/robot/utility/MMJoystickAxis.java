@@ -9,23 +9,26 @@ import edu.wpi.first.wpilibj.Joystick;
 /** Add your docs here. */
 public class MMJoystickAxis {
     Joystick joystick;
-    int Axis;
-    double Deadzone;
+    int axis;
+    double deadzone;
     double scale;
-    public MMJoystickAxis(int JoystickIndx, int AxisIndx, double deadzone, double Scale){
-        this.joystick = new Joystick(JoystickIndx);
-        this.Axis = AxisIndx;
-        this.Deadzone = deadzone;
-        this.scale = Scale;
+
+    public MMJoystickAxis(int joystickIndex, int axisIndex, double deadzone, double scale) {
+        this.joystick = new Joystick(joystickIndex);
+        this.axis = axisIndex;
+        this.deadzone = deadzone;
+        this.scale = scale;
     }
-    public double get(){
-        double rawAxis = joystick.getRawAxis(Axis);
+
+    public double get() {
+        double rawAxis = joystick.getRawAxis(axis);
         double result;
-        if (Deadzone<=Math.abs(rawAxis)){
-            double temp = Math.signum(rawAxis)*(Math.abs(rawAxis)-Deadzone)/(1-Deadzone);
-            result = temp*scale;
-        }else{
-            result = 0;;
+
+        if (deadzone <= Math.abs(rawAxis)) {
+            double temp = Math.signum(rawAxis) * (Math.abs(rawAxis) - deadzone) / (1 - deadzone);
+            result = temp * scale;
+        } else {
+            result = 0;
         }
         return result;
     }

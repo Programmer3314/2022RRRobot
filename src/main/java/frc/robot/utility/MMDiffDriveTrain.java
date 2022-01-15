@@ -8,23 +8,24 @@ package frc.robot.utility;
  * Differential Drive Train
  */
 public class MMDiffDriveTrain {
-    double ChassiRadius;
     MMMotorGroup leftMG;
     MMMotorGroup rightMG;
     double revPerFoot;
+    double chassisRadius;
 
     /**
      * Differential Drive Train
      * 
-     * @param leftMG     left side motor group
-     * @param rightMG    right side motor group
-     * @param revPerFoot motor revolutions/foot of drivetrain travel
+     * @param leftMG
+     * @param rightMG
+     * @param revPerFoot
+     * @param chassisRadius
      */
-    public MMDiffDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot, double ChassiRadius) {
+    public MMDiffDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot, double chassisRadius) {
         this.leftMG = leftMG;
         this.rightMG = rightMG;
         this.revPerFoot = revPerFoot;
-        this.ChassiRadius = ChassiRadius;
+        this.chassisRadius = chassisRadius;
     }
 
     /**
@@ -34,9 +35,9 @@ public class MMDiffDriveTrain {
      * @param turn  in feet/sec
      */
     public void Drive(double speed, double turn) {
-        double DegToFeet = (turn*ChassiRadius*Math.PI)/180;
+        double degToFeet = (turn * chassisRadius * Math.PI) / 180;
         double speedRPM = speed * 60 * revPerFoot;
-        double turnRPM = turn * 60 * revPerFoot * DegToFeet;
+        double turnRPM = turn * 60 * revPerFoot * degToFeet;
         leftMG.setVelocity(speedRPM + turnRPM);
         rightMG.setVelocity(speedRPM - turnRPM);
     }

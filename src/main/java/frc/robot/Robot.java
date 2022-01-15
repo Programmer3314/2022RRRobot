@@ -18,9 +18,6 @@ import static frc.robot.Constants.*;
 /*
 Main TODO List:
 - Do CLEANUPS...
-- Convert turn to be degrees per second - this will require additional drivetrain geometry info
-- Create class MMJoystickAxis to handle data cleanups like Deadband and Scaling, so that 
-  a configured MMJoystickAxis will return a clean value. (For example return speed in Feet/Sec.)
 - When possible start tuning the test chassis pids - we'll discuss this before you do it.
 
 - Start on shooter code:
@@ -54,21 +51,25 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     controllerDriver = new Joystick(4);
-    speed = new MMJoystickAxis(4, 1, .2, KMaxSpeed);
-    turn = new MMJoystickAxis(4, 4, .2, KMaxTurnRate);
+    speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
+    // TODO Check that this is the correct axis - I think this is the right up/down
+    // axis
+    turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(4, MotorType.kBrushless)
-                .setCurrentLimit(KNeoDriveTrainStallLimit, KNeoDriveTrainFreeLimit)
+                .setCurrentLimit(kNeoDriveTrainStallLimit, kNeoDriveTrainFreeLimit)
                 .setInverted(true)
-                .setPIDFParameters(KNeoDriveTrainP, KNeoDriveTrainI, KNeoDriveTrainD, KNeoDriveTrainF, KNeoDriveTrainIZ, KNeoDriveTrainMin, KNeoDriveTrainMax),
+                .setPIDFParameters(kNeoDriveTrainP, kNeoDriveTrainI, kNeoDriveTrainD, kNeoDriveTrainF, kNeoDriveTrainIZ,
+                    kNeoDriveTrainMin, kNeoDriveTrainMax),
             new MMSparkMaxMotorController(5, MotorType.kBrushless),
             new MMSparkMaxMotorController(6, MotorType.kBrushless)),
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(1, MotorType.kBrushless)
-                .setCurrentLimit(KNeoDriveTrainStallLimit, KNeoDriveTrainFreeLimit)
+                .setCurrentLimit(kNeoDriveTrainStallLimit, kNeoDriveTrainFreeLimit)
                 .setInverted(false)
-                .setPIDFParameters(KNeoDriveTrainP, KNeoDriveTrainI, KNeoDriveTrainD, KNeoDriveTrainF, KNeoDriveTrainIZ, KNeoDriveTrainMin, KNeoDriveTrainMax),
+                .setPIDFParameters(kNeoDriveTrainP, kNeoDriveTrainI, kNeoDriveTrainD, kNeoDriveTrainF, kNeoDriveTrainIZ,
+                    kNeoDriveTrainMin, kNeoDriveTrainMax),
             new MMSparkMaxMotorController(2, MotorType.kBrushless),
             new MMSparkMaxMotorController(3, MotorType.kBrushless)),
         4.67, 1.04);

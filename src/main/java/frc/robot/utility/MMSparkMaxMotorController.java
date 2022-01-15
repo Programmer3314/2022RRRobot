@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /** Add your docs here. */
 public class MMSparkMaxMotorController extends MMMotorController {
-
     public CANSparkMax mc;
     public SparkMaxPIDController pid;
     public RelativeEncoder enc;
