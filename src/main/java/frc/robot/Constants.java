@@ -18,5 +18,5 @@ public class Constants {
     public static int kNeoDriveTrainFreeLimit = 40;
 
     public static double kMaxSpeed = -10;
-    public static double kMaxTurnRate = 25;
+    public static double kMaxTurnRate = 180;
 }

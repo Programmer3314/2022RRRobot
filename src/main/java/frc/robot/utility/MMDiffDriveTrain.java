@@ -12,6 +12,7 @@ public class MMDiffDriveTrain {
     MMMotorGroup rightMG;
     double revPerFoot;
     double chassisRadius;
+    double feetPerDeg;
 
     /**
      * Differential Drive Train
@@ -26,6 +27,7 @@ public class MMDiffDriveTrain {
         this.rightMG = rightMG;
         this.revPerFoot = revPerFoot;
         this.chassisRadius = chassisRadius;
+        feetPerDeg = (chassisRadius * Math.PI) / 180;
     }
 
     /**
@@ -45,9 +47,8 @@ public class MMDiffDriveTrain {
         // turn could be turnDegPerSec
         // then we'd have turnRPM = turnDegPerSec * kSecPerMin * revPerFoot * feetPerDeg;
         // or we just need to be more carefull
-        double degToFeet = (turn * chassisRadius * Math.PI) / 180;
         double speedRPM = speed * 60 * revPerFoot;
-        double turnRPM = turn * 60 * revPerFoot * degToFeet;
+        double turnRPM = turn * 60 * revPerFoot * feetPerDeg;
         leftMG.setVelocity(speedRPM + turnRPM);
         rightMG.setVelocity(speedRPM - turnRPM);
     }
