@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFollowingMotorGroup;
+import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMSparkMaxMotorController;
+import static frc.robot.Constants.*;
 
 /*
 Main TODO List:
@@ -42,6 +44,7 @@ Main TODO List:
 public class Robot extends TimedRobot {
   MMDiffDriveTrain driveTrain;
   Joystick controllerDriver;
+  MMJoystickAxis speed, turn;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -51,28 +54,24 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     controllerDriver = new Joystick(4);
-
-    // TODO CLEANUP setup constants for the constants below
-    // TODO CLEANUP Create a class MMSparkMaxPIDFParms. The class ...
-    // can be used in constants. And only one value needs to be
-    // passed into setPIDFParameters.
+    speed = new MMJoystickAxis(4, 1, .2, KMaxSpeed);
+    turn = new MMJoystickAxis(4, 4, .2, KMaxTurnRate);
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(4, MotorType.kBrushless)
-                .setCurrentLimit(40, 40)
+                .setCurrentLimit(KNeoDriveTrainStallLimit, KNeoDriveTrainFreeLimit)
                 .setInverted(true)
-                .setPIDFParameters(0, 0, 0, 0.0002, 0, -1, 1),
+                .setPIDFParameters(KNeoDriveTrainP, KNeoDriveTrainI, KNeoDriveTrainD, KNeoDriveTrainF, KNeoDriveTrainIZ, KNeoDriveTrainMin, KNeoDriveTrainMax),
             new MMSparkMaxMotorController(5, MotorType.kBrushless),
             new MMSparkMaxMotorController(6, MotorType.kBrushless)),
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(1, MotorType.kBrushless)
-                .setCurrentLimit(40, 40)
+                .setCurrentLimit(KNeoDriveTrainStallLimit, KNeoDriveTrainFreeLimit)
                 .setInverted(false)
-                .setPIDFParameters(0, 0, 0, 0.0002, 0, -1, 1),
+                .setPIDFParameters(KNeoDriveTrainP, KNeoDriveTrainI, KNeoDriveTrainD, KNeoDriveTrainF, KNeoDriveTrainIZ, KNeoDriveTrainMin, KNeoDriveTrainMax),
             new MMSparkMaxMotorController(2, MotorType.kBrushless),
             new MMSparkMaxMotorController(3, MotorType.kBrushless)),
-        4.67);
-
+        4.67, 1.04);
   }
 
   @Override
@@ -94,10 +93,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    double vertical = controllerDriver.getRawAxis(1);
-    double horizonal = controllerDriver.getRawAxis(4);
-    // TODO CLEANUP use constants for the #s below
-    driveTrain.Drive(-10 * vertical, 10 * horizonal);
+    // double vertical = controllerDriver.getRawAxis(1);
+    // double horizonal = controllerDriver.getRawAxis(4);
+    driveTrain.Drive(speed.get(), turn.get());
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
 
   }
