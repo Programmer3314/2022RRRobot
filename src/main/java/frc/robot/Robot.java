@@ -52,8 +52,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
-    // TODO Check that this is the correct axis - I think this is the right up/down
-    // axis
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
