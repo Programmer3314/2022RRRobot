@@ -5,9 +5,6 @@
 package frc.robot;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
-
-import edu.wpi.first.wpilibj.Tracer;
 
 /** Add your docs here. */
 public class ShooterFormula {
@@ -15,7 +12,7 @@ public class ShooterFormula {
 
     // constructor that makes new list of target points
     //
-    public ShooterFormula(){
+    public ShooterFormula() {
         targetPoints = new ArrayList<>();
         targetPoints.add(new TargetPoint(2.5, 2800, 0));
         targetPoints.add(new TargetPoint(10, 3200, 0.3));
@@ -25,26 +22,26 @@ public class ShooterFormula {
     public TargetPoint calculate(double targetDistance) {
         TargetPoint upper = null;
         TargetPoint lower = null;
-        for (TargetPoint x: targetPoints){
-            if (x.distance >= targetDistance && lower!=null){
-                 upper = x;
-                 break;
+        for (TargetPoint x : targetPoints) {
+            if (x.distance >= targetDistance && lower != null) {
+                upper = x;
+                break;
             }
-            if (x.distance <= targetDistance){
+            if (x.distance <= targetDistance) {
                 lower = x;
-           }
-        
+            }
+
         }
-        if (upper == null || lower == null){
+        if (upper == null || lower == null) {
             return null;
-        } else{
-            double ratio = (targetDistance-lower.distance)/(upper.distance-lower.distance); // cretes ratio of difference between the 2 distance points
-            double rpm = ratio* (upper.rpm-lower.rpm) + lower.rpm; //implents ratio to rpm
-            double angle = ratio * (upper.angle - lower.angle) + lower.angle; //implents ratio to angle
-            //we did this :)
+        } else {
+            // creates ratio of difference between the 2 distance point
+            double ratio = (targetDistance - lower.distance) / (upper.distance - lower.distance); 
+            double rpm = ratio * (upper.rpm - lower.rpm) + lower.rpm; // implents ratio to rpm
+            double angle = ratio * (upper.angle - lower.angle) + lower.angle; // implents ratio to angle
+            // we did this :)
             TargetPoint result = new TargetPoint(targetDistance, rpm, angle);
             return result;
         }
     }
-
 }
