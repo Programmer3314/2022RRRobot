@@ -7,7 +7,11 @@ package frc.robot;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFollowingMotorGroup;
@@ -53,6 +57,9 @@ public class Robot extends TimedRobot {
   MMMotorGroup shooterWheels;
   MMMotorGroup shooterCAM;
   ShooterFormula shooterFormula;
+  //PneumaticsControlModule PCM;
+  Solenoid lightRing;
+  
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -64,6 +71,9 @@ public class Robot extends TimedRobot {
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
+    //PCM = new PneumaticsControlModule(1);
+    lightRing = new Solenoid(1,PneumaticsModuleType.CTREPCM, 0);
+
 
     /**
     shooterCAM = new MMFollowingMotorGroup(
@@ -131,7 +141,10 @@ public class Robot extends TimedRobot {
     driveTrain.Drive(speed.get(), turn.get());
     double shooterRPM=0; 
     double shooterAngle=0;
-    
+    if (controllerDriver.getRawButtonPressed(9)){
+      lightRing.set(!lightRing.get());
+    }
+
     //input distance via smartdashboard and then 
     double test = SmartDashboard.getNumber("Target Distance", 0);
     TargetPoint firingSolution = shooterFormula.calculate(test);
