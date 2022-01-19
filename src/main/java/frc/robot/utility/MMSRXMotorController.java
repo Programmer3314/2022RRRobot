@@ -92,7 +92,6 @@ public class MMSRXMotorController extends MMMotorController {
     public void setPosition(double position) {
         double ticks = encoderTicksPerRev*position;
         mc.set(TalonSRXControlMode.Position, ticks);
-        
     }
 
 }

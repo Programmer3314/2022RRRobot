@@ -32,4 +32,4 @@ public class MMJoystickAxis {
         }
         return result;
     }
-} 
+}

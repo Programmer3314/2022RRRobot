@@ -79,6 +79,5 @@ public class MMSparkMaxMotorController extends MMMotorController {
     @Override
     public void setPosition(double position) {
         pid.setReference(position, ControlType.kPosition);
-        
     }
 }

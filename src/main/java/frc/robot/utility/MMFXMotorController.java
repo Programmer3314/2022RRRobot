@@ -89,9 +89,9 @@ public class MMFXMotorController extends MMMotorController {
 
     @Override
     public void setPosition(double position) {
-        double ticks = kMMFalconTicksPerRev*position;
+        double ticks = kMMFalconTicksPerRev * position;
         mc.set(ControlMode.Position, ticks);
-        
+
     }
 
 }

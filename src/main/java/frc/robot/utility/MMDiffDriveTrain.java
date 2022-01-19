@@ -37,16 +37,6 @@ public class MMDiffDriveTrain {
      * @param turn  in degrees/sec
      */
     public void Drive(double speed, double turn) {
-        // TODO the calculation for degToFeet has "turn" in it and so does the turnRPM line
-        // This is a mistake. "turn" should only be in one of them. 
-        // degToFeet should probably just be the conversion and should be calculated once in the 
-        // constructor. It's not a lot of fun, but maybe we should add UOM (Units of Measure)
-        // to variable names that are used in anything but trivial calculations.
-        // degToFeet should maybe be called feetPerDeg (and not include turn) 
-        // 60 could be kSecPerMin
-        // turn could be turnDegPerSec
-        // then we'd have turnRPM = turnDegPerSec * kSecPerMin * revPerFoot * feetPerDeg;
-        // or we just need to be more carefull
         double speedRPM = speed * 60 * revPerFoot;
         double turnRPM = turn * 60 * revPerFoot * feetPerDeg;
         leftMG.setVelocity(speedRPM + turnRPM);

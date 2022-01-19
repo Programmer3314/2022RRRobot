@@ -28,7 +28,6 @@ public class Constants {
     public static int kNeoShooterCAMStallLimit = 40;
     public static int kNeoShooterCAMFreeLimit = 40;
 
-    
     public static double kNeoShooterWheelsP = 0;
     public static double kNeoShooterWheelsI = 0;
     public static double kNeoShooterWheelsD = 0;

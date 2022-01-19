@@ -63,6 +63,6 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
     @Override
     public void setPosition(double position) {
         lead.setPosition(position);
-        
+
     }
 }
