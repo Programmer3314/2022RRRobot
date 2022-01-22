@@ -41,4 +41,10 @@ public class Constants {
 
     public static double kMaxSpeed = -10;
     public static double kMaxTurnRate = 180;
+
+    public static double kCameraVerticalAngle = 41;
+    public static double ktargetHeight=104/12.0;
+    public static double kTargetCameraHeight=6/12.0;
+    public static double kTargetingHeightDiff=ktargetHeight-kTargetCameraHeight;
+
 }
