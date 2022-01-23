@@ -6,7 +6,7 @@ package frc.robot;
 
 /** Add your docs here. */
 public class Constants {
-    public static double kNeoDriveTrainP = 0;
+    public static double kNeoDriveTrainP = 0.000005;
     public static double kNeoDriveTrainI = 0;
     public static double kNeoDriveTrainD = 0;
     public static double kNeoDriveTrainF = 0.0002;
@@ -47,4 +47,6 @@ public class Constants {
     public static double kTargetCameraHeight=6/12.0;
     public static double kTargetingHeightDiff=ktargetHeight-kTargetCameraHeight;
 
+    public static double kRevPerFoot = 4.67;
+    public static double kChassiRadius = 1.04;
 }

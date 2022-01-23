@@ -4,6 +4,8 @@
 
 package frc.robot.utility;
 
+import frc.robot.Robot;
+
 /**
  * Differential Drive Train
  */
@@ -52,6 +54,11 @@ public class MMDiffDriveTrain {
         return (leftMG.getRevolutions() + rightMG.getRevolutions()) / 2.0;
     };
 
-    // TODO CLEANUP add a funtion that returns distance in feet (based on getRevolutions)
-
+    public double getDistanceFeet(){
+        return getRevolutions()/revPerFoot;
+    }
+    public void resetEncoders(){
+        leftMG.resetEncoders();
+        rightMG.resetEncoders();
+    }
 }

@@ -4,19 +4,7 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kCameraVerticalAngle;
-import static frc.robot.Constants.kMaxSpeed;
-import static frc.robot.Constants.kMaxTurnRate;
-import static frc.robot.Constants.kNeoDriveTrainD;
-import static frc.robot.Constants.kNeoDriveTrainF;
-import static frc.robot.Constants.kNeoDriveTrainFreeLimit;
-import static frc.robot.Constants.kNeoDriveTrainI;
-import static frc.robot.Constants.kNeoDriveTrainIZ;
-import static frc.robot.Constants.kNeoDriveTrainMax;
-import static frc.robot.Constants.kNeoDriveTrainMin;
-import static frc.robot.Constants.kNeoDriveTrainP;
-import static frc.robot.Constants.kNeoDriveTrainStallLimit;
-import static frc.robot.Constants.kTargetingHeightDiff;
+import static frc.robot.Constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -29,6 +17,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utility.MMAutonomous;
 import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
@@ -39,8 +28,6 @@ import frc.robot.utility.MMSparkMaxMotorController;
 /*
 Main TODO List:
 - Do CLEANUPS...
-
-- Check confidence 
 
 - Drive robot to specific distance while pointing to target
   and indicate when good.   
@@ -71,22 +58,24 @@ Main TODO List:
  * project.
  */
 public class Robot extends TimedRobot {
-  MMDiffDriveTrain driveTrain;
+  public static MMDiffDriveTrain driveTrain;
   Joystick controllerDriver;
   MMJoystickAxis speed, turn;
   MMMotorGroup shooterWheels;
   MMMotorGroup shooterCAM;
   ShooterFormula shooterFormula;
-  Solenoid lightRing;
+  public static Solenoid lightRing;
   MMJoystickAxis intakeTrigger;
   MMFollowingMotorGroup frontIntake;
-  NetworkTableInstance nt;
-  NetworkTable visiontable;
-  AHRS navx;
-  double autocorrectTargetAngle;
-  // TODO CLEANUP remove lowConfidence variable and rely on confidenceCounter >0
-  Boolean lowConfidence;
-  int confidenceCounter;
+  public static NetworkTableInstance nt;
+  public static NetworkTable visiontable;
+  public static AHRS navx;
+  public static double autocorrectTargetAngle;
+  public static int confidenceCounter;
+  public static double currentAngle;
+  public static double verticalAngle;
+  public static double horizontalAngle;
+  public static MMAutonomous autonomous;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -99,24 +88,21 @@ public class Robot extends TimedRobot {
     // TODO CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
     // Sensors together, Data init, etc.
-
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-    
-    lowConfidence = true;
+
+    lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+    navx = new AHRS(SPI.Port.kMXP);
+    navx.reset();
+
     confidenceCounter = 0;
 
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
-    lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
     intakeTrigger = new MMJoystickAxis(4, 2, .5, 1);
     frontIntake = new MMFollowingMotorGroup(
-        new MMSRXMotorController(20)
-    );
-
-    navx = new AHRS(SPI.Port.kMXP);
-    navx.reset();
+        new MMSRXMotorController(20));
 
     /**
      * shooterCAM = new MMFollowingMotorGroup(
@@ -142,7 +128,6 @@ public class Robot extends TimedRobot {
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
 
-    // TODO CLEANUP create constants for the last two parameters of MMDiffDriveTrain
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(4, MotorType.kBrushless)
@@ -160,7 +145,7 @@ public class Robot extends TimedRobot {
                     kNeoDriveTrainMin, kNeoDriveTrainMax),
             new MMSparkMaxMotorController(2, MotorType.kBrushless),
             new MMSparkMaxMotorController(3, MotorType.kBrushless)),
-        4.67, 1.04);
+        kRevPerFoot, kChassiRadius);
   }
 
   @Override
@@ -169,10 +154,35 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    autonomous= new TwoBallAuto();
   }
 
   @Override
   public void autonomousPeriodic() {
+    currentAngle = navx.getYaw();
+
+     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
+     horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
+    SmartDashboard.putNumber("Vertical Angle", verticalAngle);
+    SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+
+    if (visiontable.getEntry("Confidence").getBoolean(false)) {
+      autocorrectTargetAngle = currentAngle + horizontalAngle;
+      // lowConfidence = false;
+      confidenceCounter = 500;
+    } else {
+      if (confidenceCounter > 0) {
+        confidenceCounter--;
+      }
+      if (confidenceCounter <= 0) {
+        // lowConfidence = true;
+      }
+    }
+
+    SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
+
+   autonomous.periodic();
+   SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
   }
 
   @Override
@@ -181,7 +191,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    double currentAngle = navx.getYaw();
+    currentAngle = navx.getYaw();
     SmartDashboard.putNumber("curentAngle", currentAngle);
 
     // double vertical = controllerDriver.getRawAxis(1);
@@ -194,21 +204,21 @@ public class Robot extends TimedRobot {
     frontIntake.setPower(IntakePower);
     SmartDashboard.putNumber("Intake Power", IntakePower);
 
-    double verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
-    double horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
+    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
+    horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
     SmartDashboard.putNumber("Vertical Angle", verticalAngle);
     SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
 
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
       autocorrectTargetAngle = currentAngle + horizontalAngle;
-      lowConfidence = false;
-      confidenceCounter = 150;
+      // lowConfidence = false;
+      confidenceCounter = 500;
     } else {
       if (confidenceCounter > 0) {
         confidenceCounter--;
       }
       if (confidenceCounter <= 0) {
-        lowConfidence = true;
+        // lowConfidence = true;
       }
     }
 
@@ -231,17 +241,16 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
     }
 
-    if (controllerDriver.getRawButton(1) && !lowConfidence) {
+    if (controllerDriver.getRawButton(1) && confidenceCounter > 0) {
       double p = 5;
 
-      double xAngle = 0;
       double currentError = autocorrectTargetAngle - currentAngle;
       // double currentError=xAngle- currentAngle;
       requestedTurn = p * currentError;
       SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
 
     }
-    SmartDashboard.putBoolean("lowConfidence", lowConfidence);
+    SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
 
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     driveTrain.Drive(requestedSpeed, requestedTurn);
