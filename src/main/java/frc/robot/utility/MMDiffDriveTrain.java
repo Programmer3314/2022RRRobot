@@ -52,6 +52,6 @@ public class MMDiffDriveTrain {
         return (leftMG.getRevolutions() + rightMG.getRevolutions()) / 2.0;
     };
 
-    // TODO add a funtion that returns distance in feet (based on getRevolutions)
+    // TODO CLEANUP add a funtion that returns distance in feet (based on getRevolutions)
 
 }
