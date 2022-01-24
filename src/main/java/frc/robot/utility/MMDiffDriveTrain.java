@@ -4,8 +4,6 @@
 
 package frc.robot.utility;
 
-import frc.robot.Robot;
-
 /**
  * Differential Drive Train
  */
@@ -19,9 +17,9 @@ public class MMDiffDriveTrain {
     /**
      * Differential Drive Train
      * 
-     * @param leftMG left side motor group
-     * @param rightMG right side motor group
-     * @param revPerFoot motor revolutions per linear foot of chassis movement
+     * @param leftMG        left side motor group
+     * @param rightMG       right side motor group
+     * @param revPerFoot    motor revolutions per linear foot of chassis movement
      * @param chassisRadius radius of robot chassis in Feet
      */
     public MMDiffDriveTrain(MMMotorGroup leftMG, MMMotorGroup rightMG, double revPerFoot, double chassisRadius) {
@@ -54,10 +52,11 @@ public class MMDiffDriveTrain {
         return (leftMG.getRevolutions() + rightMG.getRevolutions()) / 2.0;
     };
 
-    public double getDistanceFeet(){
-        return getRevolutions()/revPerFoot;
+    public double getDistanceFeet() {
+        return getRevolutions() / revPerFoot;
     }
-    public void resetEncoders(){
+
+    public void resetEncoders() {
         leftMG.resetEncoders();
         rightMG.resetEncoders();
     }

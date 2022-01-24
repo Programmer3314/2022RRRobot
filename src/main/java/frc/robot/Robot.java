@@ -154,15 +154,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomous= new TwoBallAuto();
+    autonomous = new TwoBallAuto();
   }
 
   @Override
   public void autonomousPeriodic() {
     currentAngle = navx.getYaw();
 
-     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
-     horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
+    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
+    horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
     SmartDashboard.putNumber("Vertical Angle", verticalAngle);
     SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
 
@@ -181,8 +181,8 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
 
-   autonomous.periodic();
-   SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
+    autonomous.periodic();
+    SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
   }
 
   @Override
