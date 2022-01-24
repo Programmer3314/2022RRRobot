@@ -3,9 +3,13 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.utility;
-//enum autoStates {Start, DriveBack, TurnAway, AutoTarget, Done};
 
-/** Add your docs here. */
+// TODO Add initial call to doCurrentState() on first update
+// TODO Add secondsInState and cyclesInState variables
+
+/** 
+ * Generic State Machine 
+ */
 public abstract class MMStateMachine<T> {
     public T currentState;
     public T nextState;

@@ -168,14 +168,10 @@ public class Robot extends TimedRobot {
 
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
       autocorrectTargetAngle = currentAngle + horizontalAngle;
-      // lowConfidence = false;
       confidenceCounter = 500;
     } else {
       if (confidenceCounter > 0) {
         confidenceCounter--;
-      }
-      if (confidenceCounter <= 0) {
-        // lowConfidence = true;
       }
     }
 
@@ -211,14 +207,10 @@ public class Robot extends TimedRobot {
 
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
       autocorrectTargetAngle = currentAngle + horizontalAngle;
-      // lowConfidence = false;
       confidenceCounter = 500;
     } else {
       if (confidenceCounter > 0) {
         confidenceCounter--;
-      }
-      if (confidenceCounter <= 0) {
-        // lowConfidence = true;
       }
     }
 

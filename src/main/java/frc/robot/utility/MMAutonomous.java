@@ -6,9 +6,11 @@ package frc.robot.utility;
 
 /** Add your docs here. */
 public abstract class MMAutonomous<T> extends MMStateMachine<T> {
-    public abstract void init();
-    public abstract void periodic();
+
     public MMAutonomous (T initState){
         super(initState);
     }
+
+    public abstract void init();
+    public abstract void periodic();
 }
