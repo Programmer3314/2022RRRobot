@@ -4,8 +4,10 @@
 
 package frc.robot.utility;
 
-// TODO Add initial call to doCurrentState() on first update
+// TODO Make sure that the intiial state runs on first update
 // TODO Add secondsInState and cyclesInState variables
+// TODO add non-abstract methods isTransition, isTransitionFrom, isTransitionTo
+// these should take these should check From&To, From, To states respectively. 
 
 /** 
  * Generic State Machine 

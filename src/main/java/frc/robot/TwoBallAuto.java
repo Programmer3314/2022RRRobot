@@ -13,8 +13,6 @@ enum TBautoStates {
     Start, DriveBack, TurnAway, AutoTarget, Done
 };
 
-
-/** Add your docs here. */
 /**
  * Steps:
  * Drive back certain distance+Stop(3ft in tests)
@@ -23,6 +21,7 @@ enum TBautoStates {
 public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     double goalAngle;
     double autoTargetRunCounter;
+
     public TwoBallAuto() {
         super(TBautoStates.Start);
     }
@@ -38,48 +37,46 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void CalcNextState() {
-        switch(currentState){
-            case AutoTarget:      
-            if(Math.abs(currentAngle-autocorrectTargetAngle)<2){
-                autoTargetRunCounter+=1;
-                if(autoTargetRunCounter>=50){
-                    nextState = TBautoStates.Done;
+        switch (currentState) {
+            case AutoTarget:
+                // TODO check confidence counter as well
+                if (Math.abs(currentAngle - autocorrectTargetAngle) < 2) {
+                    autoTargetRunCounter += 1;
+                    if (autoTargetRunCounter >= 50) {
+                        nextState = TBautoStates.Done;
+                    }
+                } else {
+                    autoTargetRunCounter = 0;
                 }
-            }
-            else{
-                autoTargetRunCounter=0;
-            }
                 break;
             case Done:
                 break;
             case DriveBack:
-            if(Robot.driveTrain.getDistanceFeet()<=-3.0){
-                nextState = TBautoStates.TurnAway;
-            }
+                if (Robot.driveTrain.getDistanceFeet() <= -3.0) {
+                    nextState = TBautoStates.TurnAway;
+                }
                 break;
             case Start:
-            nextState=TBautoStates.DriveBack;
+                nextState = TBautoStates.DriveBack;
                 break;
             case TurnAway:
-            if(currentAngle <= goalAngle){
-                nextState = TBautoStates.AutoTarget;
-            }
-                break;
-            default:
+                if (currentAngle <= goalAngle) {
+                    nextState = TBautoStates.AutoTarget;
+                }
                 break;
         }
     }
 
     @Override
     public void doTransition() {
-        if(nextState==TBautoStates.AutoTarget){
+        if (nextState == TBautoStates.AutoTarget) {
             lightRing.set(true);
         }
-        if(nextState==TBautoStates.DriveBack){
+        if (nextState == TBautoStates.DriveBack) {
             Robot.driveTrain.resetEncoders();
         }
-        if(nextState==TBautoStates.TurnAway){
-            goalAngle=currentAngle-10;
+        if (nextState == TBautoStates.TurnAway) {
+            goalAngle = currentAngle - 10;
         }
     }
 
@@ -111,8 +108,6 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 break;
             case TurnAway:
                 Robot.driveTrain.Drive(0, -20);
-                break;
-            default:
                 break;
         }
     }
