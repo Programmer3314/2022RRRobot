@@ -38,7 +38,6 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void CalcNextState() {
-        // TODO Auto-generated method stub
         switch(currentState){
             case AutoTarget:      
             if(Math.abs(currentAngle-autocorrectTargetAngle)<2){
@@ -73,7 +72,6 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void doTransition() {
-        // TODO Auto-generated method stub
         if(nextState==TBautoStates.AutoTarget){
             lightRing.set(true);
         }
@@ -87,7 +85,6 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void doCurrentState() {
-        // TODO Auto-generated method stub
         switch (currentState) {
             case AutoTarget:
                 if (confidenceCounter > 0) {
