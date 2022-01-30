@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
   public static double horizontalAngle;
   public static MMAutonomous autonomous;
 
+  // TODO Once ball angles are returned from vision add chase ball button. 
   // TODO Create State Machines for Shooter, Queue, and Tunnel
 
 
