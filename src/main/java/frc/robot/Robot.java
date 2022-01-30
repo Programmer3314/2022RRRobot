@@ -77,6 +77,9 @@ public class Robot extends TimedRobot {
   public static double horizontalAngle;
   public static MMAutonomous autonomous;
 
+  // TODO Create State Machines for Shooter, Queue, and Tunnel
+
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
