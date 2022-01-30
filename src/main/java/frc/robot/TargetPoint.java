@@ -11,6 +11,7 @@ public class TargetPoint {
     public double distance;
     public double angle;
     public double rpm;
+    public boolean active;
 
     /**
      * Creating a target point w/ values

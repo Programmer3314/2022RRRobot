@@ -4,13 +4,31 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kCameraVerticalAngle;
+import static frc.robot.Constants.kChassiRadius;
+import static frc.robot.Constants.kMaxSpeed;
+import static frc.robot.Constants.kMaxTurnRate;
+import static frc.robot.Constants.kNeoDriveTrainD;
+import static frc.robot.Constants.kNeoDriveTrainF;
+import static frc.robot.Constants.kNeoDriveTrainFreeLimit;
+import static frc.robot.Constants.kNeoDriveTrainI;
+import static frc.robot.Constants.kNeoDriveTrainIZ;
+import static frc.robot.Constants.kNeoDriveTrainMax;
+import static frc.robot.Constants.kNeoDriveTrainMin;
+import static frc.robot.Constants.kNeoDriveTrainP;
+import static frc.robot.Constants.kNeoDriveTrainStallLimit;
+import static frc.robot.Constants.kRevPerFoot;
+import static frc.robot.Constants.kTargetingHeightDiff;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
@@ -76,6 +94,16 @@ public class Robot extends TimedRobot {
   public static double verticalAngle;
   public static double horizontalAngle;
   public static MMAutonomous autonomous;
+  public static boolean autoBallPickup;
+  public static Alliance alliance;
+  public static double ballChaseAngle;
+  public static MMMotorGroup queueBelt;
+  public static MMMotorGroup tunnelBelt;
+  public static QueueStateMachine queueStateMachine;
+  public static MMMotorGroup tunnelWheels;
+  public static ColorSensorV3 colorSensor;
+
+
 
   // TODO Once ball angles are returned from vision add chase ball button. 
   // TODO Create State Machines for Shooter, Queue, and Tunnel
@@ -94,13 +122,13 @@ public class Robot extends TimedRobot {
     // Sensors together, Data init, etc.
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-
     lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
 
     confidenceCounter = 0;
 
+    colorSensor = new ColorSensorV3(Port.kOnboard);
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
@@ -132,6 +160,8 @@ public class Robot extends TimedRobot {
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
 
+    queueStateMachine = new QueueStateMachine();
+
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMSparkMaxMotorController(4, MotorType.kBrushless)
@@ -158,6 +188,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    alliance = DriverStation.getAlliance();
     autonomous = new TwoBallAuto();
   }
 
@@ -187,6 +218,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    alliance = DriverStation.getAlliance();
   }
 
   @Override
@@ -199,6 +231,9 @@ public class Robot extends TimedRobot {
 
     double requestedSpeed = speed.get();
     double requestedTurn = turn.get();
+
+    
+    autoBallPickup = controllerDriver.getRawButton(2);
 
     double IntakePower = intakeTrigger.get();
     frontIntake.setPower(IntakePower);
@@ -246,11 +281,22 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
 
     }
+
+    boolean targetConfidence = nt.getTable("Ball Target").getEntry(alliance==Alliance.Blue?"Blue Target Confidence": "Red Target Confidence").getBoolean(false);
+    ballChaseAngle = (Double) nt.getTable("Ball Target").getEntry(alliance==Alliance.Blue?"Blue Angle to Ball": "Red Angle to Ball").getNumber(0);
+    SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
+
+    if(autoBallPickup /*&& targetConfidence*/){
+      double p = 3;
+      requestedTurn = p*ballChaseAngle;
+      requestedSpeed = -1;
+    }
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
 
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     driveTrain.Drive(requestedSpeed, requestedTurn);
 
+    SmartDashboard.putString("Alliance Type", alliance.toString());
   }
 
   @Override
@@ -263,9 +309,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
+    colorSensor = new ColorSensorV3(Port.kOnboard);
+    
   }
 
   @Override
   public void testPeriodic() {
+    SmartDashboard.putString("Is Running:", "Yes");
+    SmartDashboard.putNumber("Amount of Red Detected:", colorSensor.getRed());
+    SmartDashboard.putNumber("Amount of Blue Detected: ", colorSensor.getBlue());
   }
 }
