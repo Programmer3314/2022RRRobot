@@ -128,6 +128,9 @@ public class Robot extends TimedRobot {
 
     confidenceCounter = 0;
 
+    // TODO PRIORITY The use of Port.kOnboard seems to be serious...
+    // move the hardware sensor to connect via the NavX and then
+    // change the Port to use MXP
     colorSensor = new ColorSensorV3(Port.kOnboard);
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
