@@ -100,13 +100,13 @@ public class Robot extends TimedRobot {
   public static MMMotorGroup queueBelt;
   public static MMMotorGroup tunnelBelt;
   public static QueueStateMachine queueStateMachine;
+  public static TunnelStateMachine tunnelStateMachine;
+  public static ShooterStateMachine shooterStateMachine;
   public static MMMotorGroup tunnelWheels;
-  public static ColorSensorV3 colorSensor;
+  public static ColorSensorV3 frontColorSensor;
 
 
 
-  // TODO Once ball angles are returned from vision add chase ball button. 
-  // TODO Create State Machines for Shooter, Queue, and Tunnel
 
 
   /**
@@ -123,15 +123,12 @@ public class Robot extends TimedRobot {
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
     lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-    navx = new AHRS(SPI.Port.kMXP);
+    navx = new AHRS(SPI.Port.kOnboardCS0);
     navx.reset();
 
     confidenceCounter = 0;
 
-    // TODO PRIORITY The use of Port.kOnboard seems to be serious...
-    // move the hardware sensor to connect via the NavX and then
-    // change the Port to use MXP
-    colorSensor = new ColorSensorV3(Port.kOnboard);
+    frontColorSensor = new ColorSensorV3(Port.kMXP);
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
@@ -164,6 +161,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Distance", 0);
 
     queueStateMachine = new QueueStateMachine();
+    tunnelStateMachine = new TunnelStateMachine();
+    shooterStateMachine = new ShooterStateMachine();
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -197,6 +196,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    commonPeriodic();
     currentAngle = navx.getYaw();
 
     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
@@ -204,14 +204,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Vertical Angle", verticalAngle);
     SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
 
-    if (visiontable.getEntry("Confidence").getBoolean(false)) {
-      autocorrectTargetAngle = currentAngle + horizontalAngle;
-      confidenceCounter = 500;
-    } else {
-      if (confidenceCounter > 0) {
-        confidenceCounter--;
-      }
-    }
+    
 
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
 
@@ -226,6 +219,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    commonPeriodic();
     currentAngle = navx.getYaw();
     SmartDashboard.putNumber("curentAngle", currentAngle);
 
@@ -246,15 +240,6 @@ public class Robot extends TimedRobot {
     horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
     SmartDashboard.putNumber("Vertical Angle", verticalAngle);
     SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
-
-    if (visiontable.getEntry("Confidence").getBoolean(false)) {
-      autocorrectTargetAngle = currentAngle + horizontalAngle;
-      confidenceCounter = 500;
-    } else {
-      if (confidenceCounter > 0) {
-        confidenceCounter--;
-      }
-    }
 
     double shooterRPM = 0;
     double shooterAngle = 0;
@@ -312,14 +297,36 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    colorSensor = new ColorSensorV3(Port.kOnboard);
+    alliance = DriverStation.getAlliance();
+    frontColorSensor = new ColorSensorV3(Port.kMXP);
+
+    
+    
     
   }
 
   @Override
   public void testPeriodic() {
+    tunnelStateMachine.update();
+    SmartDashboard.putBoolean("Desired Ball", tunnelStateMachine.desiredBall);
+    SmartDashboard.putBoolean("isRed", tunnelStateMachine.isRed);
+    SmartDashboard.putBoolean("isBlue", tunnelStateMachine.isBlue);
+    SmartDashboard.putNumber("Counter", tunnelStateMachine.counter);
+    SmartDashboard.putString("Tunnel State", tunnelStateMachine.currentState.toString());
     SmartDashboard.putString("Is Running:", "Yes");
-    SmartDashboard.putNumber("Amount of Red Detected:", colorSensor.getRed());
-    SmartDashboard.putNumber("Amount of Blue Detected: ", colorSensor.getBlue());
+    SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
+    SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
+    commonPeriodic();
+  }
+
+  public void commonPeriodic(){
+    if (visiontable.getEntry("Confidence").getBoolean(false)) {
+      autocorrectTargetAngle = currentAngle + horizontalAngle;
+      confidenceCounter = 500;
+    } else {
+      if (confidenceCounter > 0) {
+        confidenceCounter--;
+      }
+    }
   }
 }

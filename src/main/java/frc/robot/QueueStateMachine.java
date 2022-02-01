@@ -21,7 +21,6 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     public QueueStateMachine() {
         super(QueueStates.Start);
-        // TODO Auto-generated constructor stub
 
     }
 
@@ -29,7 +28,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public void CalcNextState() {
         switch (currentState) {
             case Start:
-                nextState = QueueStates.WaitForBall;
+                nextState = QueueStates.WaitForBall;    
                 break;
             case WaitForBall:
                 if (takeBallFromTunnel) {

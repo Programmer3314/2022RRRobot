@@ -39,7 +39,9 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     public void CalcNextState() {
         switch (currentState) {
             case AutoTarget:
-                // TODO check confidence counter as well
+                if (Robot.confidenceCounter == 0){
+                    nextState = TBautoStates.Done;
+                }
                 if (Math.abs(currentAngle - autocorrectTargetAngle) < 2) {
                     autoTargetRunCounter += 1;
                     if (autoTargetRunCounter >= 50) {
