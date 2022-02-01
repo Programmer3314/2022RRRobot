@@ -160,6 +160,11 @@ public class Robot extends TimedRobot {
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
 
+    // TODO Move definitions of MotorGroups controlled by 
+    // these state machines and pass them in just like 
+    // with the diffDriveTrain below. This will prevent 
+    // confusion and/or conflict over controlling them. 
+    // The same should be done with sensor definitions. 
     queueStateMachine = new QueueStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
     shooterStateMachine = new ShooterStateMachine();
@@ -298,15 +303,13 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     alliance = DriverStation.getAlliance();
+    // TODO Move all occurances of new ColorSensorV3 into Robot Init. (And then into the Tunnel constructor)
     frontColorSensor = new ColorSensorV3(Port.kMXP);
-
-    
-    
-    
   }
 
   @Override
   public void testPeriodic() {
+    commonPeriodic();
     tunnelStateMachine.update();
     SmartDashboard.putBoolean("Desired Ball", tunnelStateMachine.desiredBall);
     SmartDashboard.putBoolean("isRed", tunnelStateMachine.isRed);
@@ -316,7 +319,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Is Running:", "Yes");
     SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
     SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
-    commonPeriodic();
   }
 
   public void commonPeriodic(){
