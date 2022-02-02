@@ -6,7 +6,13 @@ package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utility.MMFXMotorController;
+import frc.robot.utility.MMFollowingMotorGroup;
+import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
 
 enum TunnelStates {
@@ -19,19 +25,38 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public int counter;
     public boolean isRed;
     public boolean isBlue;
+    MMMotorGroup tunnelBelt;
+    MMMotorGroup tunnelWheels;
+    ColorSensorV3 frontColorSensor;
+    DigitalInput breakBeamOne;
+    
+
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
-
+        this.breakBeamOne = new DigitalInput(0);
+        this.frontColorSensor = new ColorSensorV3(Port.kMXP);
+        //this.tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(11));
+        this.tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(10));
     }
 
     @Override
     public void update() {
-        int red = Robot.frontColorSensor.getRed();
-        int blue = Robot.frontColorSensor.getBlue();
+        int red = frontColorSensor.getRed();
+        int blue = frontColorSensor.getBlue();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
         desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed));
+
+        SmartDashboard.putBoolean("Desired Ball", desiredBall);
+        SmartDashboard.putBoolean("isRed", isRed);
+        SmartDashboard.putBoolean("isBlue", isBlue);
+        SmartDashboard.putNumber("Counter", counter);
+        SmartDashboard.putString("Tunnel State", currentState.toString());
+        SmartDashboard.putString("Is Running:", "Yes");
+        SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
+        SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
+        SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
 
         super.update();
     }
@@ -62,12 +87,12 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doTransition() {
-        if (isTransitionTo(TunnelStates.MoveToQueue)) {
+        if (isTransitionTo(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
-            // Robot.tunnelWheels.setVelocity(500);
+            //tunnelWheels.setPower(0);
         }
         if (isTransitionTo(TunnelStates.Idle)) {
-            // Robot.tunnelWheels.setVelocity(0);
+            //tunnelWheels.setPower(0.5);
             counter++;
         }
 
@@ -77,10 +102,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Idle:
-                // Robot.tunnelBelt.setVelocity(500);
+                tunnelBelt.setPower(0.5);
                 break;
             case BallDetected:
-                // Robot.tunnelBelt.setVelocity(0);
+                tunnelBelt.setPower(0);
                 break;
         }
 

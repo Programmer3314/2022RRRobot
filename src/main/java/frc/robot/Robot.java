@@ -26,9 +26,11 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
@@ -98,13 +100,10 @@ public class Robot extends TimedRobot {
   public static Alliance alliance;
   public static double ballChaseAngle;
   public static MMMotorGroup queueBelt;
-  public static MMMotorGroup tunnelBelt;
   public static QueueStateMachine queueStateMachine;
   public static TunnelStateMachine tunnelStateMachine;
   public static ShooterStateMachine shooterStateMachine;
-  public static MMMotorGroup tunnelWheels;
-  public static ColorSensorV3 frontColorSensor;
-
+  public static double targetDistance; 
 
 
 
@@ -128,7 +127,7 @@ public class Robot extends TimedRobot {
 
     confidenceCounter = 0;
 
-    frontColorSensor = new ColorSensorV3(Port.kMXP);
+    
     controllerDriver = new Joystick(4);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
@@ -195,23 +194,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    alliance = DriverStation.getAlliance();
+    commonInit();
     autonomous = new TwoBallAuto();
   }
 
   @Override
   public void autonomousPeriodic() {
     commonPeriodic();
-    currentAngle = navx.getYaw();
-
-    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
-    horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
-    SmartDashboard.putNumber("Vertical Angle", verticalAngle);
-    SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
-
-    
-
-    SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
+   
 
     autonomous.periodic();
     SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
@@ -219,17 +209,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    alliance = DriverStation.getAlliance();
+    commonInit();
   }
 
   @Override
   public void teleopPeriodic() {
     commonPeriodic();
-    currentAngle = navx.getYaw();
-    SmartDashboard.putNumber("curentAngle", currentAngle);
-
-    // double vertical = controllerDriver.getRawAxis(1);
-    // double horizonal = controllerDriver.getRawAxis(4);
+    
+  
 
     double requestedSpeed = speed.get();
     double requestedTurn = turn.get();
@@ -241,18 +228,14 @@ public class Robot extends TimedRobot {
     frontIntake.setPower(IntakePower);
     SmartDashboard.putNumber("Intake Power", IntakePower);
 
-    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
-    horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
-    SmartDashboard.putNumber("Vertical Angle", verticalAngle);
-    SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+   
 
     double shooterRPM = 0;
     double shooterAngle = 0;
     if (controllerDriver.getRawButtonPressed(9)) {
       lightRing.set(!lightRing.get());
     }
-    double targetDistance = kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
-    SmartDashboard.putNumber("Target Distance", targetDistance);
+    
 
     // input distance via smartdashboard and then
     // double test = SmartDashboard.getNumber("Target Distance", 0);
@@ -275,9 +258,7 @@ public class Robot extends TimedRobot {
 
     }
 
-    boolean targetConfidence = nt.getTable("Ball Target").getEntry(alliance==Alliance.Blue?"Blue Target Confidence": "Red Target Confidence").getBoolean(false);
-    ballChaseAngle = (Double) nt.getTable("Ball Target").getEntry(alliance==Alliance.Blue?"Blue Angle to Ball": "Red Angle to Ball").getNumber(0);
-    SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
+    
 
     if(autoBallPickup /*&& targetConfidence*/){
       double p = 3;
@@ -302,26 +283,40 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    alliance = DriverStation.getAlliance();
-    // TODO Move all occurances of new ColorSensorV3 into Robot Init. (And then into the Tunnel constructor)
-    frontColorSensor = new ColorSensorV3(Port.kMXP);
+    commonInit();
+    
   }
 
   @Override
   public void testPeriodic() {
     commonPeriodic();
     tunnelStateMachine.update();
-    SmartDashboard.putBoolean("Desired Ball", tunnelStateMachine.desiredBall);
-    SmartDashboard.putBoolean("isRed", tunnelStateMachine.isRed);
-    SmartDashboard.putBoolean("isBlue", tunnelStateMachine.isBlue);
-    SmartDashboard.putNumber("Counter", tunnelStateMachine.counter);
-    SmartDashboard.putString("Tunnel State", tunnelStateMachine.currentState.toString());
-    SmartDashboard.putString("Is Running:", "Yes");
-    SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
-    SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
+    
+  }
+  public void commonInit(){
+    alliance = DriverStation.getAlliance();
+    
+    
   }
 
   public void commonPeriodic(){
+    currentAngle = navx.getYaw();
+
+    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
+    horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
+    SmartDashboard.putNumber("Vertical Angle", verticalAngle);
+    SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+
+    targetDistance = kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
+    SmartDashboard.putNumber("Target Distance", targetDistance);
+    
+    boolean targetConfidence = nt.getTable("Ball Target").getEntry(alliance==Alliance.Blue?"Blue Target Confidence": "Red Target Confidence").getBoolean(false);
+    ballChaseAngle = (Double) nt.getTable("Ball Target").getEntry(alliance==Alliance.Blue?"Blue Angle to Ball": "Red Angle to Ball").getNumber(0);
+    SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
+    
+
+    SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
+
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
       autocorrectTargetAngle = currentAngle + horizontalAngle;
       confidenceCounter = 500;
