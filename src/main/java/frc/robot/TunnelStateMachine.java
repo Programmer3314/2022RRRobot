@@ -25,7 +25,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public int counter;
     public boolean isRed;
     public boolean isBlue;
-    MMMotorGroup tunnelBelt;
+    //MMMotorGroup tunnelBelt;
     MMMotorGroup tunnelWheels;
     ColorSensorV3 frontColorSensor;
     DigitalInput breakBeamOne;
@@ -37,7 +37,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         this.breakBeamOne = new DigitalInput(0);
         this.frontColorSensor = new ColorSensorV3(Port.kMXP);
         //this.tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(11));
-        this.tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(10));
+   //     this.tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(10));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         int blue = frontColorSensor.getBlue();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
-        desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed));
+        desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed)) && !breakBeamOne.get();
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
@@ -66,8 +66,9 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         switch (currentState) {
             case Start:
                 nextState = TunnelStates.Idle;
-            case Idle:
-                if (desiredBall) {
+            case Idle:                                                                                                          
+                if (desiredBall ) { 
+                    
                     nextState = TunnelStates.BallDetected;
                 }
                 break;
@@ -102,13 +103,16 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Idle:
-                tunnelBelt.setPower(0.5);
+                //tunnelBelt.setPower(0.5);
                 break;
             case BallDetected:
-                tunnelBelt.setPower(0);
+                //tunnelBelt.setPower(0);
                 break;
         }
 
+    }
+    public void resetState(){
+        currentState = TunnelStates.Start;
     }
 
 }

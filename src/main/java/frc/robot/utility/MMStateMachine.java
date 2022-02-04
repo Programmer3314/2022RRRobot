@@ -5,8 +5,7 @@
 package frc.robot.utility;
 
 // TODO Add secondsInState and cyclesInState variables
-// TODO add non-abstract methods isTransition, isTransitionFrom, isTransitionTo
-// these should take these should check From&To, From, To states respectively.
+
 
 /**
  * Generic State Machine
