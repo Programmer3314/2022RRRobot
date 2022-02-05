@@ -6,6 +6,8 @@
 /**
  * Expected Hardware configuration:
  * Deflection Sensor (1 or 2) on lower hooks
+ * Contact Sensors on top hooks (proximity or wobble)
+ * Maybe: Pocketted Sensors on top hooks
  * Single motor (implement motor group anyway) 
  * Existing motor encoder(s)
  * Existing IMU in NavX
@@ -16,8 +18,8 @@
 /**
  * Steps
  * 1) Start
- * 2) Hone its motors so its in the right position
- * 3) Idlee
+ * 2) Home its motors so its in the right position
+ * 3) Idle
  *  -----Button Hit-------------
  * 4) First Extend- extends lead hook until it touches the first bar, overshoot
  * 5) First Pullup - Lead hook pulls robot up, thus bringing the stationary hooks up
