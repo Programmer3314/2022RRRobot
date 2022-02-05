@@ -112,6 +112,17 @@ public class Robot extends TimedRobot {
     // TODO CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
     // Sensors together, Data init, etc.
+    // TODO Confirm Hardware Sensor requirements.
+    // check in each state machine and for the robot in general. 
+    // TODO Organize all human inputs into a single class with and update() call to get data
+    // convert button presses to more meaningful variables.
+    // TODO create custom PIDF controller that includes:
+    // - small amount of error around zero to be ignored
+    // - minimum correction to apply (if any +/- correction use at least a minimum value)
+    // - maximum correction to apply 
+    // TODO Implement Auto Select Dial 
+    // TODO Create In/Out ball counter
+
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
     lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
@@ -126,27 +137,6 @@ public class Robot extends TimedRobot {
     intakeTrigger = new MMJoystickAxis(4, 2, .5, 1);
     frontIntake = new MMFollowingMotorGroup(
         new MMSRXMotorController(20));
-
-    /**
-     * shooterCAM = new MMFollowingMotorGroup(
-     * new MMSparkMaxMotorController(11, MotorType.kBrushless)
-     * .setCurrentLimit(kNeoShooterCAMStallLimit, kNeoShooterCAMFreeLimit)
-     * .setInverted(false)
-     * .setPIDFParameters(kNeoShooterCAMP, kNeoShooterCAMI, kNeoShooterCAMD,
-     * kNeoShooterCAMF, kNeoShooterCAMIZ, kNeoShooterCAMMin, kNeoShooterCAMMax)
-     * );
-     * 
-     * 
-     * shooterWheels = new MMFollowingMotorGroup(
-     * new MMSparkMaxMotorController(10, MotorType.kBrushless)
-     * .setCurrentLimit(kNeoShooterWheelsStallLimit, kNeoShooterWheelsFreeLimit)
-     * .setInverted(false)
-     * .setPIDFParameters(kNeoShooterWheelsP, kNeoShooterWheelsI,
-     * kNeoShooterWheelsD, kNeoShooterWheelsF, kNeoShooterWheelsIZ,
-     * kNeoShooterWheelsMin,
-     * kNeoShooterWheelsMax)
-     * );
-     */
 
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);

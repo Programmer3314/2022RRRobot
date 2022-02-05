@@ -7,6 +7,15 @@ package frc.robot;
 
 import frc.robot.utility.MMStateMachine;
 
+
+
+/**
+ * Expected Hardware configuration:
+ * Break Beam sensor in ball path to detect when ball is ready/gone
+ * Single motor (implement motor group anyway) 
+ */
+
+
 enum QueueStates {
     Start, WaitForBall, DrawBallIn, GotBall, SendingBall
 };

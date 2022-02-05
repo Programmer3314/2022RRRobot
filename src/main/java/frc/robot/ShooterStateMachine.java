@@ -6,6 +6,18 @@ package frc.robot;
 
 import frc.robot.utility.MMStateMachine;
 
+/**
+ * Expected Hardware configuration (No Turret):
+ * Break Beam sensor in ball path to detect when ball is ready/gone
+ * Shoot motor (implement motor group anyway) 
+ * Feed motor
+ * CAM motor
+ * CAM Home Limit Switch
+ * Existing Motor Encoders
+ * 
+ */
+
+
 enum ShooterStates {
     Start, Home, Idle, Preparing, Shooting
 };

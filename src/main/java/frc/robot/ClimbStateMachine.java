@@ -2,6 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
+/**
+ * Expected Hardware configuration:
+ * Deflection Sensor (1 or 2) on lower hooks
+ * Single motor (implement motor group anyway) 
+ * Existing motor encoder(s)
+ * Existing IMU in NavX
+ */
+
+ // TODO Code Climb State Machine
+
 /**
  * Steps
  * 1) Start

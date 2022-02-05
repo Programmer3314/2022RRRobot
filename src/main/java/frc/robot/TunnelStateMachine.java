@@ -10,10 +10,19 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.utility.MMFXMotorController;
-import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
+
+/**
+ * Expected Hardware configuration:
+ * Break Beam sensors in ball path to detect entry/exit
+ * Break Beam sensor(s) to position ball at green wheels
+ * Color Sensor V3 
+ * Belt motor (implement motor group anyway) 
+ * Green Wheel motor
+ * Existing Motor Encoders
+ */
+
 
 enum TunnelStates {
     Start, Idle, BallDetected, MoveToQueue
