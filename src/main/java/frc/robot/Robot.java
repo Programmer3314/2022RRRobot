@@ -76,13 +76,17 @@ Main TODO List:
 public class Robot extends TimedRobot {
   public static MMDiffDriveTrain driveTrain;
   Joystick controllerDriver;
+  public static Joystick buttonBox1;
+  public static Joystick controllerOperator;
   MMJoystickAxis speed, turn;
   MMMotorGroup shooterWheels;
   MMMotorGroup shooterCAM;
   ShooterFormula shooterFormula;
   public static Solenoid lightRing;
-  MMJoystickAxis intakeTrigger;
-  MMFollowingMotorGroup frontIntake;
+  // public static Solenoid lightRing1;
+  // public static Solenoid lightRing2;
+  // public static Solenoid lightRing3;
+  public static Solenoid lightRing4;
   public static NetworkTableInstance nt;
   public static NetworkTable visiontable;
   public static AHRS navx;
@@ -99,7 +103,11 @@ public class Robot extends TimedRobot {
   public static QueueStateMachine queueStateMachine;
   public static TunnelStateMachine tunnelStateMachine;
   public static ShooterStateMachine shooterStateMachine;
+  public static ClimbStateMachine climbStateMachine;
   public static double targetDistance;
+  public static Intake intake;
+  public static boolean intakeButton;
+  public static boolean ejectButton;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -113,32 +121,41 @@ public class Robot extends TimedRobot {
     // like Motor devices together, Human inputs together,
     // Sensors together, Data init, etc.
     // TODO Confirm Hardware Sensor requirements.
-    // check in each state machine and for the robot in general. 
-    // TODO Organize all human inputs into a single class with and update() call to get data
+    // check in each state machine and for the robot in general.
+    // TODO Organize all human inputs into a single class with and update() call to
+    // get data
     // convert button presses to more meaningful variables.
     // TODO create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
-    // - minimum correction to apply (if any +/- correction use at least a minimum value)
-    // - maximum correction to apply 
-    // TODO Implement Auto Select Dial 
+    // - minimum correction to apply (if any +/- correction use at least a minimum
+    // value)
+    // - maximum correction to apply
+    // TODO Implement Auto Select Dial
     // TODO Create In/Out ball counter
-    // TODO Create Log 
-    
+    // TODO Create Log
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
     lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+    intake = new Intake();
+
+    // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
+    // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
+    // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
+    lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
+
     navx = new AHRS(SPI.Port.kOnboardCS0);
     navx.reset();
 
     confidenceCounter = 0;
 
     controllerDriver = new Joystick(4);
+    controllerOperator = new Joystick(5);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
-    intakeTrigger = new MMJoystickAxis(4, 2, .5, 1);
-    frontIntake = new MMFollowingMotorGroup(
-        new MMSRXMotorController(20));
+  
+    
+    buttonBox1 = new Joystick(1);
 
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
@@ -151,6 +168,7 @@ public class Robot extends TimedRobot {
     queueStateMachine = new QueueStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
     shooterStateMachine = new ShooterStateMachine();
+    climbStateMachine = new ClimbStateMachine();
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -193,20 +211,35 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     commonInit();
+    lightRing4.set(false);
+    climbStateMachine.currentState = ClimbStates.Start;
   }
 
   @Override
   public void teleopPeriodic() {
     commonPeriodic();
+    intakeButton = controllerOperator.getRawButton(5);
+    ejectButton = controllerOperator.getRawButton(6);
+    if (intakeButton) {
+      intake.intake();
+    } else if (ejectButton) {
+      intake.Eject();
+    } else {
+      intake.Idle();
+    }
+    climbStateMachine.update();
+    SmartDashboard.putString("climbStateMachine", climbStateMachine.currentState.toString());
+    SmartDashboard.putNumber("Climb Encoder Value", climbStateMachine.climbMotor.getRevolutions());
+
+    // lightRing1.set(buttonBox1.getRawButton(5));
+    // lightRing2.set(buttonBox1.getRawButton(2));
+    // lightRing3.set(buttonBox1.getRawButton(3));
 
     double requestedSpeed = speed.get();
     double requestedTurn = turn.get();
 
     autoBallPickup = controllerDriver.getRawButton(2);
 
-    double IntakePower = intakeTrigger.get();
-    frontIntake.setPower(IntakePower);
-    SmartDashboard.putNumber("Intake Power", IntakePower);
 
     double shooterRPM = 0;
     double shooterAngle = 0;
@@ -259,7 +292,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     commonInit();
-    //tunnelStateMachine = new TunnelStateMachine();
+    // tunnelStateMachine = new TunnelStateMachine();
     tunnelStateMachine.resetState();
   }
 
