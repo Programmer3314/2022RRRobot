@@ -223,9 +223,9 @@ public class Robot extends TimedRobot {
     if (intakeButton) {
       intake.intake();
     } else if (ejectButton) {
-      intake.Eject();
+      intake.eject();
     } else {
-      intake.Idle();
+      intake.idle();
     }
     climbStateMachine.update();
     SmartDashboard.putString("climbStateMachine", climbStateMachine.currentState.toString());
