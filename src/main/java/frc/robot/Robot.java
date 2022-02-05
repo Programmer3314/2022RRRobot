@@ -122,6 +122,8 @@ public class Robot extends TimedRobot {
     // - maximum correction to apply 
     // TODO Implement Auto Select Dial 
     // TODO Create In/Out ball counter
+    // TODO Create Log 
+    
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
