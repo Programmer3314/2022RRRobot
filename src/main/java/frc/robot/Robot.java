@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
     // TODO Organize all human inputs into a single class with and update() call to
     // get data
     // convert button presses to more meaningful variables.
-    // TODO create custom PIDF controller that includes:
+    // TODO ON-HOLD create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
     // - minimum correction to apply (if any +/- correction use at least a minimum
     // value)
