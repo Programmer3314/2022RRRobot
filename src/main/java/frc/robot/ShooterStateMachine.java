@@ -17,6 +17,8 @@ import frc.robot.utility.MMStateMachine;
  * 
  */
 
+ // TODO Add motors and check for actually attaining the firing solution
+ 
 
 enum ShooterStates {
     Start, Home, Idle, Preparing, Shooting
