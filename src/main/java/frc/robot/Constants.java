@@ -49,4 +49,15 @@ public class Constants {
 
     public static double kRevPerFoot = 4.67;
     public static double kChassiRadius = 1.04;
+
+    public static int kCanMCDriveRight1 = 1;
+    public static int kCanMCDriveRight2 = 2;
+    public static int kCanMCDriveRight3 = 3;
+
+    public static int kCanMCDriveLeft1 = 4;
+    public static int kCanMCDriveLeft2 = 5;
+    public static int kCanMCDriveLeft3 = 6;
+
+    public static int kCanMCClimber1 = 30;
+    public static int kCanMCClimber2 = 31;
 }

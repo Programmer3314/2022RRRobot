@@ -8,8 +8,10 @@ import static frc.robot.utility.MMConstants.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 /**
  * TalonFX Motor Controller built into a Falcon500 motor
@@ -17,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 public class MMFXMotorController extends MMMotorController {
 
     public TalonFX mc;
+    //public TalonFXConfiguration config;
 
     /**
      * Create a TalonFX Motor Controller built into a Falcon500 motor
@@ -26,6 +29,7 @@ public class MMFXMotorController extends MMMotorController {
     public MMFXMotorController(int canid) {
         mc = new TalonFX(canid);
         mc.configFactoryDefault();
+        //mc.getAllConfigs(config, 100);
 
         /**
          * Phase sensor accordingly.
@@ -92,6 +96,16 @@ public class MMFXMotorController extends MMMotorController {
         double ticks = kMMFalconTicksPerRev * position;
         mc.set(ControlMode.Position, ticks);
 
+    }
+
+    public MMFXMotorController setBrakeMode(boolean brakeMode) {
+        if(brakeMode){
+        mc.setNeutralMode(NeutralMode.Brake);     
+        }
+        else{
+        mc.setNeutralMode(NeutralMode.Coast);
+        }
+        return this;
     }
 
 }

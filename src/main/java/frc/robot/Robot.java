@@ -4,21 +4,7 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kCameraVerticalAngle;
-import static frc.robot.Constants.kChassiRadius;
-import static frc.robot.Constants.kMaxSpeed;
-import static frc.robot.Constants.kMaxTurnRate;
-import static frc.robot.Constants.kNeoDriveTrainD;
-import static frc.robot.Constants.kNeoDriveTrainF;
-import static frc.robot.Constants.kNeoDriveTrainFreeLimit;
-import static frc.robot.Constants.kNeoDriveTrainI;
-import static frc.robot.Constants.kNeoDriveTrainIZ;
-import static frc.robot.Constants.kNeoDriveTrainMax;
-import static frc.robot.Constants.kNeoDriveTrainMin;
-import static frc.robot.Constants.kNeoDriveTrainP;
-import static frc.robot.Constants.kNeoDriveTrainStallLimit;
-import static frc.robot.Constants.kRevPerFoot;
-import static frc.robot.Constants.kTargetingHeightDiff;
+import static frc.robot.Constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -142,7 +128,7 @@ public class Robot extends TimedRobot {
     // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
     // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
     // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
-    lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
+    //lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
 
     navx = new AHRS(SPI.Port.kOnboardCS0);
     navx.reset();
@@ -172,21 +158,21 @@ public class Robot extends TimedRobot {
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
-            new MMSparkMaxMotorController(4, MotorType.kBrushless)
+            new MMSparkMaxMotorController(kCanMCDriveLeft1, MotorType.kBrushless)
                 .setCurrentLimit(kNeoDriveTrainStallLimit, kNeoDriveTrainFreeLimit)
                 .setInverted(true)
                 .setPIDFParameters(kNeoDriveTrainP, kNeoDriveTrainI, kNeoDriveTrainD, kNeoDriveTrainF, kNeoDriveTrainIZ,
                     kNeoDriveTrainMin, kNeoDriveTrainMax),
-            new MMSparkMaxMotorController(5, MotorType.kBrushless),
-            new MMSparkMaxMotorController(6, MotorType.kBrushless)),
+            new MMSparkMaxMotorController(kCanMCDriveLeft2, MotorType.kBrushless),
+            new MMSparkMaxMotorController(kCanMCDriveLeft3, MotorType.kBrushless)),
         new MMFollowingMotorGroup(
-            new MMSparkMaxMotorController(1, MotorType.kBrushless)
+            new MMSparkMaxMotorController(kCanMCDriveRight1, MotorType.kBrushless)
                 .setCurrentLimit(kNeoDriveTrainStallLimit, kNeoDriveTrainFreeLimit)
                 .setInverted(false)
                 .setPIDFParameters(kNeoDriveTrainP, kNeoDriveTrainI, kNeoDriveTrainD, kNeoDriveTrainF, kNeoDriveTrainIZ,
                     kNeoDriveTrainMin, kNeoDriveTrainMax),
-            new MMSparkMaxMotorController(2, MotorType.kBrushless),
-            new MMSparkMaxMotorController(3, MotorType.kBrushless)),
+            new MMSparkMaxMotorController(kCanMCDriveRight2, MotorType.kBrushless),
+            new MMSparkMaxMotorController(kCanMCDriveRight3, MotorType.kBrushless)),
         kRevPerFoot, kChassiRadius);
   }
 
@@ -211,7 +197,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     commonInit();
-    lightRing4.set(false);
+    //lightRing4.set(false);
     climbStateMachine.currentState = ClimbStates.Start;
   }
 
@@ -294,18 +280,20 @@ public class Robot extends TimedRobot {
     commonInit();
     // tunnelStateMachine = new TunnelStateMachine();
     tunnelStateMachine.resetState();
+    climbStateMachine.resetState();
   }
 
   @Override
   public void testPeriodic() {
     commonPeriodic();
     tunnelStateMachine.update();
-
+    climbStateMachine.update();
+    SmartDashboard.putString("climbStateMachine", climbStateMachine.currentState.toString());
+    SmartDashboard.putNumber("Climb Encoder Value", climbStateMachine.climbMotor.getRevolutions());
   }
 
   public void commonInit() {
     alliance = DriverStation.getAlliance();
-
   }
 
   public void commonPeriodic() {
