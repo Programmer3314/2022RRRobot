@@ -58,6 +58,21 @@ public class Constants {
     public static int kCanMCDriveLeft2 = 5;
     public static int kCanMCDriveLeft3 = 6;
 
+    public static int kCanMCTunnelBelt = 10;
+    public static int kCanMCTunnelWheels = 11;
+
+    public static int kCanMCQueueBelt = 12;
+
+    public static int kCanMCShooterTurret = 15;
+    public static int kCanMCShooterFeed = 16;
+    public static int kCanMCShooterShoot = 17;
+    public static int kCanMCShooterCam = 18;
+
+    public static int kCanMCIntake = 20;
+
     public static int kCanMCClimber1 = 30;
     public static int kCanMCClimber2 = 31;
+
+    public static int kDIOQueueBreakBeam = 1;
+    public static int kDIOTunnelBreakBeam = 0;
 }

@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import frc.robot.utility.MMFXMotorController;
+import frc.robot.utility.MMFollowingMotorGroup;
+import frc.robot.utility.MMMotorGroup;
+import frc.robot.utility.MMSRXMotorController;
 import frc.robot.utility.MMStateMachine;
 
 /**
@@ -15,6 +19,10 @@ import frc.robot.utility.MMStateMachine;
  * CAM Home Limit Switch
  * Existing Motor Encoders
  * 
+ */
+
+/**
+ * Look at 3dPaint for description of statemachine
  */
 
  // TODO Add motors and check for actually attaining the firing solution
@@ -30,9 +38,16 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     boolean homed;
     TargetPoint target;
     boolean ballGone;
+    MMMotorGroup shooter;
+    MMMotorGroup camAngle;
+    MMMotorGroup feed;
+
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
+        shooter = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterShoot));
+        camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
+        feed = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterFeed));
     }
 
     @Override
@@ -77,9 +92,12 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public void doCurrentState() {
         switch(currentState){
             case Home:
+            camAngle.setPower(-.2);
+            //home turret
             homed = true;
             break;
             case Preparing:
+
             //get motors to correct velocity and position based on shooting solution
             break;
         }

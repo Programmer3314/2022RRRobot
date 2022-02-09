@@ -6,15 +6,17 @@
 package frc.robot;
 
 import frc.robot.utility.MMStateMachine;
-
-
+import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.utility.MMFXMotorController;
+import frc.robot.utility.MMFollowingMotorGroup;
+import frc.robot.utility.MMMotorGroup;
+import frc.robot.Constants.*;
 
 /**
  * Expected Hardware configuration:
  * Break Beam sensor in ball path to detect when ball is ready/gone
- * Single motor (implement motor group anyway) 
+ * Single motor (implement motor group anyway)
  */
-
 
 enum QueueStates {
     Start, WaitForBall, DrawBallIn, GotBall, SendingBall
@@ -23,21 +25,24 @@ enum QueueStates {
 /** Add your docs here. */
 public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
+    MMMotorGroup queueBelt;
     boolean takeBallFromTunnel = false;
     boolean ballPositionInQueue = false;
     boolean shooterBallRequest = false;
-    boolean queueFull = false;
+    public static boolean queueFull = false;
+    DigitalInput breakBeamOne;
 
     public QueueStateMachine() {
         super(QueueStates.Start);
-
+        breakBeamOne = new DigitalInput(Constants.kDIOQueueBreakBeam);
+        queueBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCQueueBelt));
     }
 
     @Override
     public void CalcNextState() {
         switch (currentState) {
             case Start:
-                nextState = QueueStates.WaitForBall;    
+                nextState = QueueStates.WaitForBall;
                 break;
             case WaitForBall:
                 if (takeBallFromTunnel) {
@@ -65,27 +70,25 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     @Override
     public void doTransition() {
-        if(isTransitionTo(QueueStates.DrawBallIn)){
-            Robot.queueBelt.setVelocity(200);
+        if (isTransitionTo(QueueStates.DrawBallIn)) {
+            queueBelt.setVelocity(200);
             takeBallFromTunnel = false;
-        
+
         }
-        if(isTransitionTo(QueueStates.GotBall)){
-            Robot.queueBelt.setVelocity(0);
+        if (isTransitionTo(QueueStates.GotBall)) {
+            queueBelt.setVelocity(0);
             queueFull = true;
-            
+
         }
-        if (isTransitionTo(QueueStates.SendingBall)){
-            Robot.queueBelt.setVelocity(300);
+        if (isTransitionTo(QueueStates.SendingBall)) {
+            queueBelt.setVelocity(300);
             shooterBallRequest = false;
-            
+
         }
-        if(isTransitionTo(QueueStates.WaitForBall)){
-            Robot.queueBelt.setVelocity(0);
+        if (isTransitionTo(QueueStates.WaitForBall)) {
+            queueBelt.setVelocity(0);
             queueFull = false;
         }
-
-
 
     }
 
@@ -102,7 +105,8 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
         shooterBallRequest = true;
 
     }
-    public boolean isFull(){
+
+    public boolean isFull() {
         return queueFull;
     }
 }

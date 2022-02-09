@@ -7,8 +7,10 @@ package frc.robot;
 import static frc.robot.Constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS.SerialDataType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -85,7 +88,6 @@ public class Robot extends TimedRobot {
   public static boolean autoBallPickup;
   public static Alliance alliance;
   public static double ballChaseAngle;
-  public static MMMotorGroup queueBelt;
   public static QueueStateMachine queueStateMachine;
   public static TunnelStateMachine tunnelStateMachine;
   public static ShooterStateMachine shooterStateMachine;
@@ -130,7 +132,7 @@ public class Robot extends TimedRobot {
     // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
     //lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
 
-    navx = new AHRS(SPI.Port.kOnboardCS0);
+    navx = new AHRS(SerialPort.Port.kUSB1);
     navx.reset();
 
     confidenceCounter = 0;
@@ -294,10 +296,14 @@ public class Robot extends TimedRobot {
 
   public void commonInit() {
     alliance = DriverStation.getAlliance();
+    navx.resetDisplacement();
   }
 
   public void commonPeriodic() {
     currentAngle = navx.getYaw();
+    SmartDashboard.putNumber("Navx Angle", currentAngle);
+    SmartDashboard.putNumber("Position X: ", navx.getDisplacementX());
+    SmartDashboard.putNumber("Position Y", navx.getDisplacementY());
 
     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
     horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
@@ -323,5 +329,6 @@ public class Robot extends TimedRobot {
         confidenceCounter--;
       }
     }
+
   }
 }

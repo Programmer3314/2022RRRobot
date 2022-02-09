@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMSRXMotorController;
+import frc.robot.Constants.*;
+
+//TODO statemachine
 
 /** Add your docs here. */
 public class Intake {
@@ -20,7 +23,7 @@ public class Intake {
     DoubleSolenoid intakePosition;
 
     public Intake() {
-        intakeMotor = new MMFollowingMotorGroup(new MMSRXMotorController(20));
+        intakeMotor = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCIntake));
         intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 1, 2);
     }
 

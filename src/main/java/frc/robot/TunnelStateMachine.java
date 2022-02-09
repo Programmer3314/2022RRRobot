@@ -2,6 +2,13 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/**
+ * Start
+ * Idle: Tunnelbelt moves
+ * 
+ */
+
+
 package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
@@ -10,8 +17,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utility.MMFXMotorController;
+import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
+import frc.robot.Constants.*;
 
 /**
  * Expected Hardware configuration:
@@ -34,7 +44,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public int counter;
     public boolean isRed;
     public boolean isBlue;
-    //MMMotorGroup tunnelBelt;
+    MMMotorGroup tunnelBelt;
     MMMotorGroup tunnelWheels;
     ColorSensorV3 frontColorSensor;
     DigitalInput breakBeamOne;
@@ -43,10 +53,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
-        this.breakBeamOne = new DigitalInput(0);
-        this.frontColorSensor = new ColorSensorV3(Port.kMXP);
-        //this.tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(11));
-   //     this.tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(10));
+        breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
+        frontColorSensor = new ColorSensorV3(Port.kOnboard);
+       // tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
+        //tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
     }
 
     @Override
@@ -77,7 +87,6 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                 nextState = TunnelStates.Idle;
             case Idle:                                                                                                          
                 if (desiredBall ) { 
-                    
                     nextState = TunnelStates.BallDetected;
                 }
                 break;
@@ -97,12 +106,12 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doTransition() {
-        if (isTransitionTo(TunnelStates.BallDetected)) {
+        if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
-            //tunnelWheels.setPower(0);
+            //tunnelWheels.setPower(0.5);
         }
         if (isTransitionTo(TunnelStates.Idle)) {
-            //tunnelWheels.setPower(0.5);
+            //tunnelWheels.setPower(0);
             counter++;
         }
 
@@ -123,5 +132,4 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void resetState(){
         currentState = TunnelStates.Start;
     }
-
 }
