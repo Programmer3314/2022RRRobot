@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 
-
 package frc.robot;
 
 /** Add your docs here. */
@@ -12,6 +11,7 @@ public class TargetPoint {
     public double angle;
     public double rpm;
     public boolean active;
+    public double feedrpm;
 
     /**
      * Creating a target point w/ values
@@ -19,9 +19,10 @@ public class TargetPoint {
      * @param rpm in revolutions per minutes
      * @param angle in revolutions/rotations
      */
-    public TargetPoint(double distance, double rpm, double angle){
+    public TargetPoint(double distance, double rpm, double angle, double feedrpm){
         this.distance = distance;
         this.rpm = rpm;
         this.angle = angle;
+        this.feedrpm = feedrpm;
     }
 }

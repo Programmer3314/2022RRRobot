@@ -96,6 +96,8 @@ public class Robot extends TimedRobot {
   public static Intake intake;
   public static boolean intakeButton;
   public static boolean ejectButton;
+  public static boolean shootOneButton;
+  public static boolean shootAllButton;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -141,6 +143,8 @@ public class Robot extends TimedRobot {
     controllerOperator = new Joystick(5);
     speed = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turn = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
+    shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
+    shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll)> .7;
   
     
     buttonBox1 = new Joystick(1);

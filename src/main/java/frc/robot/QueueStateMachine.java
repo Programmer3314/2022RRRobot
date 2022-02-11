@@ -94,7 +94,6 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     @Override
     public void doCurrentState() {
-
     }
 
     public void takeBallFromTunnel() {

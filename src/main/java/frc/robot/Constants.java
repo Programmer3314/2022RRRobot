@@ -39,8 +39,14 @@ public class Constants {
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
 
+    public static int kOperatorAxisShootOne = 2;
+    public static int kOperatorAxisShootAll = 3;
+
     public static double kMaxSpeed = -10;
     public static double kMaxTurnRate = 180;
+
+    public static double krpmMargin = 50;
+    public static double kangleMargin = .5;
 
     public static double kCameraVerticalAngle = 41;
     public static double ktargetHeight=104/12.0;
@@ -73,6 +79,10 @@ public class Constants {
     public static int kCanMCClimber1 = 30;
     public static int kCanMCClimber2 = 31;
 
-    public static int kDIOQueueBreakBeam = 1;
     public static int kDIOTunnelBreakBeam = 0;
+    public static int kDIOQueueBreakBeam = 1;
+
+    public static int kDIOTurretLimitSwitch = 2;
+    public static int kDIOCamLimitSwitch = 3;
+    public static int kDIOShooterBallGone = 4;
 }
