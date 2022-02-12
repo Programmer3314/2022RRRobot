@@ -16,9 +16,9 @@ public class ShooterFormula {
     //
     public ShooterFormula() {
         targetPoints = new ArrayList<>();
-        targetPoints.add(new TargetPoint(2.5, 2800, 0, 1400));
-        targetPoints.add(new TargetPoint(10, 3200, 0.3, 1600));
-        targetPoints.add(new TargetPoint(16, 3500, 0.5, 1750));
+        targetPoints.add(new TargetPoint(2.5, 2800, 0, 1400, 5));
+        targetPoints.add(new TargetPoint(10, 3200, 0.3, 1600, 3));
+        targetPoints.add(new TargetPoint(16, 3500, 0.5, 1750, 2));
     }
 
     public TargetPoint calculate(double targetDistance) {
@@ -42,8 +42,9 @@ public class ShooterFormula {
             double rpm = ratio * (upper.rpm - lower.rpm) + lower.rpm; // implents ratio to rpm
             double angle = ratio * (upper.angle - lower.angle) + lower.angle; // implents ratio to angle
             double feedrpm = ratio*(upper.feedrpm - lower.feedrpm) + lower.feedrpm;
+            double targetError = ratio * (upper.turretMargin - lower.turretMargin) + lower.turretMargin;
             // we did this :)
-            TargetPoint result = new TargetPoint(targetDistance, rpm, angle, feedrpm);
+            TargetPoint result = new TargetPoint(targetDistance, rpm, angle, feedrpm, targetError);
             return result;
         }
     }

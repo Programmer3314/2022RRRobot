@@ -75,9 +75,18 @@ public class MMSparkMaxMotorController extends MMMotorController {
     public void resetEncoder() {
         enc.setPosition(0);
     }
+    @Override
+    public void setEncoder(double ticks) {
+        enc.setPosition(ticks);
+    }
 
     @Override
     public void setPosition(double position) {
         pid.setReference(position, ControlType.kPosition);
+    }
+
+    @Override
+    public void setEncoderRevolutions(double revs) {
+        setEncoder(revs);
     }
 }

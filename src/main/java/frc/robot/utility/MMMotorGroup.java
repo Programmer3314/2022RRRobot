@@ -44,6 +44,8 @@ public abstract class MMMotorGroup {
      */
     public abstract void resetEncoders();
 
+    public abstract void setEncoder(double ticks);
+
     /**
      * Get velocity in RPM
      * 
@@ -51,4 +53,6 @@ public abstract class MMMotorGroup {
      */
     public abstract double getVelocity();
 
+    public abstract void setEncoderRevolutions(double revs);
 }
+

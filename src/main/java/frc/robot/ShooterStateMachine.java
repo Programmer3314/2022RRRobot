@@ -29,10 +29,10 @@ import frc.robot.Constants.*;
  * Look at 3dPaint for description of statemachine
  */
 
- // TODO Add motors and check for actually attaining the firing solution
- //TODO when to clear passThroughCounter
- //TODO make sure that we are still on the target, even after 2+ shots in succession(with aiming state machine)
- 
+// TODO Add motors and check for actually attaining the firing solution
+// TODO when to clear passThroughCounter
+// TODO make sure that we are still on the target, even after 2+ shots in
+// succession(with aiming state machine)
 
 enum ShooterStates {
     Start, Home, Idle, Preparing, Shooting1, Shooting2
@@ -43,23 +43,20 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     boolean homed;
     TargetPoint target;
-    boolean airBall;//true when beam is not broken, ball not there
+    boolean airBall;// true when beam is not broken, ball not there
     MMMotorGroup shooter;
     MMMotorGroup camAngle;
     MMMotorGroup feed;
-    boolean camhomed, turrethomed;
-    DigitalInput turretlimitswitch;
+    boolean camhomed;
     DigitalInput camlimitswitch;
     DigitalInput ballGoneBreakBeam;
     int passThroughCounter;
-
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
         shooter = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterShoot));
         camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
         feed = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterFeed));
-        turretlimitswitch = new DigitalInput(Constants.kDIOTurretLimitSwitch);
         camlimitswitch = new DigitalInput(Constants.kDIOCamLimitSwitch);
         ballGoneBreakBeam = new DigitalInput(Constants.kDIOShooterBallGone);
     }
@@ -71,7 +68,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 nextState = ShooterStates.Home;
                 break;
             case Home:
-                if (homed) {
+                if (homed && Robot.aimController.isHomed()) {
                     nextState = ShooterStates.Idle;
                 }
                 break;
@@ -82,12 +79,13 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 break;
             case Preparing:
                 if (target.active && Robot.queueStateMachine.isFull()
-                && closEnough(camAngle.getRevolutions(), target.angle, Constants.kangleMargin)
-                && closEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
-                && closEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)) {
+                        && closEnough(camAngle.getRevolutions(), target.angle, Constants.kangleMargin)
+                        && closEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
+                        && closEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
+                        && closEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
                     passThroughCounter++;
-                  
-                    if (passThroughCounter>Constants.kShooterCounter){
+
+                    if (passThroughCounter > Constants.kShooterCounter) {
                         nextState = ShooterStates.Shooting1;
                     }
                 } else if (!target.active) {
@@ -100,12 +98,12 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 }
                 break;
             case Shooting2:
-                if(airBall){
-                    if(Robot.shootAllButton){
+                if (airBall) {
+                    if (Robot.shootAllButton) {
                         nextState = ShooterStates.Preparing;
                     }
-                    if(Robot.shootOneButton){
-                    nextState = ShooterStates.Idle;
+                    if (Robot.shootOneButton) {
+                        nextState = ShooterStates.Idle;
                     }
                 }
         }
@@ -113,42 +111,39 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     @Override
     public void doTransition() {
-    if(isTransitionTo(ShooterStates.Home)){
-        camAngle.setPower(-.2);
-        //move turret
-    }
-    if(isTransitionTo(ShooterStates.Preparing)){
-        shooter.setVelocity(target.rpm);
-        camAngle.setPosition(target.angle);
-        feed.setVelocity(target.feedrpm);
-        passThroughCounter = 0;
-    }
-    if(isTransitionTo(ShooterStates.Shooting1)){
-        Robot.queueStateMachine.shooterBallRequest();
-    }
-    if(isTransitionTo(ShooterStates.Idle)){
-        shooter.setPower(0);
-        camAngle.setPower(0);
-        feed.setPower(0);
-    }
+        if (isTransitionTo(ShooterStates.Home)) {
+            camAngle.setPower(-.2);
+            // move turret
+        }
+        if (isTransitionTo(ShooterStates.Preparing)) {
+            shooter.setVelocity(target.rpm);
+            camAngle.setPosition(target.angle);
+            feed.setVelocity(target.feedrpm);
+            passThroughCounter = 0;
+        }
+        if (isTransitionTo(ShooterStates.Shooting1)) {
+            Robot.queueStateMachine.shooterBallRequest();
+        }
+        if (isTransitionTo(ShooterStates.Idle)) {
+            shooter.setPower(0);
+            camAngle.setPower(0);
+            feed.setPower(0);
+        }
     }
 
     @Override
     public void doCurrentState() {
-        switch(currentState){
+        switch (currentState) {
             case Home:
-            if(turrethomed){
-                //stop turret
-            }
-            if(camhomed){
-                camAngle.setPower(0);
-            }
-            homed = camhomed && turrethomed;
-            break;
+                if (camhomed) {
+                    camAngle.setPower(0);
+                }
+                homed = camhomed;
+                break;
             case Preparing:
 
-            //get motors to correct velocity and position based on shooting solution
-            break;
+                // get motors to correct velocity and position based on shooting solution
+                break;
         }
 
     }
@@ -157,15 +152,15 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         this.target = target;
         passThroughCounter = 0;
     }
+
     @Override
-    public void update(){
-        turrethomed = turretlimitswitch.get();
+    public void update() {
         camhomed = camlimitswitch.get();
         airBall = ballGoneBreakBeam.get();
         super.update();
     }
 
-    public boolean closEnough(double value1, double value2, double margin){
+    public boolean closEnough(double value1, double value2, double margin) {
         return Math.abs(value1 - value2) <= margin;
     }
 }

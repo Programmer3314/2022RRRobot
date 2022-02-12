@@ -12,6 +12,7 @@ public class TargetPoint {
     public double rpm;
     public boolean active;
     public double feedrpm;
+    public double turretMargin;
 
     /**
      * Creating a target point w/ values
@@ -19,10 +20,11 @@ public class TargetPoint {
      * @param rpm in revolutions per minutes
      * @param angle in revolutions/rotations
      */
-    public TargetPoint(double distance, double rpm, double angle, double feedrpm){
+    public TargetPoint(double distance, double rpm, double angle, double feedrpm, double TargetError){
         this.distance = distance;
         this.rpm = rpm;
         this.angle = angle;
         this.feedrpm = feedrpm;
+        this.turretMargin = turretMargin;
     }
 }

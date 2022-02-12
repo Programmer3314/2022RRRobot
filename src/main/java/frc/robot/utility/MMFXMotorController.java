@@ -9,6 +9,8 @@ import static frc.robot.utility.MMConstants.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -92,10 +94,18 @@ public class MMFXMotorController extends MMMotorController {
     }
 
     @Override
-    public void setPosition(double position) {
-        double ticks = kMMFalconTicksPerRev * position;
+    public void setPosition(double positionRevs) {
+        double ticks = kMMFalconTicksPerRev * positionRevs;
         mc.set(ControlMode.Position, ticks);
 
+    }
+    @Override
+    public void setEncoder(double ticks){
+        mc.setSelectedSensorPosition(ticks);
+    }
+
+    public void setEncoderRevolution(double revs){
+        setEncoder(revs*kMMFalconTicksPerRev);
     }
 
     public MMFXMotorController setBrakeMode(boolean brakeMode) {
@@ -105,6 +115,21 @@ public class MMFXMotorController extends MMMotorController {
         else{
         mc.setNeutralMode(NeutralMode.Coast);
         }
+        return this;
+    }
+
+    @Override
+    public void setEncoderRevolutions(double revs) {
+        setEncoder(revs*kMMFalconTicksPerRev);   
+    }
+
+    public MMFXMotorController setStatorCurrentLimit(boolean enabled, double currentAmpLimit, double triggerAmpThreshold, double triggerThresholdSeconds){
+        mc.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold, triggerThresholdSeconds));
+        return this;
+    }
+
+    public MMFXMotorController setSupplyCurrentLimit(boolean enabled, double currentAmpLimit, double triggerAmpThreshold, double triggerThresholdSeconds){
+        mc.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold, triggerThresholdSeconds));
         return this;
     }
 

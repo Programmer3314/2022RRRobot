@@ -87,11 +87,21 @@ public class MMSRXMotorController extends MMMotorController {
     public void resetEncoder() {
         mc.setSelectedSensorPosition(0);
     }
+    @Override
+    public void setEncoder(double ticks) {
+        mc.setSelectedSensorPosition(ticks);
+    }
 
     @Override
     public void setPosition(double position) {
         double ticks = encoderTicksPerRev*position;
         mc.set(TalonSRXControlMode.Position, ticks);
+    }
+
+    @Override
+    public void setEncoderRevolutions(double revs) {
+        setEncoder(revs*encoderTicksPerRev);
+        
     }
 
 

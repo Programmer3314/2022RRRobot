@@ -65,4 +65,16 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
         lead.setPosition(position);
 
     }
+
+    @Override
+    public void setEncoder(double ticks) {
+       enc.setEncoder(ticks);
+        
+    }
+
+    @Override
+    public void setEncoderRevolutions(double revs) {
+        enc.setEncoderRevolutions(revs);
+        
+    }
 }

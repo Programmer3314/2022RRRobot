@@ -1,8 +1,10 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// the WPILib BSD license file in the root direory of this project.
 
 package frc.robot;
+
+import com.ctre.phoenix.motorcontrol.InvertType;
 
 /** Add your docs here. */
 public class Constants {
@@ -13,6 +15,16 @@ public class Constants {
     public static double kNeoDriveTrainIZ = 0;
     public static double kNeoDriveTrainMin = -1;
     public static double kNeoDriveTrainMax = +1;
+
+    public static final double kfalconDrivetrainKI = 0.000000;
+    public static final double kfalconDrivetrainKD = 0.00025 ; 
+    public static final double kfalconDrivetrainKP = 0.002500;//5e-5;
+    public static final double kfalconDrivetrainKIz = 0; 
+    public static final double kfalconDrivetrainKFF = 0.050000; 
+    public static final double kfalconDrivetrainKMaxOutput =  0.869990; 
+    public static final double kfalconDrivetrainKMinOutput = -0.869990;
+    public static final double kfalconTrackingMaxCorrection = 0.2; // = 0.1;
+    public static final double kfalconTrackingMinCorrection = 0.04;
 
     public static int kNeoDriveTrainStallLimit = 40;
     public static int kNeoDriveTrainFreeLimit = 40;
@@ -35,6 +47,7 @@ public class Constants {
     public static double kNeoShooterWheelsIZ = 0;
     public static double kNeoShooterWheelsMin = -1;
     public static double kNeoShooterWheelsMax = +1;
+    
 
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
@@ -54,7 +67,10 @@ public class Constants {
     public static double kTargetingHeightDiff=ktargetHeight-kTargetCameraHeight;
 
     public static double kRevPerFoot = 4.67;
-    public static double kChassiRadius = 1.04;
+    public static double kChassisRadius = 1.04;
+
+    public static double kNewRevPerFoot = 4.67;
+    public static double kNewChassisRadius = 1.04;
 
     public static int kCanMCDriveRight1 = 1;
     public static int kCanMCDriveRight2 = 2;
@@ -92,4 +108,19 @@ public class Constants {
     public static double kPRobotTargetTurn = 5;
     public static double kPTurretTargetTurn =2;
 
+    public static double kTurretDegreesPerRev = 10;
+    public static double kTurretDegreesHome = -170;
+    public static double kTurretLowLimit = -170;
+    public static double kTurretHighLimit = 170;
+    public static int kOperatorSearchButton=7; 
+    public static int kDriverToggleBallLight=9;
+    public static int kDriverAutoBallPickup=2;
+    public static int kDriverIntake = 5;
+    public static int kDriverEject = 6; 
+    public static int kDriverAutoTurnToTarget = 1;
+
+    public static int kPneumaticsControlModule = 1;
+
+    public static InvertType kLeftMGInverted = InvertType.InvertMotorOutput;//=true
+    public static InvertType kRightMGInverted = InvertType.None;//not inverted
 }
