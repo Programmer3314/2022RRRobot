@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
   public static boolean ejectButton;
   public static boolean shootOneButton;
   public static boolean shootAllButton;
+  public static AimController aimController;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -161,6 +162,7 @@ public class Robot extends TimedRobot {
     tunnelStateMachine = new TunnelStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     climbStateMachine = new ClimbStateMachine();
+    aimController = new AimController();
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -313,6 +315,7 @@ public class Robot extends TimedRobot {
     horizontalAngle = (Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000);
     SmartDashboard.putNumber("Vertical Angle", verticalAngle);
     SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+    
 
     targetDistance = kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
     SmartDashboard.putNumber("Target Distance", targetDistance);

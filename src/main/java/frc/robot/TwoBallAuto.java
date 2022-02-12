@@ -8,6 +8,7 @@ import static frc.robot.Robot.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
+import frc.robot.AimController;
 
 enum TBautoStates {
     Start, DriveBack, TurnAway, AutoTarget, Done
@@ -87,17 +88,19 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         switch (currentState) {
             case AutoTarget:
                 if (confidenceCounter > 0) {
-                    double p = 7;
+                    Robot.aimController.setAimMode(AimMode.robotShoot);
+                    double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
+            
 
-                    double currentError = autocorrectTargetAngle - currentAngle;
+                   // double currentError = autocorrectTargetAngle - currentAngle;
                     // double currentError=xAngle- currentAngle;
-                    double requestedTurn = p * currentError;
-                    SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
+                   // double requestedTurn = p * currentError;
+                    // SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
 
-                    SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
+                    // SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
 
-                    SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
-                    driveTrain.Drive(0, requestedTurn);
+                    // SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
+                    driveTrain.Drive(0, turn);
                 }
                 break;
             case Done:

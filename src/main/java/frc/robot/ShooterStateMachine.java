@@ -86,7 +86,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 && closEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
                 && closEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)) {
                     passThroughCounter++;
-                    //nextState = ShooterStates.Shooting;
+                  
+                    if (passThroughCounter>Constants.kShooterCounter){
+                        nextState = ShooterStates.Shooting1;
+                    }
                 } else if (!target.active) {
                     nextState = ShooterStates.Idle;
                 }

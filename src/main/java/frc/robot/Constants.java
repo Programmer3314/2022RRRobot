@@ -85,4 +85,11 @@ public class Constants {
     public static int kDIOTurretLimitSwitch = 2;
     public static int kDIOCamLimitSwitch = 3;
     public static int kDIOShooterBallGone = 4;
+
+    public static int kShooterCounter = 10;
+
+    public static double kPRobotBallTurn = 3;
+    public static double kPRobotTargetTurn = 5;
+    public static double kPTurretTargetTurn =2;
+
 }
