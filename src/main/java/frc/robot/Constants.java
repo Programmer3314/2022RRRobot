@@ -16,6 +16,9 @@ public class Constants {
     public static double kNeoDriveTrainMin = -1;
     public static double kNeoDriveTrainMax = +1;
 
+    public static int kNeoDriveTrainStallLimit = 40;
+    public static int kNeoDriveTrainFreeLimit = 40;
+
     public static final double kfalconDrivetrainKI = 0.000000;
     public static final double kfalconDrivetrainKD = 0.00025 ; 
     public static final double kfalconDrivetrainKP = 0.002500;//5e-5;
@@ -25,9 +28,6 @@ public class Constants {
     public static final double kfalconDrivetrainKMinOutput = -0.869990;
     public static final double kfalconTrackingMaxCorrection = 0.2; // = 0.1;
     public static final double kfalconTrackingMinCorrection = 0.04;
-
-    public static int kNeoDriveTrainStallLimit = 40;
-    public static int kNeoDriveTrainFreeLimit = 40;
 
     public static double kNeoShooterCAMP = 0;
     public static double kNeoShooterCAMI = 0;
@@ -47,7 +47,6 @@ public class Constants {
     public static double kNeoShooterWheelsIZ = 0;
     public static double kNeoShooterWheelsMin = -1;
     public static double kNeoShooterWheelsMax = +1;
-    
 
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
@@ -74,26 +73,26 @@ public class Constants {
 
     public static int kCanMCDriveRight1 = 1;
     public static int kCanMCDriveRight2 = 2;
-    public static int kCanMCDriveRight3 = 3;
+//    public static int kCanMCDriveRight3 = 3;
 
     public static int kCanMCDriveLeft1 = 4;
     public static int kCanMCDriveLeft2 = 5;
-    public static int kCanMCDriveLeft3 = 6;
+  //  public static int kCanMCDriveLeft3 = 6;
 
     public static int kCanMCTunnelBelt = 10;
     public static int kCanMCTunnelWheels = 11;
 
     public static int kCanMCQueueBelt = 12;
 
-    public static int kCanMCShooterTurret = 15;
+    //public static int kCanMCShooterTurret = 15;
     public static int kCanMCShooterFeed = 16;
     public static int kCanMCShooterShoot = 17;
     public static int kCanMCShooterCam = 18;
 
     public static int kCanMCIntake = 20;
 
-    public static int kCanMCClimber1 = 30;
-    public static int kCanMCClimber2 = 31;
+  //  public static int kCanMCClimber1 = 30;
+  //  public static int kCanMCClimber2 = 31;
 
     public static int kDIOTunnelBreakBeam = 0;
     public static int kDIOQueueBreakBeam = 1;
@@ -123,4 +122,18 @@ public class Constants {
 
     public static InvertType kLeftMGInverted = InvertType.InvertMotorOutput;//=true
     public static InvertType kRightMGInverted = InvertType.None;//not inverted
+
+    public static int kJoystickDriver = 4;
+    public static int kJoystickOperator = 5;
+
+    public static int kSolenoidModule = 1;
+
+    public static int kSolenoidIntakeForward = 1;
+    public static int kSolenoidIntakeBackward =2;
+
+    public static int kSolenoidClimberForward = 5;
+    public static int kSolenoidClimberBackward = 6;
+
+    public static int kTestButtonBoxDesiredBall = 2;
+    public static int kTestButtonBoxQueuePosition = 3;
 }

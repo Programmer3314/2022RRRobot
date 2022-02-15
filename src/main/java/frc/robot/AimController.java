@@ -50,13 +50,13 @@ public class AimController {
         searchPower = -.15;
     }
 
-
     public void setAimMode(AimMode aimMode) {
         this.aimMode = aimMode;
     }
 
     public double calculate(double DriverTurn, double targetAngle, double currentAngle, double ballAngle) {
         double turn = 0;
+        turretHomed = true;
         switch (aimMode) {
             case autonomous:
                 // skip for now
@@ -70,12 +70,10 @@ public class AimController {
                 turn = DriverTurn;
                 break;
             case robotShoot: {
-
                 double currentError = targetAngle - currentAngle;
 
                 turn = kPRobotTargetTurn * currentError;
             }
-
                 break;
             case turretShoot:
                 turn = DriverTurn;
@@ -85,40 +83,40 @@ public class AimController {
                 break;
 
         }
-        if (!turretHomed) {
-            // turret.setPower(-.15);
-        }
-        if (turretLowLimitSwitch.get()) {
-            turretHomed = true;
-            // turret.setEncoderRevolutions(Constants.kTurretDegreesHome/Constants.kTurretDegreesPerRev);
-        }
+        // if (!turretHomed) {
+        //     // turret.setPower(-.15);
+        // }
+        // if (turretLowLimitSwitch.get()) {
+        //     turretHomed = true;
+        //     // turret.setEncoderRevolutions(Constants.kTurretDegreesHome/Constants.kTurretDegreesPerRev);
+        // }
 
-        if (turretHomed) {
-            if (searching) {
-                if (turret.getRevolutions() < Constants.kTurretLowLimit / Constants.kTurretDegreesPerRev) {
-                    searchPower = .15;
-                }
-                if (turret.getRevolutions() > Constants.kTurretHighLimit / Constants.kTurretDegreesPerRev) {
-                    searchPower = -.15;
-                }
+        // if (turretHomed) {
+        //     if (searching) {
+        //         if (turret.getRevolutions() < Constants.kTurretLowLimit / Constants.kTurretDegreesPerRev) {
+        //             searchPower = .15;
+        //         }
+        //         if (turret.getRevolutions() > Constants.kTurretHighLimit / Constants.kTurretDegreesPerRev) {
+        //             searchPower = -.15;
+        //         }
 
-                turret.setPower(searchPower);
-                if (Robot.confidenceCounter > 0) {
-                    searching = false;
-                    turret.setPower(0);
-                }
+        //         turret.setPower(searchPower);
+        //         if (Robot.confidenceCounter > 0) {
+        //             searching = false;
+        //             turret.setPower(0);
+        //         }
 
-            } else {
-                desiredTurretPosition = (targetAngle - currentAngle) / Constants.kTurretDegreesPerRev;
-                if (desiredTurretPosition >= Constants.kTurretHighLimit) {
-                    // turretPosition = Constants.kTurretHighLimit;
-                }
-                if (desiredTurretPosition <= Constants.kTurretLowLimit) {
-                    // turretPosition = Constants.kTurretHighLimit;
-                }
-                // turret.setPosition(turretPosition);
-            }
-        }
+        //     } else {
+        //         desiredTurretPosition = (targetAngle - currentAngle) / Constants.kTurretDegreesPerRev;
+        //         if (desiredTurretPosition >= Constants.kTurretHighLimit) {
+        //             // turretPosition = Constants.kTurretHighLimit;
+        //         }
+        //         if (desiredTurretPosition <= Constants.kTurretLowLimit) {
+        //             // turretPosition = Constants.kTurretHighLimit;
+        //         }
+        //         // turret.setPosition(turretPosition);
+        //     }
+        // }
 
         return turn;
     }
@@ -128,14 +126,13 @@ public class AimController {
     }
 
     public double turretError() {
-        return desiredTurretPosition - turret.getRevolutions() * Constants.kTurretDegreesPerRev;
+        return 0;
+        //return desiredTurretPosition - turret.getRevolutions() * Constants.kTurretDegreesPerRev;
     }
 
 
     public void searchRequest() {
         searching = true;
     }
-
-    
     
 }

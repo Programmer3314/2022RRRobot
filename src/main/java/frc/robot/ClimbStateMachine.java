@@ -96,12 +96,13 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
     public ClimbStateMachine() {
         super(ClimbStates.Start);
-        climbMotor = new MMFollowingMotorGroup(
+       /** climbMotor = new MMFollowingMotorGroup(
                 new MMFXMotorController(Constants.kCanMCClimber1)
                         .setPIDFParameters(.15, 0, 1, 0)
-                        .setBrakeMode(true));
+                        .setBrakeMode(true)); */
 
-        climberPosition = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 5, 6);
+        climberPosition = new DoubleSolenoid(Constants.kSolenoidModule, PneumaticsModuleType.CTREPCM,
+                Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
     }
 
     @Override
@@ -136,94 +137,94 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                     return;
                 }
                 break;
-            }
-            switch (currentState) {
-                case Start:
-                    nextState = ClimbStates.Home;
-                    break;
-                case Home:
-                    if (lowLimitSwitch) {
-                        nextState = ClimbStates.Idle;
-                    }
-                    break;
-                case Idle:
-                    if (raiseLeadHooks) {
-                        nextState = ClimbStates.ExtendToBar1;
-                    }
-                    break;
-                case ExtendToBar1:
-                    if (climbMotor.getRevolutions() >= revolutionsToBar1) {
-                        nextState = ClimbStates.DriveToBar1;
-                    }
-                    break;
-                case DriveToBar1:
-                    if (leadHookContactLeft && leadHookContactRight && startClimb) {
-                        nextState = ClimbStates.PullBar1ToStatHooks;
-                    }
-                    break;
-                case PullBar1ToStatHooks:
-                    if (!statHookDeflectionLeft || !statHookDeflectionRight) {
-                        nextState = ClimbStates.PullBar1PastStatHooks;
-                    }
-                    break;
-                case PullBar1PastStatHooks:
-                    if (statHookDeflectionLeft && statHookDeflectionRight) {
-                        nextState = ClimbStates.ExtendToBar2;
-                    }
-                    break;
-                case ExtendToBar2:
-                    if (climbMotor.getRevolutions() >= revolutionsToBar2) {
-                        nextState = ClimbStates.ExtendToBar2Check;
-                    }
-                    break;
-                case ExtendToBar2Check:
-                    if (leadHookContactLeft && leadHookContactRight) {
-                        nextState = ClimbStates.PullBar2ToStatHooks;
-                    }
-                    break;
-                case PullBar2ToStatHooks:
-                    if (!statHookDeflectionLeft || !statHookDeflectionRight) {
-                        nextState = ClimbStates.PullBar2PastStatHooks;
-                    }
-                    break;
-                case PullBar2PastStatHooks:
-                    if (statHookDeflectionLeft && statHookDeflectionRight) {
-                        nextState = ClimbStates.ExtendBar3Swing;
-                    }
-                    break;
-                case ExtendBar3Swing:
-                    if (climbMotor.getRevolutions() >= revolutionsNearBar3) {
-                        nextState = ClimbStates.WaitForCalm;
-                    }
-                    break;
-                case WaitForCalm:
-                    if (navxCalm) {
-                        nextState = ClimbStates.ExtendBar3Calm;
-                    }
-                    break;
-                case ExtendBar3Calm:
-                    if (climbMotor.getRevolutions() >= revolutionsToBar3) {
-                        nextState = ClimbStates.ExtendToBar3Check;
-                    }
-                    break;
-                case ExtendToBar3Check:
-                    if (leadHookContactRight && leadHookContactLeft) {
-                        nextState = ClimbStates.PullupBar3;
-                    }
-                    break;
-                case PullupBar3:
-                    if (climbMotor.getRevolutions() <= revolutionsToBar3Final) {
-                        nextState = ClimbStates.Done;
-                    }
-                    break;
-                case Done:
-                    break;
-                case Pause:
-                    if (startClimb) {
-                        nextState = pauseState;
-                    }
-                    break;
-            }
+        }
+        switch (currentState) {
+            case Start:
+                nextState = ClimbStates.Home;
+                break;
+            case Home:
+                if (lowLimitSwitch) {
+                    nextState = ClimbStates.Idle;
+                }
+                break;
+            case Idle:
+                if (raiseLeadHooks) {
+                    nextState = ClimbStates.ExtendToBar1;
+                }
+                break;
+            case ExtendToBar1:
+                if (climbMotor.getRevolutions() >= revolutionsToBar1) {
+                    nextState = ClimbStates.DriveToBar1;
+                }
+                break;
+            case DriveToBar1:
+                if (leadHookContactLeft && leadHookContactRight && startClimb) {
+                    nextState = ClimbStates.PullBar1ToStatHooks;
+                }
+                break;
+            case PullBar1ToStatHooks:
+                if (!statHookDeflectionLeft || !statHookDeflectionRight) {
+                    nextState = ClimbStates.PullBar1PastStatHooks;
+                }
+                break;
+            case PullBar1PastStatHooks:
+                if (statHookDeflectionLeft && statHookDeflectionRight) {
+                    nextState = ClimbStates.ExtendToBar2;
+                }
+                break;
+            case ExtendToBar2:
+                if (climbMotor.getRevolutions() >= revolutionsToBar2) {
+                    nextState = ClimbStates.ExtendToBar2Check;
+                }
+                break;
+            case ExtendToBar2Check:
+                if (leadHookContactLeft && leadHookContactRight) {
+                    nextState = ClimbStates.PullBar2ToStatHooks;
+                }
+                break;
+            case PullBar2ToStatHooks:
+                if (!statHookDeflectionLeft || !statHookDeflectionRight) {
+                    nextState = ClimbStates.PullBar2PastStatHooks;
+                }
+                break;
+            case PullBar2PastStatHooks:
+                if (statHookDeflectionLeft && statHookDeflectionRight) {
+                    nextState = ClimbStates.ExtendBar3Swing;
+                }
+                break;
+            case ExtendBar3Swing:
+                if (climbMotor.getRevolutions() >= revolutionsNearBar3) {
+                    nextState = ClimbStates.WaitForCalm;
+                }
+                break;
+            case WaitForCalm:
+                if (navxCalm) {
+                    nextState = ClimbStates.ExtendBar3Calm;
+                }
+                break;
+            case ExtendBar3Calm:
+                if (climbMotor.getRevolutions() >= revolutionsToBar3) {
+                    nextState = ClimbStates.ExtendToBar3Check;
+                }
+                break;
+            case ExtendToBar3Check:
+                if (leadHookContactRight && leadHookContactLeft) {
+                    nextState = ClimbStates.PullupBar3;
+                }
+                break;
+            case PullupBar3:
+                if (climbMotor.getRevolutions() <= revolutionsToBar3Final) {
+                    nextState = ClimbStates.Done;
+                }
+                break;
+            case Done:
+                break;
+            case Pause:
+                if (startClimb) {
+                    nextState = pauseState;
+                }
+                break;
+        }
     }
 
     @Override

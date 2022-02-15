@@ -108,4 +108,11 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public boolean isFull() {
         return queueFull;
     }
+
+    @Override
+    public void update(){
+        //ballPositionInQueue = breakBeamOne.get();
+        ballPositionInQueue = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxQueuePosition);
+        super.update();
+    }
 }

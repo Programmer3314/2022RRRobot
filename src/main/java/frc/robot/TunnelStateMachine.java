@@ -55,17 +55,19 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         super(TunnelStates.Start);
         breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
         frontColorSensor = new ColorSensorV3(Port.kOnboard);
-       // tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
-        //tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
+        tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
+        tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
     }
 
     @Override
     public void update() {
+        //TODO make desired ball laggy
         int red = frontColorSensor.getRed();
         int blue = frontColorSensor.getBlue();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
-        desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed)) && !breakBeamOne.get();
+        // desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed)) && !breakBeamOne.get();
+        desiredBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
@@ -108,10 +110,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doTransition() {
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
-            //tunnelWheels.setPower(0.5);
+            tunnelWheels.setPower(0.5);
         }
         if (isTransitionTo(TunnelStates.Idle)) {
-            //tunnelWheels.setPower(0);
+            tunnelWheels.setPower(0);
             counter++;
         }
 
@@ -121,10 +123,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Idle:
-                //tunnelBelt.setPower(0.5);
+                tunnelBelt.setPower(0.5);
                 break;
             case BallDetected:
-                //tunnelBelt.setPower(0);
+                tunnelBelt.setPower(0);
                 break;
         }
 

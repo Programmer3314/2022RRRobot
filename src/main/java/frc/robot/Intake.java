@@ -14,8 +14,6 @@ import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMSRXMotorController;
 import frc.robot.Constants.*;
 
-//TODO statemachine
-
 /** Add your docs here. */
 public class Intake {
 
@@ -24,7 +22,7 @@ public class Intake {
 
     public Intake() {
         intakeMotor = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCIntake));
-        intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 1, 2);
+        intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, Constants.kSolenoidIntakeForward, Constants.kSolenoidIntakeForward);
     }
 
     public void intake() {

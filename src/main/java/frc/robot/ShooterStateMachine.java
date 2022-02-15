@@ -79,10 +79,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 break;
             case Preparing:
                 if (target.active && Robot.queueStateMachine.isFull()
-                        && closEnough(camAngle.getRevolutions(), target.angle, Constants.kangleMargin)
-                        && closEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
-                        && closEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
-                        && closEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
+                        && closeEnough(camAngle.getRevolutions(), target.angle, Constants.kangleMargin)
+                        && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
+                        && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
+                        && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
                     passThroughCounter++;
 
                     if (passThroughCounter > Constants.kShooterCounter) {
@@ -140,10 +140,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 }
                 homed = camhomed;
                 break;
-            case Preparing:
-
-                // get motors to correct velocity and position based on shooting solution
-                break;
         }
 
     }
@@ -160,7 +156,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         super.update();
     }
 
-    public boolean closEnough(double value1, double value2, double margin) {
+    public boolean closeEnough(double value1, double value2, double margin) {
         return Math.abs(value1 - value2) <= margin;
     }
 }
