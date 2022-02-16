@@ -77,6 +77,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean leadHookPocketRight;
     MMMotorGroup climbMotor;
     boolean raiseLeadHooks;
+    boolean lowerLeadHooks;
     boolean startClimb;
     double revolutionsToBar1 = 10;
     double revolutionsToBar2 = 10;
@@ -113,8 +114,11 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         statHookDeflectionLeft = !Robot.buttonBox1.getRawButton(5);
         statHookDeflectionRight = !Robot.buttonBox1.getRawButton(6);
         lowLimitSwitch = Robot.buttonBox1.getRawButton(9);
-        raiseLeadHooks = Robot.buttonBox1.getRawButton(4);
-        startClimb = Robot.buttonBox1.getRawButton(7);
+        // TODO: double check this code for errors
+        raiseLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorRaiseHooks);
+        lowerLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorLowerHooksButton);
+        startClimb = Robot.controllerOperator.getRawButton(Constants.kOperatorClimbButton);
+
 
         super.update();
     }
@@ -156,10 +160,16 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 if (climbMotor.getRevolutions() >= revolutionsToBar1) {
                     nextState = ClimbStates.DriveToBar1;
                 }
+                if (lowerLeadHooks){
+                    nextState = ClimbStates.Home;
+                }
                 break;
             case DriveToBar1:
                 if (leadHookContactLeft && leadHookContactRight && startClimb) {
                     nextState = ClimbStates.PullBar1ToStatHooks;
+                }
+                if (lowerLeadHooks){
+                    nextState = ClimbStates.Home;
                 }
                 break;
             case PullBar1ToStatHooks:

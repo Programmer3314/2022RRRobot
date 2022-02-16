@@ -98,6 +98,8 @@ public class Robot extends TimedRobot {
   public static Intake intake;
   public static boolean intakeButton;
   public static boolean ejectButton;
+  public static boolean autoLockHoop;
+  public static boolean pointBlankButton;
   public static boolean shootOneButton;
   public static boolean shootAllButton;
   public static AimController aimController;
@@ -132,7 +134,7 @@ public class Robot extends TimedRobot {
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
     lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-    intake = new Intake();
+    
 
     // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
     // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
@@ -159,10 +161,11 @@ public class Robot extends TimedRobot {
     // with the diffDriveTrain below. This will prevent
     // confusion and/or conflict over controlling them.
     // The same should be done with sensor definitions.
+    intake = new Intake();
     queueStateMachine = new QueueStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
     shooterStateMachine = new ShooterStateMachine();
-    //climbStateMachine = new ClimbStateMachine();
+    // climbStateMachine = new ClimbStateMachine();
     aimController = new AimController();
     pneumaticsControlModule = new PneumaticsControlModule(Constants.kPneumaticsControlModule);
 
@@ -228,16 +231,27 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     commonInit();
     // lightRing4.set(false);
-//    climbStateMachine.currentState = ClimbStates.Start;
-    shooterStateMachine.currentState = ShooterStates.Start;
+    // climbStateMachine.currentState = ClimbStates.Start;
+    // TODO: Comment these lines before competition
+    // climbStateMachine.resetState();
+    tunnelStateMachine.resetState();
+    queueStateMachine.resetState();
+    shooterStateMachine.resetState();
   }
 
   @Override
   public void teleopPeriodic() {
     commonPeriodic();
+
+    double requestedSpeed = speedAxis.get();
+    double requestedTurn = turnAxis.get();
+
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
+    pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPointBlankPOV) == 0;
+    autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
+
     if (intakeButton) {
       intake.intake();
     } else if (ejectButton) {
@@ -249,30 +263,10 @@ public class Robot extends TimedRobot {
       lightRing.set(!lightRing.get());
     }
 
-   
-
-    // lightRing1.set(buttonBox1.getRawButton(5));
-    // lightRing2.set(buttonBox1.getRawButton(2));
-    // lightRing3.set(buttonBox1.getRawButton(3));
-
-    double requestedSpeed = speedAxis.get();
-    double requestedTurn = turnAxis.get();
-
-    // input distance via smartdashboard and then
-    // double test = SmartDashboard.getNumber("Target Distance", 0);
-    //TODO add condition for confidence and send inactive firing solution if there is no confidence
-    TargetPoint firingSolution = shooterFormula.calculate(targetDistance);
-    if (firingSolution == null) {
-      SmartDashboard.putNumber("TargetRPM", -1);
-      SmartDashboard.putNumber("TargetAngle", -1);
-    } else {
-      SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
-      SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
-    }
 
     AimMode aimMode = AimMode.driver;
 
-    if (controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget) && confidenceCounter > 0) {
+    if (autoLockHoop && confidenceCounter > 0) {
       // double p = 5;
       // double currentError = autocorrectTargetAngle - currentAngle;
       // // double currentError=xAngle- currentAngle;
@@ -308,7 +302,7 @@ public class Robot extends TimedRobot {
     commonInit();
     // tunnelStateMachine = new TunnelStateMachine();
     tunnelStateMachine.resetState();
-//    climbStateMachine.resetState();
+    // climbStateMachine.resetState();
   }
 
   @Override
@@ -328,20 +322,17 @@ public class Robot extends TimedRobot {
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
 
-   
     currentAngle = cleanAngle(navx.getYaw());
     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
     horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
     targetDistance = kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
-    
-    
+
     boolean targetConfidence = nt.getTable("Ball Target")
         .getEntry(alliance == Alliance.Blue ? "Blue Target Confidence" : "Red Target Confidence").getBoolean(false);
     ballChaseAngle = (Double) nt.getTable("Ball Target")
         .getEntry(alliance == Alliance.Blue ? "Blue Angle to Ball" : "Red Angle to Ball").getNumber(0);
 
-
-     if (searchButton) {
+    if (searchButton) {
       aimController.searchRequest();
     }
 
@@ -355,16 +346,35 @@ public class Robot extends TimedRobot {
         confidenceCounter--;
       }
     }
+    // input distance via smartdashboard and then
+    // double test = SmartDashboard.getNumber("Target Distance", 0);
+    // TODO add condition for confidence and send inactive firing solution if there
+    // is no confidence
+    TargetPoint firingSolution = shooterFormula.calculate(pointBlankButton? 0:targetDistance);
+
+    if (firingSolution == null) {
+      SmartDashboard.putNumber("TargetRPM", -1);
+      SmartDashboard.putNumber("TargetAngle", -1);
+    } else {
+      SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
+      SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
+      if (confidenceCounter > 0) {
+        firingSolution.active = true;
+      } else {
+        firingSolution.active = false;
+      }
+      
+      shooterStateMachine.setShootingSolution(firingSolution);
+    }
 
     commonUpdate();
   }
 
-  public void commonUpdate(){
+  public void commonUpdate() {
     tunnelStateMachine.update();
     // climbStateMachine.update();
     queueStateMachine.update();
     shooterStateMachine.update();
-
 
     SmartDashboard.putNumber("Navx Angle", currentAngle);
     SmartDashboard.putNumber("Position X: ", navx.getDisplacementX());
@@ -374,10 +384,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Distance", targetDistance);
     SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
-  // SmartDashboard.putString("climbStateMachine", climbStateMachine.currentState.toString());
-    // SmartDashboard.putNumber("Climb Encoder Value", climbStateMachine.climbMotor.getRevolutions());
+    // SmartDashboard.putString("climbStateMachine",
+    // climbStateMachine.currentState.toString());
+    // SmartDashboard.putNumber("Climb Encoder Value",
+    // climbStateMachine.climbMotor.getRevolutions());
 
-    
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     SmartDashboard.putString("Alliance Type", alliance.toString());

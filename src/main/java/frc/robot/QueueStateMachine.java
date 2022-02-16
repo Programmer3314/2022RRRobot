@@ -108,6 +108,10 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public boolean isFull() {
         return queueFull;
     }
+    
+    public void resetState(){
+        currentState = QueueStates.Start;
+    }
 
     @Override
     public void update(){

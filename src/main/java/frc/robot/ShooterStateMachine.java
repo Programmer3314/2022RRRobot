@@ -73,7 +73,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 }
                 break;
             case Idle:
-                if (target.active) {
+                if (target.active && (Robot.shootOneButton || Robot.shootAllButton)) {
                     nextState = ShooterStates.Preparing;
                 }
                 break;
@@ -152,8 +152,13 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     @Override
     public void update() {
         camhomed = camlimitswitch.get();
-        airBall = ballGoneBreakBeam.get();
+        airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
+        //airBall = ballGoneBreakBeam.get();
         super.update();
+    }
+
+    public void resetState(){
+        currentState = ShooterStates.Start;
     }
 
     public boolean closeEnough(double value1, double value2, double margin) {

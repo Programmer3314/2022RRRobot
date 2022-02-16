@@ -111,7 +111,13 @@ public class Constants {
     public static double kTurretDegreesHome = -170;
     public static double kTurretLowLimit = -170;
     public static double kTurretHighLimit = 170;
+
     public static int kOperatorSearchButton=7; 
+    public static int kOperatorPointBlankPOV = 0;
+    public static int kOperatorRaiseHooks = 1;
+    public static int kOperatorLowerHooksButton = 8;
+    public static int kOperatorClimbButton = 2;
+
     public static int kDriverToggleBallLight=9;
     public static int kDriverAutoBallPickup=2;
     public static int kDriverIntake = 5;
@@ -136,4 +142,5 @@ public class Constants {
 
     public static int kTestButtonBoxDesiredBall = 2;
     public static int kTestButtonBoxQueuePosition = 3;
+    public static int kTestButtonBoxAirBall = 4;
 }
