@@ -86,6 +86,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     @Override
     public void CalcNextState() {
         switch (currentState) {
+            // TODO Fix missing break; after start.
             case Start:
                 nextState = TunnelStates.Idle;
             case Idle:                                                                                                          
@@ -110,7 +111,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     @Override
     public void doTransition() {
         // The FROM on the next line was correct. The Green wheels don't turn on until
-        // the Queue is ready. The proble seems to be that we're not moving to MoveToQueue
+        // the Queue is ready. The problem seems to be that we're not moving to MoveToQueue
+        // or we are but there is another problem 
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
             tunnelWheels.setPower(0.5);
@@ -130,6 +132,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                 tunnelBelt.setPower(0.3);
                 break;
             case BallDetected:
+                // I think this should be 0.0
                 tunnelBelt.setPower(0.3);
                 break;
         }
