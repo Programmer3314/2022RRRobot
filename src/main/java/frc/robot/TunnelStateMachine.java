@@ -109,7 +109,9 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doTransition() {
-        if (isTransitionTo(TunnelStates.BallDetected)) {
+        // The FROM on the next line was correct. The Green wheels don't turn on until
+        // the Queue is ready. The proble seems to be that we're not moving to MoveToQueue
+        if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
             tunnelWheels.setPower(0.5);
             SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());

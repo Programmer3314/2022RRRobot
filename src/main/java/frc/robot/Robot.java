@@ -133,8 +133,7 @@ public class Robot extends TimedRobot {
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-    //lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-    
+    // lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
 
     // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
     // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
@@ -168,7 +167,8 @@ public class Robot extends TimedRobot {
     shooterStateMachine = new ShooterStateMachine();
     // climbStateMachine = new ClimbStateMachine();
     aimController = new AimController();
-    //pneumaticsControlModule = new PneumaticsControlModule(Constants.kPneumaticsControlModule);
+    // pneumaticsControlModule = new
+    // PneumaticsControlModule(Constants.kPneumaticsControlModule);
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -177,14 +177,18 @@ public class Robot extends TimedRobot {
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF),
-            new MMFXMotorController(Constants.kCanMCDriveLeft2)),
+            new MMFXMotorController(Constants.kCanMCDriveLeft2)
+                .setInverted(Constants.kLeftMGInverted) // This MUST MATCH LEAD!
+        ),
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveRight1)
                 .setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF),
-            new MMFXMotorController(Constants.kCanMCDriveRight2)),
+            new MMFXMotorController(Constants.kCanMCDriveRight2)
+                .setInverted(Constants.kRightMGInverted) // This MUST MATCH LEAD!
+        ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 
     // driveTrain = new MMDiffDriveTrain(
@@ -207,7 +211,7 @@ public class Robot extends TimedRobot {
     // new MMSparkMaxMotorController(kCanMCDriveRight2, MotorType.kBrushless),
     // new MMSparkMaxMotorController(kCanMCDriveRight3, MotorType.kBrushless)),
     // kRevPerFoot, kChassiRadius);
-    //pneumaticsControlModule.enableCompressorDigital();
+    // pneumaticsControlModule.enableCompressorDigital();
   }
 
   @Override
@@ -247,9 +251,6 @@ public class Robot extends TimedRobot {
     double requestedSpeed = speedAxis.get();
     double requestedTurn = turnAxis.get();
     SmartDashboard.putNumber("Joystick Value", requestedSpeed);
-    
-    
-
 
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
@@ -267,7 +268,6 @@ public class Robot extends TimedRobot {
     if (controllerDriver.getRawButtonPressed(Constants.kDriverToggleBallLight)) {
       lightRing.set(!lightRing.get());
     }
-
 
     AimMode aimMode = AimMode.driver;
 
@@ -290,8 +290,6 @@ public class Robot extends TimedRobot {
     aimController.setAimMode(aimMode);
     requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);
     driveTrain.Drive(requestedSpeed, requestedTurn);
-    
-
 
     commonUpdate();
   }
@@ -357,7 +355,7 @@ public class Robot extends TimedRobot {
     // double test = SmartDashboard.getNumber("Target Distance", 0);
     // TODO add condition for confidence and send inactive firing solution if there
     // is no confidence
-    TargetPoint firingSolution = shooterFormula.calculate(pointBlankButton? 0:targetDistance);
+    TargetPoint firingSolution = shooterFormula.calculate(pointBlankButton ? 0 : targetDistance);
 
     if (firingSolution == null) {
       SmartDashboard.putNumber("TargetRPM", -1);
@@ -370,20 +368,17 @@ public class Robot extends TimedRobot {
       } else {
         firingSolution.active = false;
       }
-      
-      
+
       shooterStateMachine.setShootingSolution(firingSolution);
     }
-  
 
-    
   }
 
   public void commonUpdate() {
     tunnelStateMachine.update();
     // climbStateMachine.update();
     queueStateMachine.update();
-    //shooterStateMachine.update();
+    // shooterStateMachine.update();
 
     SmartDashboard.putNumber("Navx Angle", currentAngle);
     SmartDashboard.putNumber("Position X: ", navx.getDisplacementX());
@@ -402,7 +397,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     SmartDashboard.putString("Alliance Type", alliance.toString());
 
-    //SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
+    // SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
   }
 
   public static double cleanAngle(double angle) {

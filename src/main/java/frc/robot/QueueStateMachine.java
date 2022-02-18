@@ -110,7 +110,8 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     }
 
     public boolean isFull() {
-        return queueFull;
+        return false;
+        //return queueFull;
     }
     
     public void resetState(){
