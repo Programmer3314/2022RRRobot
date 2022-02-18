@@ -4,6 +4,8 @@
 
 package frc.robot.utility;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Differential Drive Train
  */
@@ -43,6 +45,8 @@ public class MMDiffDriveTrain {
         rightMG.setPower(rpmToPower(speedRPM - turnRPM, revPerFoot*600));
         //leftMG.setVelocity(speedRPM + turnRPM);
         //rightMG.setVelocity(speedRPM - turnRPM);
+        SmartDashboard.putNumber("Drivetrain left MG power", rpmToPower(speedRPM + turnRPM, revPerFoot*600));
+        SmartDashboard.putNumber("Drivetrain Right MG power", rpmToPower(speedRPM - turnRPM, revPerFoot*600));
     }
 
     /**

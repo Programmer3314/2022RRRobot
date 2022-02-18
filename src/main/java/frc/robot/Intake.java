@@ -22,7 +22,7 @@ public class Intake {
 
     public Intake() {
         intakeMotor = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCIntake));
-        intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, Constants.kSolenoidIntakeForward, Constants.kSolenoidIntakeForward);
+        intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, Constants.kSolenoidIntakeForward, Constants.kSolenoidIntakeForward);
     }
 
     public void intake() {

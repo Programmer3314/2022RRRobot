@@ -126,7 +126,7 @@ public class Constants {
 
     public static int kPneumaticsControlModule = 1;
 
-    public static InvertType kLeftMGInverted = InvertType.InvertMotorOutput;//=true
+    public static InvertType kLeftMGInverted = InvertType.None;//not inverted
     public static InvertType kRightMGInverted = InvertType.None;//not inverted
 
     public static int kJoystickDriver = 4;

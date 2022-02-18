@@ -54,7 +54,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public TunnelStateMachine() {
         super(TunnelStates.Start);
         breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
-        frontColorSensor = new ColorSensorV3(Port.kOnboard);
+        frontColorSensor = new ColorSensorV3(Port.kMXP);
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
     }
@@ -78,7 +78,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
         SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
         SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
-
+        
+ 
         super.update();
     }
 
@@ -108,9 +109,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doTransition() {
-        if (isTransitionFrom(TunnelStates.BallDetected)) {
+        if (isTransitionTo(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
             tunnelWheels.setPower(0.5);
+            SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());
         }
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
@@ -123,10 +125,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Idle:
-                tunnelBelt.setPower(0.5);
+                tunnelBelt.setPower(0.3);
                 break;
             case BallDetected:
-                tunnelBelt.setPower(0);
+                tunnelBelt.setPower(0.3);
                 break;
         }
 

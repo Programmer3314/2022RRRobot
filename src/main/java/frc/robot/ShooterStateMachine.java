@@ -54,8 +54,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
-        shooter = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterShoot));
-        camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
+        // shooter = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterShoot));
+        // camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
         feed = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterFeed));
         camlimitswitch = new DigitalInput(Constants.kDIOCamLimitSwitch);
         ballGoneBreakBeam = new DigitalInput(Constants.kDIOShooterBallGone);

@@ -71,22 +71,26 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     @Override
     public void doTransition() {
         if (isTransitionTo(QueueStates.DrawBallIn)) {
-            queueBelt.setVelocity(200);
+            // queueBelt.setVelocity(200);
+            queueBelt.setPower(.2);
             takeBallFromTunnel = false;
 
         }
         if (isTransitionTo(QueueStates.GotBall)) {
-            queueBelt.setVelocity(0);
+            // queueBelt.setVelocity(0);
+            queueBelt.setPower(0);
             queueFull = true;
 
         }
         if (isTransitionTo(QueueStates.SendingBall)) {
-            queueBelt.setVelocity(300);
+            // queueBelt.setVelocity(300);
+            queueBelt.setPower(.9);
             shooterBallRequest = false;
 
         }
         if (isTransitionTo(QueueStates.WaitForBall)) {
-            queueBelt.setVelocity(0);
+            // queueBelt.setVelocity(0);
+            queueBelt.setPower(0);
             queueFull = false;
         }
 

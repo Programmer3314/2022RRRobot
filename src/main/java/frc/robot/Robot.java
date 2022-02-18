@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-    lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+    //lightRing = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
     
 
     // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
@@ -141,7 +141,8 @@ public class Robot extends TimedRobot {
     // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
     // lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
 
-    navx = new AHRS(SerialPort.Port.kUSB1);
+    navx = new AHRS(Port.kMXP);
+    // navx = new AHRS(SerialPort.Port.USB);
     navx.reset();
 
     confidenceCounter = 0;
@@ -167,7 +168,7 @@ public class Robot extends TimedRobot {
     shooterStateMachine = new ShooterStateMachine();
     // climbStateMachine = new ClimbStateMachine();
     aimController = new AimController();
-    pneumaticsControlModule = new PneumaticsControlModule(Constants.kPneumaticsControlModule);
+    //pneumaticsControlModule = new PneumaticsControlModule(Constants.kPneumaticsControlModule);
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -206,7 +207,7 @@ public class Robot extends TimedRobot {
     // new MMSparkMaxMotorController(kCanMCDriveRight2, MotorType.kBrushless),
     // new MMSparkMaxMotorController(kCanMCDriveRight3, MotorType.kBrushless)),
     // kRevPerFoot, kChassiRadius);
-    pneumaticsControlModule.enableCompressorDigital();
+    //pneumaticsControlModule.enableCompressorDigital();
   }
 
   @Override
@@ -245,6 +246,10 @@ public class Robot extends TimedRobot {
 
     double requestedSpeed = speedAxis.get();
     double requestedTurn = turnAxis.get();
+    SmartDashboard.putNumber("Joystick Value", requestedSpeed);
+    
+    
+
 
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
@@ -285,6 +290,8 @@ public class Robot extends TimedRobot {
     aimController.setAimMode(aimMode);
     requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);
     driveTrain.Drive(requestedSpeed, requestedTurn);
+    
+
 
     commonUpdate();
   }
@@ -364,17 +371,19 @@ public class Robot extends TimedRobot {
         firingSolution.active = false;
       }
       
+      
       shooterStateMachine.setShootingSolution(firingSolution);
     }
+  
 
-    commonUpdate();
+    
   }
 
   public void commonUpdate() {
     tunnelStateMachine.update();
     // climbStateMachine.update();
     queueStateMachine.update();
-    shooterStateMachine.update();
+    //shooterStateMachine.update();
 
     SmartDashboard.putNumber("Navx Angle", currentAngle);
     SmartDashboard.putNumber("Position X: ", navx.getDisplacementX());
@@ -393,7 +402,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     SmartDashboard.putString("Alliance Type", alliance.toString());
 
-    SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
+    //SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
   }
 
   public static double cleanAngle(double angle) {
