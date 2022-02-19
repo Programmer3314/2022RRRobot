@@ -7,6 +7,7 @@ package frc.robot;
 
 import frc.robot.utility.MMStateMachine;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
@@ -30,11 +31,12 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     boolean ballPositionInQueue = false;
     boolean shooterBallRequest = false;
     public static boolean queueFull = false;
-    DigitalInput breakBeamOne;
+    DigitalInput ballInQueue;
 
     public QueueStateMachine() {
         super(QueueStates.Start);
-        breakBeamOne = new DigitalInput(Constants.kDIOQueueBreakBeam);
+        //ballInqueue = new DigitalInput(Constants.kDIOQueueBreakBeam);
+        ballInQueue = new DigitalInput(Constants.kDIOQueueBreakBeam);
         queueBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCQueueBelt));
     }
 
@@ -110,7 +112,6 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     }
 
     public boolean isFull() {
-        
         return queueFull;
     }
     
@@ -120,8 +121,12 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     @Override
     public void update(){
-        //ballPositionInQueue = breakBeamOne.get();
-        ballPositionInQueue = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxQueuePosition);
+        ballPositionInQueue = !ballInQueue.get();
+        SmartDashboard.putBoolean("BallinQueue", ballPositionInQueue);
+        //ballPositionInQueue = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxQueuePosition);
         super.update();
+        SmartDashboard.putString("QueueState Machine", currentState.toString());
+        SmartDashboard.putBoolean("QueueIsFull", queueFull);
+     //   SmartDashboard.putNumber("", value)
     }
 }

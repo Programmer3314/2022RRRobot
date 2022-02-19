@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
@@ -32,7 +33,6 @@ import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
-import frc.robot.utility.MMSRXMotorController;
 import frc.robot.utility.MMSparkMaxMotorController;
 
 /*
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
   public static boolean shootAllButton;
   public static AimController aimController;
   public static boolean searchButton;
-  public static PneumaticsControlModule pneumaticsControlModule;
+  public static PneumaticHub pneumaticHub;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -116,6 +116,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    //TODO IMMEDEYIT!!!!!!!!!
+    //spin down from shoot
+
+    //Tune the CAM 
+    //Count Time in a Given State && Clear the Counter when Change the Log
+
 
     // TODO CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
@@ -167,8 +173,7 @@ public class Robot extends TimedRobot {
     // climbStateMachine = new ClimbStateMachine();
 
     aimController = new AimController(/*turret*/);
-    // pneumaticsControlModule = new
-    // PneumaticsControlModule(Constants.kPneumaticsControlModule);
+    pneumaticHub = new PneumaticHub(Constants.kPneumaticsHub);
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -211,7 +216,7 @@ public class Robot extends TimedRobot {
     // new MMSparkMaxMotorController(kCanMCDriveRight2, MotorType.kBrushless),
     // new MMSparkMaxMotorController(kCanMCDriveRight3, MotorType.kBrushless)),
     // kRevPerFoot, kChassiRadius);
-    // pneumaticsControlModule.enableCompressorDigital();
+    pneumaticHub.enableCompressorDigital();
   }
 
   @Override
@@ -286,6 +291,8 @@ public class Robot extends TimedRobot {
       // requestedSpeed = -1;
       aimMode = AimMode.ballChase;
     }
+
+    
 
     aimController.setAimMode(aimMode);
     requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);

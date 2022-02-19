@@ -40,13 +40,13 @@ public class Constants {
     public static int kNeoShooterCAMStallLimit = 40;
     public static int kNeoShooterCAMFreeLimit = 40;
 
-    public static double kNeoShooterWheelsP = 0;
-    public static double kNeoShooterWheelsI = 0;
-    public static double kNeoShooterWheelsD = 0;
-    public static double kNeoShooterWheelsF = 0.0002;
-    public static double kNeoShooterWheelsIZ = 0;
-    public static double kNeoShooterWheelsMin = -1;
-    public static double kNeoShooterWheelsMax = +1;
+    public static double kFXShooterWheelsP = 0.1;
+    public static double kFXShooterWheelsI = 0;
+    public static double kFXShooterWheelsD = 1;
+    public static double kFXShooterWheelsF = 0.0495;
+    public static double kFXShooterWheelsIZ = 0;
+    public static double kFXShooterWheelsMin = -1;
+    public static double kFXShooterWheelsMax = +1;
 
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
@@ -57,7 +57,7 @@ public class Constants {
     public static double kMaxSpeed = -10;
     public static double kMaxTurnRate = 180;
 
-    public static double krpmMargin = 50;
+    public static double krpmMargin = 100;
     public static double kangleMargin = .5;
 
     public static double kCameraVerticalAngle = 41;
@@ -94,12 +94,13 @@ public class Constants {
   //  public static int kCanMCClimber1 = 30;
   //  public static int kCanMCClimber2 = 31;
 
-    public static int kDIOTunnelBreakBeam = 0;
-    public static int kDIOQueueBreakBeam = 1;
+   
+    public static int kDIOQueueBreakBeam = 0;
+    public static int kDIOTunnelBreakBeam = 1;
 
     public static int kDIOTurretLimitSwitch = 2;
     public static int kDIOCamLimitSwitch = 3;
-    public static int kDIOShooterBallGone = 4;
+    public static int kDIOShooterBallGone = 9;
 
     public static int kShooterCounter = 10;
 
@@ -124,7 +125,7 @@ public class Constants {
     public static int kDriverEject = 6; 
     public static int kDriverAutoTurnToTarget = 1;
 
-    public static int kPneumaticsControlModule = 1;
+    public static int kPneumaticsHub = 1;
 
     public static InvertType kLeftMGInverted = InvertType.InvertMotorOutput;//not inverted
     public static InvertType kRightMGInverted = InvertType.None;//not inverted

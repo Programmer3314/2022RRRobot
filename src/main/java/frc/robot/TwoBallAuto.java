@@ -4,11 +4,13 @@
 
 package frc.robot;
 
-import static frc.robot.Robot.*;
+import static frc.robot.Robot.autocorrectTargetAngle;
+import static frc.robot.Robot.confidenceCounter;
+import static frc.robot.Robot.currentAngle;
+import static frc.robot.Robot.driveTrain;
+import static frc.robot.Robot.lightRing;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
-import frc.robot.AimController;
 
 enum TBautoStates {
     Start, DriveBack, TurnAway, AutoTarget, Done

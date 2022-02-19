@@ -13,7 +13,7 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
 
     ArrayList<MMMotorController> motors = new ArrayList<>();
     MMMotorController lead;
-    MMMotorController enc;
+    public MMMotorController enc;
 
     /**
      * Create a motor group in which all motors follow the first.

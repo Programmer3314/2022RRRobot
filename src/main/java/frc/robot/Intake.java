@@ -9,9 +9,10 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
-import frc.robot.utility.MMSRXMotorController;
+
 import frc.robot.Constants.*;
 
 /** Add your docs here. */
@@ -21,7 +22,7 @@ public class Intake {
     DoubleSolenoid intakePosition;
 
     public Intake() {
-        intakeMotor = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCIntake));
+        intakeMotor = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCIntake));
         intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, Constants.kSolenoidIntakeForward, Constants.kSolenoidIntakeForward);
     }
 

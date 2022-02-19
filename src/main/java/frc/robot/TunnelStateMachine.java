@@ -66,23 +66,22 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         //TODO make desired ball laggy
         int red = frontColorSensor.getRed();
         int blue = frontColorSensor.getBlue();
-        //isRed = red > blue * 2;
-        //isBlue = blue > red * 2;
-        isRed = red > baseRed*1.05;
-        isBlue = blue > baseBlue*1.05;
+        isRed = red > blue * 2;
+        isBlue = blue > red * 2;
+        // isRed = red > baseRed*1.05;
+        // isBlue = blue > baseBlue*1.05;
         desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed) || (Robot.alliance == Alliance.Red && isRed && !isBlue)); //&& !breakBeamOne.get();
         //desiredBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
         SmartDashboard.putBoolean("isBlue", isBlue);
-        SmartDashboard.putNumber("Counter", counter);
         SmartDashboard.putString("Tunnel State", currentState.toString());
-        SmartDashboard.putString("Is Running:", "Yes");
         SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
         SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
         SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
-        
+        SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());
+
         super.update();
     }
 
@@ -118,8 +117,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         // or we are but there is another problem 
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
-            tunnelWheels.setPower(0.3);
-            SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());
+            tunnelWheels.setPower(0.6);
         }
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
@@ -135,7 +133,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                 baseRed = frontColorSensor.getRed();
                 baseBlue =  frontColorSensor.getBlue();
             case Idle:
-                tunnelBelt.setPower(0.3);
+                tunnelBelt.setPower(0.15);
 
                 break;
             case BallDetected:
