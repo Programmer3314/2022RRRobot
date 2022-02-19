@@ -16,7 +16,7 @@ public class ShooterFormula {
     //
     public ShooterFormula() {
         targetPoints = new ArrayList<>();
-        targetPoints.add(new TargetPoint(2.5, 2800, 0, 1400, 5));
+        targetPoints.add(new TargetPoint(0, 2800, 0, 1400, 5));
         targetPoints.add(new TargetPoint(10, 3200, 0.3, 1600, 3));
         targetPoints.add(new TargetPoint(16, 3500, 0.5, 1750, 2));
     }

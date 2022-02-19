@@ -72,7 +72,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public void doTransition() {
         if (isTransitionTo(QueueStates.DrawBallIn)) {
             // queueBelt.setVelocity(200);
-            queueBelt.setPower(.2);
+            queueBelt.setPower(.8);
             takeBallFromTunnel = false;
 
         }
@@ -110,8 +110,8 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     }
 
     public boolean isFull() {
-        return false;
-        //return queueFull;
+        
+        return queueFull;
     }
     
     public void resetState(){

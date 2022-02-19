@@ -45,8 +45,8 @@ public class AimController {
     double searchPower;
 
     public AimController() {
-        // turret = new MMFollowingMotorGroup(new
-        // MMFXMotorController(Constants.kCanMCShooterTurret));
+        //turret = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterTurret));
+        // this.turret = turret;
         searchPower = -.15;
     }
 
@@ -129,8 +129,6 @@ public class AimController {
         return 0;
         //return desiredTurretPosition - turret.getRevolutions() * Constants.kTurretDegreesPerRev;
     }
-
-
     public void searchRequest() {
         searching = true;
     }

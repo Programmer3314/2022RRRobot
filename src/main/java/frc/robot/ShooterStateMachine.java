@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
@@ -54,11 +56,14 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
-        // shooter = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterShoot));
-        // camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
+        shooter = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterShoot)
+        .setInverted(InvertType.InvertMotorOutput));
+        camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
         feed = new MMFollowingMotorGroup(new MMSRXMotorController(Constants.kCanMCShooterFeed));
         camlimitswitch = new DigitalInput(Constants.kDIOCamLimitSwitch);
         ballGoneBreakBeam = new DigitalInput(Constants.kDIOShooterBallGone);
+
+        
     }
 
     @Override
@@ -116,9 +121,13 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             // move turret
         }
         if (isTransitionTo(ShooterStates.Preparing)) {
-            shooter.setVelocity(target.rpm);
-            camAngle.setPosition(target.angle);
-            feed.setVelocity(target.feedrpm);
+            //shooter.setVelocity(target.rpm);
+            //camAngle.setPosition(target.angle);
+            //feed.setVelocity(target.feedrpm);
+            shooter.setPower(target.rpm/6000);
+            feed.setPower(target.feedrpm/6000);
+
+
             passThroughCounter = 0;
         }
         if (isTransitionTo(ShooterStates.Shooting1)) {
@@ -135,6 +144,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Home:
+                camhomed = true;
                 if (camhomed) {
                     camAngle.setPower(0);
                 }
@@ -155,6 +165,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
         //airBall = ballGoneBreakBeam.get();
         super.update();
+
+        SmartDashboard.putString("Shooter State", currentState.toString());
     }
 
     public void resetState(){

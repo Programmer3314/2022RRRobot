@@ -27,11 +27,11 @@ public class Intake {
 
     public void intake() {
         intakePosition.set(Value.kForward);
-        intakeMotor.setPower(1);
+        intakeMotor.setPower(.5);
     }
 
     public void eject() {
-        intakeMotor.setPower(-1);
+        intakeMotor.setPower(-.5);
         intakePosition.set(Value.kForward);
     }
 

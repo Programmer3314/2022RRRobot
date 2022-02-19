@@ -48,15 +48,17 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     MMMotorGroup tunnelWheels;
     ColorSensorV3 frontColorSensor;
     DigitalInput breakBeamOne;
+    int baseBlue;
+    int baseRed;
     
 
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
-        breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
-        frontColorSensor = new ColorSensorV3(Port.kMXP);
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
+        breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
+        frontColorSensor = new ColorSensorV3(Port.kMXP);
     }
 
     @Override
@@ -64,10 +66,12 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         //TODO make desired ball laggy
         int red = frontColorSensor.getRed();
         int blue = frontColorSensor.getBlue();
-        isRed = red > blue * 2;
-        isBlue = blue > red * 2;
-        // desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed)) && !breakBeamOne.get();
-        desiredBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
+        //isRed = red > blue * 2;
+        //isBlue = blue > red * 2;
+        isRed = red > baseRed*1.05;
+        isBlue = blue > baseBlue*1.05;
+        desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed) || (Robot.alliance == Alliance.Red && isRed && !isBlue)); //&& !breakBeamOne.get();
+        //desiredBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
@@ -79,18 +83,17 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
         SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
         
- 
         super.update();
     }
 
     @Override
     public void CalcNextState() {
         switch (currentState) {
-            // TODO Fix missing break; after start.
             case Start:
                 nextState = TunnelStates.Idle;
+                break;
             case Idle:                                                                                                          
-                if (desiredBall ) { 
+                if (desiredBall) { 
                     nextState = TunnelStates.BallDetected;
                 }
                 break;
@@ -115,7 +118,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         // or we are but there is another problem 
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
-            tunnelWheels.setPower(0.5);
+            tunnelWheels.setPower(0.3);
             SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());
         }
         if (isTransitionTo(TunnelStates.Idle)) {
@@ -128,12 +131,15 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     @Override
     public void doCurrentState() {
         switch (currentState) {
+            case Start:
+                baseRed = frontColorSensor.getRed();
+                baseBlue =  frontColorSensor.getBlue();
             case Idle:
                 tunnelBelt.setPower(0.3);
+
                 break;
             case BallDetected:
-                // I think this should be 0.0
-                tunnelBelt.setPower(0.3);
+                tunnelBelt.setPower(0.0);
                 break;
         }
 

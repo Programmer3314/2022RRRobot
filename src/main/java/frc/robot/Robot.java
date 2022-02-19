@@ -8,11 +8,14 @@ import static frc.robot.Constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.AHRS.SerialDataType;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
@@ -139,6 +142,7 @@ public class Robot extends TimedRobot {
     // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
     // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
     // lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
+    
 
     navx = new AHRS(Port.kMXP);
     // navx = new AHRS(SerialPort.Port.USB);
@@ -150,23 +154,19 @@ public class Robot extends TimedRobot {
     controllerOperator = new Joystick(Constants.kJoystickOperator);
     speedAxis = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
     turnAxis = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
-
-    buttonBox1 = new Joystick(1);
+    buttonBox1 = new Joystick(1);    
 
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
 
-    // TODO Move definitions of MotorGroups controlled by
-    // these state machines and pass them in just like
-    // with the diffDriveTrain below. This will prevent
-    // confusion and/or conflict over controlling them.
-    // The same should be done with sensor definitions.
     intake = new Intake();
     queueStateMachine = new QueueStateMachine();
-    tunnelStateMachine = new TunnelStateMachine();
     shooterStateMachine = new ShooterStateMachine();
+    tunnelStateMachine = new TunnelStateMachine();
+
     // climbStateMachine = new ClimbStateMachine();
-    aimController = new AimController();
+
+    aimController = new AimController(/*turret*/);
     // pneumaticsControlModule = new
     // PneumaticsControlModule(Constants.kPneumaticsControlModule);
 
@@ -363,7 +363,8 @@ public class Robot extends TimedRobot {
     } else {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
-      if (confidenceCounter > 0) {
+      
+      if (true || confidenceCounter > 0) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;
@@ -378,7 +379,7 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.update();
     // climbStateMachine.update();
     queueStateMachine.update();
-    // shooterStateMachine.update();
+    shooterStateMachine.update();
 
     SmartDashboard.putNumber("Navx Angle", currentAngle);
     SmartDashboard.putNumber("Position X: ", navx.getDisplacementX());
