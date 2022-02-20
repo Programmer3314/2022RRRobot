@@ -4,6 +4,8 @@
 
 package frc.robot.utility;
 
+import edu.wpi.first.wpilibj.Timer;
+
 // TODO Add secondsInState and cyclesInState variables
 
 
@@ -14,10 +16,15 @@ public abstract class MMStateMachine<T> {
     public T currentState;
     public T nextState;
     public boolean firstTimeRun;
+    public double secondsInState;
+    public double cyclesInStates;
+    public double startCurrentStateTime;
 
     public MMStateMachine(T initState) {
         currentState = initState;
         firstTimeRun = true;
+        cyclesInStates=0;
+        startCurrentStateTime =Timer.getFPGATimestamp();
     }
 
     public void update() {
@@ -27,9 +34,13 @@ public abstract class MMStateMachine<T> {
             if (nextState != currentState) {
                 doTransition();
                 currentState = nextState;
+                cyclesInStates = 0;
+                startCurrentStateTime=Timer.getFPGATimestamp();
             }
         }
+        secondsInState = Timer.getFPGATimestamp()-startCurrentStateTime;
         doCurrentState();
+        cyclesInStates++;
         firstTimeRun = false;
     }
 

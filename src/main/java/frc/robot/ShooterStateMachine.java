@@ -54,89 +54,111 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     DigitalInput ballGoneBreakBeam;
     int passThroughCounter;
     MMJoystickAxis camPower;
+    boolean shootAll;
+    boolean shootOne;
+    boolean abortShot;
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
         shooter = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterShoot)
                 .setInverted(InvertType.InvertMotorOutput)
-                .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI, Constants.kFXShooterWheelsD,
-                Constants.kFXShooterWheelsF));
+                .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
+                        Constants.kFXShooterWheelsD,
+                        Constants.kFXShooterWheelsF));
 
-        camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam));
+        camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam)
+        .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
+                        Constants.kFXShooterWheelsD,
+                        Constants.kFXShooterWheelsF)
+                        .setInverted(InvertType.InvertMotorOutput));
         feed = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterFeed)
-                   .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI, Constants.kFXShooterWheelsD,
-                Constants.kFXShooterWheelsF));
+                .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
+                        Constants.kFXShooterWheelsD,
+                        Constants.kFXShooterWheelsF));
 
         camlimitswitch = new DigitalInput(Constants.kDIOCamLimitSwitch);
         ballGoneBreakBeam = new DigitalInput(Constants.kDIOShooterBallGone);
         camPower = new MMJoystickAxis(Constants.kJoystickOperator, 5, .1, 1);
+        shootAll = false;
+        shootOne = false;
     }
 
     @Override
     public void CalcNextState() {
-        switch (currentState) {
-            case Start:
-                nextState = ShooterStates.Home;
-                break;
-            case Home:
-                if (homed && Robot.aimController.isHomed()) {
-                    nextState = ShooterStates.Idle;
-                }
-                break;
-            case Idle:
-                if (target.active && (Robot.shootOneButton || Robot.shootAllButton)) {
-                    nextState = ShooterStates.Preparing;
-                }
-                break;
-            case Preparing:
-                // if (target.active && Robot.queueStateMachine.isFull()
-                // && closeEnough(camAngle.getRevolutions(), target.angle,
-                // Constants.kangleMargin)
-                // && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
-                // && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
-                // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
-                if (target.active && Robot.queueStateMachine.isFull()
-                        // && closeEnough(camAngle.getRevolutions(), target.angle, Constants.kangleMargin)
-                        && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
-                        && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
-                        // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
-                        ) {
-                    passThroughCounter++;
 
-
-                    if (true || passThroughCounter > Constants.kShooterCounter) {
-                        nextState = ShooterStates.Shooting1;
-                    }
-                } else if (!target.active) {
-                    nextState = ShooterStates.Idle;
-                }
-                break;
-            case Shooting1:
-                if (!airBall) {
-                    nextState = ShooterStates.Shooting2;
-                }
-                break;
-            case Shooting2:
-                if (airBall) {
-                    if (Robot.shootAllButton) {
-                        nextState = ShooterStates.Preparing;
-                    }
-                    if (Robot.shootOneButton) {
+        if (abortShot && currentState != ShooterStates.Home && currentState != ShooterStates.Start) {
+            nextState = ShooterStates.Idle;
+        } else {
+            switch (currentState) {
+                case Start:
+                    nextState = ShooterStates.Home;
+                    break;
+                case Home:
+                    if (homed && Robot.aimController.isHomed()) {
                         nextState = ShooterStates.Idle;
                     }
-                }
+                    break;
+                case Idle:
+                    if (target != null && target.active && (shootOne || shootAll)) {
+                        nextState = ShooterStates.Preparing;
+                    }
+                    break;
+                case Preparing:
+                    // if (target.active && Robot.queueStateMachine.isFull()
+                    // && closeEnough(camAngle.getRevolutions(), target.angle,
+                    // Constants.kangleMargin)
+                    // && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
+                    // && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
+                    // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
+                    if (target.active && Robot.queueStateMachine.isFull()
+                    // && closeEnough(camAngle.getRevolutions(), target.angle,
+                    // Constants.kangleMargin)
+                            && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
+                            && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
+                    // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
+                    ) {
+                        passThroughCounter++;
+
+                        if (true || passThroughCounter > Constants.kShooterCounter) {
+                            nextState = ShooterStates.Shooting1;
+                        }
+                    } else if (!target.active) {
+                        nextState = ShooterStates.Idle;
+                    }
+                    break;
+                case Shooting1:
+                    if (!airBall) {
+                        nextState = ShooterStates.Shooting2;
+                    }
+                    break;
+                case Shooting2:
+                    if (airBall) {
+                        if (shootAll) {
+
+                            nextState = ShooterStates.Preparing;
+                            shootAll = false;
+                            shootOne = true;
+                        }
+                        if (shootOne) {
+                            shootOne = false;
+                            nextState = ShooterStates.Idle;
+                        }
+                    }
+            }
         }
+
     }
 
     @Override
     public void doTransition() {
         if (isTransitionTo(ShooterStates.Home)) {
-            //camAngle.setPower(-.2);
+             camAngle.setPower(-.2);
+             target = null;
             // move turret
         }
         if (isTransitionTo(ShooterStates.Preparing)) {
             shooter.setVelocity(target.rpm);
-            // camAngle.setPosition(target.angle);
+            camAngle.setPosition(target.angle);
             feed.setVelocity(target.feedrpm);
             // shooter.setPower(target.rpm / 6000);
             // feed.setPower(target.feedrpm / 6000);
@@ -148,7 +170,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         }
         if (isTransitionTo(ShooterStates.Idle)) {
             shooter.setPower(0);
-            //camAngle.setPower(0);
+             camAngle.setPower(0);
             feed.setPower(0);
         }
     }
@@ -157,9 +179,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Home:
-                camhomed = true;
+                //camhomed = true;
                 if (camhomed) {
-                    //camAngle.setPower(0);
+                     camAngle.setPower(0);
+                     camAngle.resetEncoders();
                 }
                 homed = camhomed;
                 break;
@@ -167,7 +190,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     }
 
-    
     public void setShootingSolution(TargetPoint target) {
         this.target = target;
         passThroughCounter = 0;
@@ -175,27 +197,47 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     @Override
     public void update() {
-        camhomed = camlimitswitch.get();
+        camhomed = !camlimitswitch.get();
         // airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
         airBall = !ballGoneBreakBeam.get();
         super.update();
 
-        
         //camAngle.setPower(camPower.get());
         SmartDashboard.putBoolean("Air Ball", airBall);
         SmartDashboard.putString("Shooter SM", currentState.toString());
-        SmartDashboard.putNumber("Request Feed", target.feedrpm);
-        SmartDashboard.putNumber("Requested Shooter", target.rpm);
+        if (target != null) {
+            SmartDashboard.putNumber("Request Feed", target.feedrpm);
+            SmartDashboard.putNumber("Requested Shooter", target.rpm);
+            SmartDashboard.putBoolean("Target Active", target.active);
+            SmartDashboard.putNumber("Requested Cam", target.angle);
+        }
+        SmartDashboard.putBoolean("CamLimitSwitch", camlimitswitch.get());
         SmartDashboard.putNumber("Returned Feed result", feed.getVelocity());
         SmartDashboard.putNumber("Returned Shooter", shooter.getVelocity());
-        SmartDashboard.putBoolean("Target Active", target.active);
+        SmartDashboard.putNumber("Returned Cam", camAngle.getRevolutions());
         SmartDashboard.putNumber("Pass Through Counter", passThroughCounter);
     }
+
     public void resetState() {
         currentState = ShooterStates.Start;
     }
 
     public boolean closeEnough(double value1, double value2, double margin) {
         return Math.abs(value1 - value2) <= margin;
+    }
+
+    public void shootAll() {
+        shootAll = true;
+    }
+
+    public void shootOne() {
+        shootOne = true;
+    }
+
+    public void abortShot(boolean abortshot) {
+        abortshot = true;
+        shootAll = false;
+        shootOne = false;
+
     }
 }

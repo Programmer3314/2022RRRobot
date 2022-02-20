@@ -60,9 +60,9 @@ public class Constants {
     public static double krpmMargin = 100;
     public static double kangleMargin = .5;
 
-    public static double kCameraVerticalAngle = 41;
+    public static double kCameraVerticalAngle = 33;
     public static double ktargetHeight=104/12.0;
-    public static double kTargetCameraHeight=6/12.0;
+    public static double kTargetCameraHeight=37/12.0;
     public static double kTargetingHeightDiff=ktargetHeight-kTargetCameraHeight;
 
     public static double kRevPerFoot = 4.67;
@@ -99,7 +99,7 @@ public class Constants {
     public static int kDIOTunnelBreakBeam = 1;
 
     public static int kDIOTurretLimitSwitch = 2;
-    public static int kDIOCamLimitSwitch = 3;
+    public static int kDIOCamLimitSwitch = 8;
     public static int kDIOShooterBallGone = 9;
 
     public static int kShooterCounter = 10;
@@ -118,6 +118,11 @@ public class Constants {
     public static int kOperatorRaiseHooks = 1;
     public static int kOperatorLowerHooksButton = 8;
     public static int kOperatorClimbButton = 2;
+    public static int kOperatorAbortShot = 5;
+
+    public static int kButtonBoxAbortShot = 9;
+
+    public static int kShooterLimeLight=7;
 
     public static int kDriverToggleBallLight=9;
     public static int kDriverAutoBallPickup=2;

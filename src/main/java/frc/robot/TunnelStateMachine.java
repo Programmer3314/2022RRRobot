@@ -74,14 +74,14 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         //desiredBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
-        SmartDashboard.putBoolean("isRed", isRed);
+        SmartDashboard.putBoolean("isRed", isRed);  
         SmartDashboard.putBoolean("isBlue", isBlue);
         SmartDashboard.putString("Tunnel State", currentState.toString());
         SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
         SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
         SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
         SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());
-
+         
         super.update();
     }
 
