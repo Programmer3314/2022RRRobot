@@ -71,7 +71,7 @@ Main TODO List:
  */
 public class Robot extends TimedRobot {
   public static MMDiffDriveTrain driveTrain;
-  Joystick controllerDriver;
+  public static Joystick controllerDriver;
   public static Joystick buttonBox1;
   public static Joystick controllerOperator;
   MMJoystickAxis speedAxis, turnAxis;
@@ -240,7 +240,7 @@ public class Robot extends TimedRobot {
     // new MMSparkMaxMotorController(kCanMCDriveRight3, MotorType.kBrushless)),
     // kRevPerFoot, kChassiRadius);
    // pneumaticHub.enableCompressorDigital();
-   pneumaticHub.disableCompressor();
+   pneumaticHub.enableCompressorDigital();
   }
 
 
@@ -273,7 +273,6 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.resetState();
     queueStateMachine.resetState();
     shooterStateMachine.resetState();
-
   }
 
   @Override
@@ -315,30 +314,41 @@ public class Robot extends TimedRobot {
       lightRing.set(!lightRing.get());
     }
 
-    AimMode aimMode = AimMode.driver;
+    // AimMode aimMode = AimMode.driver;
 
-    if (autoLockHoop && confidenceCounter > 0) {
-      // double p = 5;
-      // double currentError = autocorrectTargetAngle - currentAngle;
-      // // double currentError=xAngle- currentAngle;
-      // requestedTurn = p * currentError;
-      // SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
-      aimMode = AimMode.robotShoot;
-    }
+    // if (autoLockHoop && confidenceCounter > 0) {
+    //   // double p = 5;
+    //   // double currentError = autocorrectTargetAngle - currentAngle;
+    //   // // double currentError=xAngle- currentAngle;
+    //   // requestedTurn = p * currentError;
+    //   // SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
+    //   aimMode = AimMode.robotShoot;
+    // }
 
-    if (autoBallPickup /* && targetConfidence */) {
-      // double p = 3;
-      // requestedTurn = p * ballChaseAngle;
-      // requestedSpeed = -1;
-      aimMode = AimMode.ballChase;
-    }
+    // if (autoBallPickup /* && targetConfidence */) {
+    //   // double p = 3;
+    //   // requestedTurn = p * ballChaseAngle;
+    //   // requestedSpeed = -1;
+    //   aimMode = AimMode.ballChase;
+    // }
 
     
-
-    aimController.setAimMode(aimMode);
+    if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget) && confidenceCounter > 0){
+    aimController.setAimMode(AimMode.robotShoot);
+    }
+    else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)){
+      aimController.setAimMode(AimMode.driver);
+    }
+    else if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoBallPickup)){
+      aimController.setAimMode(AimMode.ballChase);
+    }
+    else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoBallPickup)){
+      aimController.setAimMode(AimMode.driver);
+    }
     requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);
     driveTrain.Drive(requestedSpeed, requestedTurn);
 
+    SmartDashboard.putNumber("Manual Feed:", 0);
 
     commonUpdate();
   }

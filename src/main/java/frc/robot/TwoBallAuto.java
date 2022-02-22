@@ -10,10 +10,11 @@ import static frc.robot.Robot.currentAngle;
 import static frc.robot.Robot.driveTrain;
 import static frc.robot.Robot.lightRing;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
 
 enum TBautoStates {
-    Start, DriveBack, TurnAway, AutoTarget, Done
+    Start, DriveBack, Shoot, Done
 };
 
 /**
@@ -36,86 +37,42 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     @Override
     public void periodic() {
         update();
+        SmartDashboard.putString("Auto State", currentState.toString());
     }
 
     @Override
     public void CalcNextState() {
         switch (currentState) {
-            case AutoTarget:
-                if (Robot.confidenceCounter == 0){
-                    nextState = TBautoStates.Done;
-                }
-                if (Math.abs(currentAngle - autocorrectTargetAngle) < 2) {
-                    autoTargetRunCounter += 1;
-                    if (autoTargetRunCounter >= 50) {
-                        nextState = TBautoStates.Done;
-                    }
-                } else {
-                    autoTargetRunCounter = 0;
-                }
-                break;
-            case Done:
-                break;
-            case DriveBack:
-                if (Robot.driveTrain.getDistanceFeet() <= -3.0) {
-                    nextState = TBautoStates.TurnAway;
-                }
-                break;
             case Start:
                 nextState = TBautoStates.DriveBack;
                 break;
-            case TurnAway:
-                if (currentAngle <= goalAngle) {
-                    nextState = TBautoStates.AutoTarget;
+            case DriveBack:
+                if (Robot.driveTrain.getDistanceFeet() <= -3.0) {
+                    nextState = TBautoStates.Shoot;
                 }
+                break;
+            case Shoot:
+                nextState = TBautoStates.Done;
+            case Done:
                 break;
         }
     }
 
     @Override
     public void doTransition() {
-        if (nextState == TBautoStates.AutoTarget) {
-            lightRing.set(true);
-        }
-        if (nextState == TBautoStates.DriveBack) {
+        if (isTransitionTo(TBautoStates.DriveBack)){
             Robot.driveTrain.resetEncoders();
+            Robot.intake.intake();
+            Robot.driveTrain.Drive(-1, 0);
         }
-        if (nextState == TBautoStates.TurnAway) {
-            goalAngle = currentAngle - 10;
+        if (isTransitionTo(TBautoStates.Shoot)){
+            Robot.driveTrain.Drive(0, 0);
+            Robot.shooterStateMachine.shootAll();
+            Robot.intake.idle();
         }
     }
 
     @Override
-    public void doCurrentState() {
-        switch (currentState) {
-            case AutoTarget:
-                if (confidenceCounter > 0) {
-                    Robot.aimController.setAimMode(AimMode.robotShoot);
-                    double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
-            
-
-                   // double currentError = autocorrectTargetAngle - currentAngle;
-                    // double currentError=xAngle- currentAngle;
-                   // double requestedTurn = p * currentError;
-                    // SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
-
-                    // SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
-
-                    // SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
-                    driveTrain.Drive(0, turn);
-                }
-                break;
-            case Done:
-                Robot.driveTrain.Drive(0, 0);
-                break;
-            case DriveBack:
-                Robot.driveTrain.Drive(-1, 0);
-                break;
-            case Start:
-                break;
-            case TurnAway:
-                Robot.driveTrain.Drive(0, -20);
-                break;
-        }
+    public void doCurrentState() {     
     }
 }

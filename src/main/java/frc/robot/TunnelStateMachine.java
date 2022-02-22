@@ -68,8 +68,9 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         int blue = frontColorSensor.getBlue();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
-        // isRed = red > baseRed*1.05;
-        // isBlue = blue > baseBlue*1.05;
+        //isRed = red > baseRed*1.05;
+        //isBlue = blue > baseBlue*1.05;
+        //desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance == Alliance.Red && isRed));
         desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed) || (Robot.alliance == Alliance.Red && isRed && !isBlue)); //&& !breakBeamOne.get();
         //desiredBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
 
@@ -143,6 +144,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     }
     public void resetState(){
+        desiredBall = false;
         currentState = TunnelStates.Start;
     }
 }

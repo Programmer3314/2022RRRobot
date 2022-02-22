@@ -41,10 +41,10 @@ public class MMDiffDriveTrain {
     public void Drive(double speed, double turn) {
         double speedRPM = speed * 60 * revPerFoot;
         double turnRPM = turn * 60 * revPerFoot * feetPerDeg;
-        leftMG.setPower(rpmToPower(speedRPM + turnRPM, revPerFoot*600));
-        rightMG.setPower(rpmToPower(speedRPM - turnRPM, revPerFoot*600));
-        //leftMG.setVelocity(speedRPM + turnRPM);
-        //rightMG.setVelocity(speedRPM - turnRPM);
+        // leftMG.setPower(rpmToPower(speedRPM + turnRPM, revPerFoot*600));
+        // rightMG.setPower(rpmToPower(speedRPM - turnRPM, revPerFoot*600));
+        leftMG.setVelocity(speedRPM + turnRPM);
+        rightMG.setVelocity(speedRPM - turnRPM);
         SmartDashboard.putNumber("Drivetrain left MG power", rpmToPower(speedRPM + turnRPM, revPerFoot*600));
         SmartDashboard.putNumber("Drivetrain Right MG power", rpmToPower(speedRPM - turnRPM, revPerFoot*600));
     }

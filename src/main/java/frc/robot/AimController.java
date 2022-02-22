@@ -6,6 +6,7 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
@@ -36,6 +37,7 @@ enum AimMode {
 }
 
 public class AimController {
+    PIDController robotAim;
     AimMode aimMode;
     MMMotorGroup turret;
     DigitalInput turretLowLimitSwitch;
@@ -48,6 +50,9 @@ public class AimController {
         //turret = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterTurret));
         // this.turret = turret;
         searchPower = -.15;
+        robotAim = new PIDController(kPRobotTargetTurn, kIRobotTargetTurn, kDRobotTargetTurn);
+        robotAim.setTolerance(kRobotAimTolerance);
+        turretHomed = true;
     }
 
     public void setAimMode(AimMode aimMode) {
@@ -56,7 +61,6 @@ public class AimController {
 
     public double calculate(double DriverTurn, double targetAngle, double currentAngle, double ballAngle) {
         double turn = 0;
-        turretHomed = true;
         switch (aimMode) {
             case autonomous:
                 // skip for now
@@ -72,7 +76,8 @@ public class AimController {
             case robotShoot: {
                 double currentError = targetAngle - currentAngle;
 
-                turn = kPRobotTargetTurn * currentError;
+                //turn = kPRobotTargetTurn * currentError;
+                turn = robotAim.calculate(currentAngle, targetAngle);
             }
                 break;
             case turretShoot:

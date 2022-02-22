@@ -48,6 +48,14 @@ public class Constants {
     public static double kFXShooterWheelsMin = -1;
     public static double kFXShooterWheelsMax = +1;
 
+    public static double kFXCamP = 0.1;
+    public static double kFXCamI = 0;
+    public static double kFXCamD = 1;
+    public static double kFXCamF = 0.0;
+    public static double kFXCamIZ = 0;
+    public static double kFXCamMin = -1;
+    public static double kFXCamMax = +1;
+
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
 
@@ -58,7 +66,7 @@ public class Constants {
     public static double kMaxTurnRate = 180;
 
     public static double krpmMargin = 100;
-    public static double kangleMargin = .5;
+    public static double kangleMargin = 10;
 
     public static double kCameraVerticalAngle = 33;
     public static double ktargetHeight=104/12.0;
@@ -105,7 +113,12 @@ public class Constants {
     public static int kShooterCounter = 10;
 
     public static double kPRobotBallTurn = 3;
-    public static double kPRobotTargetTurn = 5;
+
+    public static double kPRobotTargetTurn = 11;
+    public static double kIRobotTargetTurn = 0;
+    public static double kDRobotTargetTurn = 0;
+    public static double kRobotAimTolerance = 2;
+
     public static double kPTurretTargetTurn =2;
 
     public static double kTurretDegreesPerRev = 10;
@@ -122,7 +135,7 @@ public class Constants {
 
     public static int kButtonBoxAbortShot = 9;
 
-    public static int kShooterLimeLight=7;
+    public static int kShooterLimeLight=0;
 
     public static int kDriverToggleBallLight=9;
     public static int kDriverAutoBallPickup=2;
@@ -146,7 +159,7 @@ public class Constants {
     public static int kSolenoidClimberForward = 5;
     public static int kSolenoidClimberBackward = 6;
 
-    public static int kTestButtonBoxDesiredBall = 2;
-    public static int kTestButtonBoxQueuePosition = 3;
-    public static int kTestButtonBoxAirBall = 4;
+    // public static int kTestButtonBoxDesiredBall = 2;
+    // public static int kTestButtonBoxQueuePosition = 3;
+    // public static int kTestButtonBoxAirBall = 4;
 }

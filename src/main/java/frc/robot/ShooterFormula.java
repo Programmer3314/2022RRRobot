@@ -17,9 +17,9 @@ public class ShooterFormula {
     public ShooterFormula() {
         targetPoints = new ArrayList<>();
         //Distance, ShooterRpm, CamAngle, FeedRpm, TargetError
-        targetPoints.add(new TargetPoint(0, 3000, 25, 3000, 5));
-        targetPoints.add(new TargetPoint(10, 4500, 25, 3000, 3));
-        targetPoints.add(new TargetPoint(25, 3500, 0.5, 1750, 2));
+        targetPoints.add(new TargetPoint(0, 3400, 0, 3400, 5));
+        targetPoints.add(new TargetPoint(3, 3640, 0, 3640, 4));
+        targetPoints.add(new TargetPoint(18, 4000, 70, 4000, 2));
     }
 
     public TargetPoint calculate(double targetDistance) {
