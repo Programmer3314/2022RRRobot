@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
 
 enum TBautoStates {
-    Start, DriveBack, Shoot, Done
+    Start, DriveBack, Buffer, Shoot, Done
 };
 
 /**
@@ -47,14 +47,23 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 nextState = TBautoStates.DriveBack;
                 break;
             case DriveBack:
-                if (Robot.driveTrain.getDistanceFeet() <= -3.0) {
-                    nextState = TBautoStates.Shoot;
+                if (Robot.driveTrain.getDistanceFeet() <= -4.0) {
+                    nextState = TBautoStates.Buffer;
                 }
                 break;
+            case Buffer:
+                if (secondsInState >= 2){
+                    nextState = TBautoStates.Shoot;
+                } 
+                break;
             case Shoot:
-                nextState = TBautoStates.Done;
+                if (!Robot.shooterStateMachine.shootOne && !Robot.shooterStateMachine.shootAll){
+                    nextState = TBautoStates.Done;
+                }
+                break;
             case Done:
                 break;
+            
         }
     }
 
@@ -63,16 +72,36 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         if (isTransitionTo(TBautoStates.DriveBack)){
             Robot.driveTrain.resetEncoders();
             Robot.intake.intake();
-            Robot.driveTrain.Drive(-1, 0);
+            Robot.driveTrain.Drive(-2, 0);
+
         }
-        if (isTransitionTo(TBautoStates.Shoot)){
+
+        if (isTransitionFrom(TBautoStates.DriveBack)){
             Robot.driveTrain.Drive(0, 0);
+
+        }
+
+        if (isTransitionTo(TBautoStates.Shoot)){
+            //Robot.driveTrain.Drive(0, 0);
+            Robot.aimController.setAimMode(AimMode.robotShoot);
+
             Robot.shooterStateMachine.shootAll();
+
             Robot.intake.idle();
         }
     }
 
     @Override
     public void doCurrentState() {     
+        switch (currentState){
+            case Shoot:
+                double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
+                Robot.driveTrain.Drive(0, turn);
+                break;
+  
+        }
+    }
+    public void resetState(){
+        currentState = TBautoStates.Start;
     }
 }

@@ -20,7 +20,7 @@ import frc.robot.Constants.*;
  */
 
 enum QueueStates {
-    Start, WaitForBall, DrawBallIn, GotBall, SendingBall
+    Start, WaitForBall, DrawBallIn, GotBall, SendingBall, RejectBall
 };
 
 /** Add your docs here. */
@@ -42,6 +42,9 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     @Override
     public void CalcNextState() {
+        if (Robot.tacoBell){
+            nextState = QueueStates.RejectBall;
+        } else { //TODO finish taco bell
         switch (currentState) {
             case Start:
                 nextState = QueueStates.WaitForBall;
@@ -66,7 +69,13 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
                     nextState = QueueStates.WaitForBall;
                 }
                 break;
+            case RejectBall:
+                if (!Robot.tacoBell){
+                    nextState = QueueStates.WaitForBall;
+                }
+                
         }
+    }
 
     }
 

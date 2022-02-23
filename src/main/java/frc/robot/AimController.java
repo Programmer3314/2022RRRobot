@@ -53,6 +53,7 @@ public class AimController {
         robotAim = new PIDController(kPRobotTargetTurn, kIRobotTargetTurn, kDRobotTargetTurn);
         robotAim.setTolerance(kRobotAimTolerance);
         turretHomed = true;
+        setAimMode(AimMode.driver);
     }
 
     public void setAimMode(AimMode aimMode) {
@@ -78,6 +79,7 @@ public class AimController {
 
                 //turn = kPRobotTargetTurn * currentError;
                 turn = robotAim.calculate(currentAngle, targetAngle);
+                
             }
                 break;
             case turretShoot:

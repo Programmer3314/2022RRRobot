@@ -112,6 +112,8 @@ public class Robot extends TimedRobot {
   public static PneumaticHub pneumaticHub;
   public static Solenoid shootLimeLight;
   public static boolean abortShootButton;
+  public static boolean disableCompressor;
+  public static boolean tacoBell; //Take out all balls within the robot
 
 /**
  * get joystick value and turn on shoot one or shoot all bool, want tap joystick not hold it
@@ -130,11 +132,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     //TODO IMMEDEYIT!!!!!!!!!
-    //spin down from shoot
-
-    //Tune the CAM 
-    //Count Time in a Given State && 
-    //Clear the Counter when Change the Log
+    //Abort Shoot
+    //Reset Robot Button
+    //Get Rid Of All Balls
+    //Autonomous Select Button
+    //Get the camera streams on shuffleboard
 
 
     // TODO CLEANUP Organize the init code to group simillar code
@@ -179,6 +181,7 @@ public class Robot extends TimedRobot {
     buttonBox1 = new Joystick(1);   
     abortShootButton = controllerOperator.getRawButton(kOperatorAbortShot) || 
                        buttonBox1.getRawButton(kButtonBoxAbortShot);
+    
 
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
@@ -191,7 +194,7 @@ public class Robot extends TimedRobot {
     // climbStateMachine = new ClimbStateMachine();
 
     aimController = new AimController(/*turret*/);
-    pneumaticHub = new PneumaticHub(Constants.kPneumaticsHub);
+    pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
     shootLimeLight= pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
 
     driveTrain = new MMDiffDriveTrain(
@@ -252,7 +255,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     commonInit();
+    tunnelStateMachine.resetState();
+    queueStateMachine.resetState();
+    shooterStateMachine.resetState();
+    aimController.setAimMode(AimMode.driver);
     autonomous = new TwoBallAuto();
+    
   }
 
   @Override
@@ -266,6 +274,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     commonInit();
+    aimController.setAimMode(AimMode.driver);
     // lightRing4.set(false);
     // climbStateMachine.currentState = ClimbStates.Start;
     // TODO: Comment these lines before competition
@@ -313,6 +322,12 @@ public class Robot extends TimedRobot {
     if (controllerDriver.getRawButtonPressed(Constants.kDriverToggleBallLight)) {
       lightRing.set(!lightRing.get());
     }
+
+    if (buttonBox1.getRawButton(kTestButtonBoxDisableCompressor)){
+      pneumaticHub.disableCompressor();
+    }
+
+    
 
     // AimMode aimMode = AimMode.driver;
 

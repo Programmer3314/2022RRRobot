@@ -62,7 +62,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     double shooterSpeed;
     double camControl;
 
-
     public ShooterStateMachine() {
         super(ShooterStates.Start);
         shooter = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterShoot)
@@ -122,23 +121,33 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 SmartDashboard.putBoolean("close to feed velocity",
                         closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin));
                 SmartDashboard.putBoolean("Close to cam angle", closeEnough(camAngle.getRevolutions(), target.angle,
-                Constants.kangleMargin));
+                        Constants.kangleMargin));
 
+                SmartDashboard.putBoolean("Close to target Angle",
+                        closeEnough(Robot.currentAngle, Robot.autocorrectTargetAngle, target.turretMargin));
                 SmartDashboard.putBoolean("Target Active", target == null ? false : target.active);
+
+                SmartDashboard.putNumber("Auto correct Target angle", Robot.autocorrectTargetAngle);
+                SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
+
                 if (target.active && Robot.queueStateMachine.isFull()
-                && closeEnough(camAngle.getRevolutions(), target.angle,
-                Constants.kangleMargin)
+                        && closeEnough(camAngle.getRevolutions(), target.angle,
+                                Constants.kangleMargin)
                         && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
                         && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
+                        && closeEnough(Robot.currentAngle, Robot.autocorrectTargetAngle, target.turretMargin)
                 // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                 ) {
                     passThroughCounter++;
                     SmartDashboard.putString("In Preparing/ passed If: ", "Yessir");
-                    if (true || passThroughCounter > Constants.kShooterCounter) {
+                    if (passThroughCounter > Constants.kShooterCounter) {
                         nextState = ShooterStates.Shooting1;
                     }
-                } else if (!target.active) {
-                    nextState = ShooterStates.Idle;
+                } else {
+                    if (!target.active) {
+                        nextState = ShooterStates.Idle;
+                    }
+                    passThroughCounter = 0;
                 }
                 break;
             case Shooting1:
@@ -154,7 +163,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                         shootOne = true;
                     } else if (shootOne) {
                         shootOne = false;
-                        shootAll =false;
+                        shootAll = false;
                         nextState = ShooterStates.Idle;
                     }
                 }
@@ -174,7 +183,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             shooter.setVelocity(target.rpm);
             camAngle.setPosition(target.angle);
             feed.setVelocity(target.feedrpm);
-            Robot.aimController.setAimMode(AimMode.robotShoot);
+            // Robot.aimController.setAimMode(AimMode.robotShoot);
+
             // shooter.setVelocity(shooterSpeed);
             // camAngle.setPosition(camControl);
             // feed.setVelocity(shooterSpeed);
@@ -191,8 +201,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             camAngle.setPower(0);
             feed.setPower(0);
         }
-        if (isTransitionFrom(ShooterStates.Shooting2)){
-            Robot.aimController.setAimMode(AimMode.driver);
+        if (isTransitionFrom(ShooterStates.Shooting2)) {
+            // Robot.aimController.setAimMode(AimMode.driver);
         }
     }
 
@@ -235,25 +245,24 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             // SmartDashboard.putNumber("Manual Shooter", shooterSpeed);
             SmartDashboard.putNumber("Requested Shooter", target.rpm);
             SmartDashboard.putNumber("Requested Cam", target.angle);
-            //SmartDashboard.putNumber("Manual Cam", camControl);
+            // SmartDashboard.putNumber("Manual Cam", camControl);
         }
 
         // if (Robot.controllerDriver.getPOV() == 0) {
-        //     shooterSpeed += 200;
+        // shooterSpeed += 200;
         // }
         // if (Robot.controllerDriver.getPOV() == 180) {
-        //     shooterSpeed -= 200;
+        // shooterSpeed -= 200;
         // }
 
         // if (Robot.controllerDriver.getPOV() == 90) {
-        //     camControl += 5;
+        // camControl += 5;
         // }
         // if (Robot.controllerDriver.getPOV() == 270) {
-        //     camControl -= 5;
+        // camControl -= 5;
         // }
         super.update();
 
-        
         // camAngle.setPower(camPower.get());
         // camAngle.setPosition(camControl);
         // shooter.setVelocity(shooterSpeed);
@@ -261,7 +270,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
         SmartDashboard.putBoolean("Air Ball", airBall);
         SmartDashboard.putString("Shooter SM", currentState.toString());
-        
+
         SmartDashboard.putBoolean("CamLimitSwitch", camlimitswitch.get());
         SmartDashboard.putNumber("Returned Feed result", feed.getVelocity());
         SmartDashboard.putNumber("Returned Shooter", shooter.getVelocity());

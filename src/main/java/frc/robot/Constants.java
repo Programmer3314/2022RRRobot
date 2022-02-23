@@ -135,7 +135,7 @@ public class Constants {
 
     public static int kButtonBoxAbortShot = 9;
 
-    public static int kShooterLimeLight=0;
+    public static int kShooterLimeLight=4;
 
     public static int kDriverToggleBallLight=9;
     public static int kDriverAutoBallPickup=2;
@@ -143,7 +143,8 @@ public class Constants {
     public static int kDriverEject = 6; 
     public static int kDriverAutoTurnToTarget = 1;
 
-    public static int kPneumaticsHub = 1;
+    public static int kPneumaticsHub = 0;
+    public static int kEjectPneumaticsHub = 1;
 
     public static InvertType kLeftMGInverted = InvertType.InvertMotorOutput;//not inverted
     public static InvertType kRightMGInverted = InvertType.None;//not inverted
@@ -153,12 +154,13 @@ public class Constants {
 
     public static int kSolenoidModule = 1;
 
-    public static int kSolenoidIntakeForward = 1;
-    public static int kSolenoidIntakeBackward =2;
+    public static int kSolenoidIntakeForward = 0;
+    public static int kSolenoidIntakeBackward =1;
 
     public static int kSolenoidClimberForward = 5;
     public static int kSolenoidClimberBackward = 6;
 
+    public static int kTestButtonBoxDisableCompressor = 10;
     // public static int kTestButtonBoxDesiredBall = 2;
     // public static int kTestButtonBoxQueuePosition = 3;
     // public static int kTestButtonBoxAirBall = 4;
