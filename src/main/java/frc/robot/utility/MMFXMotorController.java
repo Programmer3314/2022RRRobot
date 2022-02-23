@@ -4,7 +4,8 @@
 
 package frc.robot.utility;
 
-import static frc.robot.utility.MMConstants.*;
+import static frc.robot.utility.MMConstants.kMMFalconTicksPerRev;
+import static frc.robot.utility.MMConstants.kMMTimeoutMs;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -13,9 +14,6 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * TalonFX Motor Controller built into a Falcon500 motor
@@ -23,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class MMFXMotorController extends MMMotorController {
 
     public TalonFX mc;
-    //public TalonFXConfiguration config;
+    // public TalonFXConfiguration config;
 
     /**
      * Create a TalonFX Motor Controller built into a Falcon500 motor
@@ -33,7 +31,7 @@ public class MMFXMotorController extends MMMotorController {
     public MMFXMotorController(int canid) {
         mc = new TalonFX(canid);
         mc.configFactoryDefault();
-        //mc.getAllConfigs(config, 100);
+        // mc.getAllConfigs(config, 100);
 
         /**
          * Phase sensor accordingly.
@@ -77,7 +75,7 @@ public class MMFXMotorController extends MMMotorController {
 
     @Override
     public double getVelocity() {
-        
+
         return mc.getSelectedSensorVelocity() * 600.0 / kMMFalconTicksPerRev;
     }
 
@@ -102,37 +100,41 @@ public class MMFXMotorController extends MMMotorController {
         mc.set(ControlMode.Position, ticks);
 
     }
+
     @Override
-    public void setEncoder(double ticks){
+    public void setEncoder(double ticks) {
         mc.setSelectedSensorPosition(ticks);
     }
 
-    public void setEncoderRevolution(double revs){
-        setEncoder(revs*kMMFalconTicksPerRev);
+    public void setEncoderRevolution(double revs) {
+        setEncoder(revs * kMMFalconTicksPerRev);
     }
 
     public MMFXMotorController setBrakeMode(boolean brakeMode) {
-        if(brakeMode){
-        mc.setNeutralMode(NeutralMode.Brake);     
-        }
-        else{
-        mc.setNeutralMode(NeutralMode.Coast);
+        if (brakeMode) {
+            mc.setNeutralMode(NeutralMode.Brake);
+        } else {
+            mc.setNeutralMode(NeutralMode.Coast);
         }
         return this;
     }
 
     @Override
     public void setEncoderRevolutions(double revs) {
-        setEncoder(revs*kMMFalconTicksPerRev);   
+        setEncoder(revs * kMMFalconTicksPerRev);
     }
 
-    public MMFXMotorController setStatorCurrentLimit(boolean enabled, double currentAmpLimit, double triggerAmpThreshold, double triggerThresholdSeconds){
-        mc.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold, triggerThresholdSeconds));
+    public MMFXMotorController setStatorCurrentLimit(boolean enabled, double currentAmpLimit,
+            double triggerAmpThreshold, double triggerThresholdSeconds) {
+        mc.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold,
+                triggerThresholdSeconds));
         return this;
     }
 
-    public MMFXMotorController setSupplyCurrentLimit(boolean enabled, double currentAmpLimit, double triggerAmpThreshold, double triggerThresholdSeconds){
-        mc.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold, triggerThresholdSeconds));
+    public MMFXMotorController setSupplyCurrentLimit(boolean enabled, double currentAmpLimit,
+            double triggerAmpThreshold, double triggerThresholdSeconds) {
+        mc.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold,
+                triggerThresholdSeconds));
         return this;
     }
 

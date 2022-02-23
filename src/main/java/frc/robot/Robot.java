@@ -4,28 +4,15 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
-
-import java.util.function.BiConsumer;
-
 import com.kauailabs.navx.frc.AHRS;
-import com.kauailabs.navx.frc.AHRS.SerialDataType;
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsControlModule;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,7 +22,6 @@ import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
-import frc.robot.utility.MMSparkMaxMotorController;
 
 /*
 Main TODO List:
@@ -113,16 +99,16 @@ public class Robot extends TimedRobot {
   public static Solenoid shootLimeLight;
   public static boolean abortShootButton;
   public static boolean disableCompressor;
-  public static boolean tacoBell; //Take out all balls within the robot
+  public static boolean tacoBell; // Take out all balls within the robot
 
-/**
- * get joystick value and turn on shoot one or shoot all bool, want tap joystick not hold it
- * if someone holds the shoot all button, shoot one ball then shoot all will be false 
- * and shoot one will become true
- * 
- */
-
-
+  /**
+   * get joystick value and turn on shoot one or shoot all bool, want tap joystick
+   * not hold it
+   * if someone holds the shoot all button, shoot one ball then shoot all will be
+   * false
+   * and shoot one will become true
+   * 
+   */
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -131,13 +117,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    //TODO IMMEDEYIT!!!!!!!!!
-    //Abort Shoot
-    //Reset Robot Button
-    //Get Rid Of All Balls
-    //Autonomous Select Button
-    //Get the camera streams on shuffleboard
-
+    // TODO IMMEDEYIT!!!!!!!!!
+    // Abort Shoot
+    // Reset Robot Button
+    // Get Rid Of All Balls
+    // Autonomous Select Button
+    // Get the camera streams on shuffleboard
+    // Expanded MMPIDController with minOutput and maxOutput
 
     // TODO CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
@@ -158,15 +144,11 @@ public class Robot extends TimedRobot {
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-    
-   
-
 
     // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
     // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
     // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
     // lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
-    
 
     navx = new AHRS(Port.kMXP);
     // navx = new AHRS(SerialPort.Port.USB);
@@ -176,12 +158,11 @@ public class Robot extends TimedRobot {
 
     controllerDriver = new Joystick(Constants.kJoystickDriver);
     controllerOperator = new Joystick(Constants.kJoystickOperator);
-    speedAxis = new MMJoystickAxis(4, 1, .2, kMaxSpeed);
-    turnAxis = new MMJoystickAxis(4, 4, .2, kMaxTurnRate);
-    buttonBox1 = new Joystick(1);   
-    abortShootButton = controllerOperator.getRawButton(kOperatorAbortShot) || 
-                       buttonBox1.getRawButton(kButtonBoxAbortShot);
-    
+    speedAxis = new MMJoystickAxis(4, 1, .2, Constants.kMaxSpeed);
+    turnAxis = new MMJoystickAxis(4, 4, .2, Constants.kMaxTurnRate);
+    buttonBox1 = new Joystick(1);
+    abortShootButton = controllerOperator.getRawButton(Constants.kOperatorAbortShot) ||
+        buttonBox1.getRawButton(Constants.kButtonBoxAbortShot);
 
     shooterFormula = new ShooterFormula();
     SmartDashboard.putNumber("Target Distance", 0);
@@ -193,9 +174,9 @@ public class Robot extends TimedRobot {
 
     // climbStateMachine = new ClimbStateMachine();
 
-    aimController = new AimController(/*turret*/);
+    aimController = new AimController(/* turret */);
     pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
-    shootLimeLight= pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
+    shootLimeLight = pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
 
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
@@ -204,49 +185,26 @@ public class Robot extends TimedRobot {
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                    .setBrakeMode(false),
+                .setBrakeMode(false),
             new MMFXMotorController(Constants.kCanMCDriveLeft2)
                 .setInverted(Constants.kLeftMGInverted) // This MUST MATCH LEAD!
-                .setBrakeMode(false)
-        ),
+                .setBrakeMode(false)),
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveRight1)
                 .setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                    .setBrakeMode(false),
+                .setBrakeMode(false),
             new MMFXMotorController(Constants.kCanMCDriveRight2)
                 .setInverted(Constants.kRightMGInverted)
                 .setBrakeMode(false) // This MUST MATCH LEAD!
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 
-    // driveTrain = new MMDiffDriveTrain(
-    // new MMFollowingMotorGroup(
-    // new MMSparkMaxMotorController(kCanMCDriveLeft1, MotorType.kBrushless)
-    // .setCurrentLimit(kNeoDriveTrainStallLimit, kNeoDriveTrainFreeLimit)
-    // .setInverted(true)
-    // .setPIDFParameters(kNeoDriveTrainP, kNeoDriveTrainI, kNeoDriveTrainD,
-    // kNeoDriveTrainF, kNeoDriveTrainIZ,
-    // kNeoDriveTrainMin, kNeoDriveTrainMax),
-    // new MMSparkMaxMotorController(kCanMCDriveLeft2, MotorType.kBrushless),
-    // new MMSparkMaxMotorController(kCanMCDriveLeft3, MotorType.kBrushless)),
-    // new MMFollowingMotorGroup(
-    // new MMSparkMaxMotorController(kCanMCDriveRight1, MotorType.kBrushless)
-    // .setCurrentLimit(kNeoDriveTrainStallLimit, kNeoDriveTrainFreeLimit)
-    // .setInverted(false)
-    // .setPIDFParameters(kNeoDriveTrainP, kNeoDriveTrainI, kNeoDriveTrainD,
-    // kNeoDriveTrainF, kNeoDriveTrainIZ,
-    // kNeoDriveTrainMin, kNeoDriveTrainMax),
-    // new MMSparkMaxMotorController(kCanMCDriveRight2, MotorType.kBrushless),
-    // new MMSparkMaxMotorController(kCanMCDriveRight3, MotorType.kBrushless)),
-    // kRevPerFoot, kChassiRadius);
-   // pneumaticHub.enableCompressorDigital();
-   pneumaticHub.enableCompressorDigital();
+    // pneumaticHub.enableCompressorDigital();
+    pneumaticHub.enableCompressorDigital();
   }
-
-
 
   @Override
   public void robotPeriodic() {
@@ -260,7 +218,7 @@ public class Robot extends TimedRobot {
     shooterStateMachine.resetState();
     aimController.setAimMode(AimMode.driver);
     autonomous = new TwoBallAuto();
-    
+
   }
 
   @Override
@@ -301,14 +259,14 @@ public class Robot extends TimedRobot {
     pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPointBlankPOV) == 0;
     autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
 
-    if (abortShootButton){
+    if (abortShootButton) {
       shooterStateMachine.abortShot(abortShootButton);
     }
 
-    if(shootAllButton){
+    if (shootAllButton) {
       shooterStateMachine.shootAll();
-      
-    } else if(shootOneButton){
+
+    } else if (shootOneButton) {
       shooterStateMachine.shootOne();
     }
 
@@ -323,41 +281,35 @@ public class Robot extends TimedRobot {
       lightRing.set(!lightRing.get());
     }
 
-    if (buttonBox1.getRawButton(kTestButtonBoxDisableCompressor)){
+    if (buttonBox1.getRawButton(Constants.kTestButtonBoxDisableCompressor)) {
       pneumaticHub.disableCompressor();
     }
-
-    
 
     // AimMode aimMode = AimMode.driver;
 
     // if (autoLockHoop && confidenceCounter > 0) {
-    //   // double p = 5;
-    //   // double currentError = autocorrectTargetAngle - currentAngle;
-    //   // // double currentError=xAngle- currentAngle;
-    //   // requestedTurn = p * currentError;
-    //   // SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
-    //   aimMode = AimMode.robotShoot;
+    // // double p = 5;
+    // // double currentError = autocorrectTargetAngle - currentAngle;
+    // // // double currentError=xAngle- currentAngle;
+    // // requestedTurn = p * currentError;
+    // // SmartDashboard.putNumber("Auto Angle Correct", requestedTurn);
+    // aimMode = AimMode.robotShoot;
     // }
 
     // if (autoBallPickup /* && targetConfidence */) {
-    //   // double p = 3;
-    //   // requestedTurn = p * ballChaseAngle;
-    //   // requestedSpeed = -1;
-    //   aimMode = AimMode.ballChase;
+    // // double p = 3;
+    // // requestedTurn = p * ballChaseAngle;
+    // // requestedSpeed = -1;
+    // aimMode = AimMode.ballChase;
     // }
 
-    
-    if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget) && confidenceCounter > 0){
-    aimController.setAimMode(AimMode.robotShoot);
-    }
-    else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)){
+    if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget) && confidenceCounter > 0) {
+      aimController.setAimMode(AimMode.robotShoot);
+    } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)) {
       aimController.setAimMode(AimMode.driver);
-    }
-    else if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoBallPickup)){
+    } else if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoBallPickup)) {
       aimController.setAimMode(AimMode.ballChase);
-    }
-    else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoBallPickup)){
+    } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoBallPickup)) {
       aimController.setAimMode(AimMode.driver);
     }
     requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);
@@ -394,18 +346,16 @@ public class Robot extends TimedRobot {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
     shootLimeLight.set(true);
- 
+
   }
 
   public void commonPeriodic() {
     searchButton = controllerOperator.getRawButton(Constants.kOperatorSearchButton);
 
-    
-
     currentAngle = cleanAngle(navx.getYaw());
-    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + kCameraVerticalAngle;
+    verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + Constants.kCameraVerticalAngle;
     horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
-    targetDistance = kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
+    targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
 
     boolean targetConfidence = nt.getTable("Ball Target")
         .getEntry(alliance == Alliance.Blue ? "Blue Target Confidence" : "Red Target Confidence").getBoolean(false);
@@ -416,10 +366,12 @@ public class Robot extends TimedRobot {
       aimController.searchRequest();
     }
 
+    // TODO Clean up autocorrectTargetAngle/firingSolution with respect to
+    // when they are valid. I'm not sure what this looks like but it seems odd
+    // that we use .active and confidenceCounter...
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
-       autocorrectTargetAngle = cleanAngle(currentAngle + horizontalAngle +
-          (/*aimController.turret.getRevolutions() */ 0* Constants.kTurretDegreesPerRev));
-
+      autocorrectTargetAngle = cleanAngle(currentAngle + horizontalAngle +
+          (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
 
       confidenceCounter = 500;
     } else {
@@ -439,7 +391,7 @@ public class Robot extends TimedRobot {
     } else {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
-      
+
       if (true || confidenceCounter > 0) {
         firingSolution.active = true;
       } else {

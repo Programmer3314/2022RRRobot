@@ -4,10 +4,7 @@
 
 package frc.robot;
 
-import java.util.Queue;
-
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +13,6 @@ import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
-import frc.robot.Constants.*;
 
 /**
  * Expected Hardware configuration (No Turret):

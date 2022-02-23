@@ -75,8 +75,7 @@ public class AimController {
                 turn = DriverTurn;
                 break;
             case robotShoot: {
-                double currentError = targetAngle - currentAngle;
-
+                //double currentError = targetAngle - currentAngle;
                 //turn = kPRobotTargetTurn * currentError;
                 turn = robotAim.calculate(currentAngle, targetAngle);
                 

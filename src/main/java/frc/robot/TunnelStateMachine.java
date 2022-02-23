@@ -21,7 +21,6 @@ import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
-import frc.robot.Constants.*;
 
 /**
  * Expected Hardware configuration:
