@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
 
 /** Add your docs here. */
 public class Constants {
@@ -102,6 +103,7 @@ public class Constants {
   //  public static int kCanMCClimber1 = 30;
   //  public static int kCanMCClimber2 = 31;
 
+    public static int kCanPowerDistributionBoard = 1;
    
     public static int kDIOQueueBreakBeam = 0;
     public static int kDIOTunnelBreakBeam = 1;
@@ -133,6 +135,10 @@ public class Constants {
     public static int kOperatorClimbButton = 2;
     public static int kOperatorAbortShot = 5;
 
+    public static int kButtonBoxIncreaseDistance = 3;
+    public static int kButtonBoxDecreaseDistance = 6;
+    public static int kButtonBoxResetRobot = 7;
+    public static int kButtonBoxTacobell= 8;
     public static int kButtonBoxAbortShot = 9;
 
     public static int kShooterLimeLight=4;

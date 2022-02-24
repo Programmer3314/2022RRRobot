@@ -44,7 +44,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public void CalcNextState() {
         if (Robot.tacoBell){
             nextState = QueueStates.RejectBall;
-        } else { //TODO finish taco bell
+        } else { 
         switch (currentState) {
             case Start:
                 nextState = QueueStates.WaitForBall;
@@ -103,12 +103,21 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
             // queueBelt.setVelocity(0);
             queueBelt.setPower(0);
             queueFull = false;
+        
+        }
+        if (isTransitionTo(QueueStates.RejectBall)){
+            queueBelt.setPower(-.4);
+        }
+        if (isTransitionFrom(QueueStates.RejectBall)){
+            takeBallFromTunnel = false;
+            shooterBallRequest = false;
         }
 
     }
 
     @Override
     public void doCurrentState() {
+        
     }
 
     public void takeBallFromTunnel() {
