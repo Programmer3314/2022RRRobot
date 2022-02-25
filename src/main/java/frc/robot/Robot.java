@@ -126,8 +126,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // TODO IMMEDEYIT!!!!!!!!!
-    // Abort Shoot - test
-    // Reset Robot Button  -test
     // Autonomous Select Button
     // Get the camera streams on shuffleboard
     // Expanded MMPIDController with minOutput and maxOutput
@@ -145,10 +143,8 @@ public class Robot extends TimedRobot {
     // - minimum correction to apply (if any +/- correction use at least a minimum
     // value)
     // - maximum correction to apply
-    // TODO Implement Auto Select Dial
     // TODO Create In/Out ball counter
     // TODO Create Log
-    // TODO Add Button box controls to control scheme
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
@@ -337,6 +333,7 @@ public class Robot extends TimedRobot {
       aimController.setAimMode(AimMode.driver);
     }
     requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);
+    
     driveTrain.Drive(requestedSpeed, requestedTurn);
 
     SmartDashboard.putNumber("Manual Feed:", 0);

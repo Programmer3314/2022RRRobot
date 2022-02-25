@@ -8,6 +8,7 @@ import static frc.robot.Constants.*;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
@@ -45,6 +46,9 @@ public class AimController {
     double desiredTurretPosition;
     boolean searching;
     double searchPower;
+    double maxRobotTurn;
+    double minRobotTurn;
+    double toleranceRobotTurn;
 
     public AimController() {
         //turret = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterTurret));
@@ -54,6 +58,9 @@ public class AimController {
         robotAim.setTolerance(kRobotAimTolerance);
         turretHomed = true;
         setAimMode(AimMode.driver);
+        maxRobotTurn = Constants.kMaxRobotTurn;
+        minRobotTurn = Constants.kMinRobotTurn;
+        toleranceRobotTurn = Constants.kToleranceRobotTurn;
     }
 
     public void setAimMode(AimMode aimMode) {
@@ -78,6 +85,30 @@ public class AimController {
                 //double currentError = targetAngle - currentAngle;
                 //turn = kPRobotTargetTurn * currentError;
                 turn = robotAim.calculate(currentAngle, targetAngle);
+                if (turn > maxRobotTurn){
+                    turn = maxRobotTurn;
+                }
+                if (turn < -maxRobotTurn){
+                    turn = -maxRobotTurn;
+                }
+                if (Math.abs(turn) < toleranceRobotTurn){
+                    turn = 0;
+                } else{
+                    double ratio = (Math.abs(turn) - toleranceRobotTurn)/(maxRobotTurn - toleranceRobotTurn);
+                        turn = Math.signum(turn)*ratio * (maxRobotTurn - minRobotTurn) + minRobotTurn;
+                    
+                    
+                    /**
+                     * turn = 0.8
+                     * tolerance = 0.2
+                     * max = 1
+                     * min = 0.2
+                     * 0.6/0.8 = 75%
+                     * 0.6 +0.2 =0.8
+                     */
+                    
+
+                }
                 
             }
                 break;
@@ -123,7 +154,7 @@ public class AimController {
         //         // turret.setPosition(turretPosition);
         //     }
         // }
-
+        SmartDashboard.putNumber("Turn", turn);
         return turn;
     }
 

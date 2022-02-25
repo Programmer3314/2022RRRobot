@@ -121,6 +121,10 @@ public class Constants {
     public static double kDRobotTargetTurn = 0;
     public static double kRobotAimTolerance = 2;
 
+    public static double kMaxRobotTurn = 500;
+    public static double kMinRobotTurn = 10;
+    public static double kToleranceRobotTurn = 0;
+
     public static double kPTurretTargetTurn =2;
 
     public static double kTurretDegreesPerRev = 10;
