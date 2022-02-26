@@ -95,7 +95,7 @@ public class AimController {
                     turn = 0;
                 } else{
                     double ratio = (Math.abs(turn) - toleranceRobotTurn)/(maxRobotTurn - toleranceRobotTurn);
-                        turn = Math.signum(turn)*ratio * (maxRobotTurn - minRobotTurn) + minRobotTurn;
+                        turn = Math.signum(turn)*(ratio * (maxRobotTurn - minRobotTurn) + minRobotTurn);
                     
                     
                     /**
@@ -155,6 +155,7 @@ public class AimController {
         //     }
         // }
         SmartDashboard.putNumber("Turn", turn);
+        SmartDashboard.putString("aimMode", aimMode.toString());
         return turn;
     }
 

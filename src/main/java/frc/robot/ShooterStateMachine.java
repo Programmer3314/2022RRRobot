@@ -135,8 +135,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                                     Constants.kangleMargin)
                             && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
                             && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
-                            && closeEnough(Robot.currentAngle, Robot.autocorrectTargetAngle, target.turretMargin)
-                            
+                            && (closeEnough(Robot.currentAngle, Robot.autocorrectTargetAngle, target.turretMargin)
+                            || Robot.pointBlankButton)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
                         passThroughCounter++;
@@ -205,7 +205,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         if (isTransitionTo(ShooterStates.Preparing)) {
             shooter.setVelocity(target.rpm);
             camAngle.setPosition(target.angle);
-            feed.setVelocity(target.feedrpm);
+            feed.setVelocity(target.feedrpm*0.7);
             // Robot.aimController.setAimMode(AimMode.robotShoot);
 
             // shooter.setVelocity(shooterSpeed);
@@ -262,7 +262,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public void update() {
         camhomed = !camlimitswitch.get();
         // airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
-        airBall = !ballGoneBreakBeam.get();
+        airBall = !ballGoneBreakBeam.get()||Robot.controllerOperator.getRawButton(3);//manual override for airball
         SmartDashboard.putBoolean("shootAll", shootAll);
         SmartDashboard.putBoolean("ShootOne", shootOne);
         if (target != null) {

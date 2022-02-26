@@ -44,7 +44,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 nextState = TBautoStates.DriveBack;
                 break;
             case DriveBack:
-                if (Robot.driveTrain.getDistanceFeet() <= -4.0) {
+                if (Robot.driveTrain.getDistanceFeet() <= -5.0) {
                     nextState = TBautoStates.Buffer;
                 }
                 break;
@@ -95,7 +95,9 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
                 Robot.driveTrain.Drive(0, turn);
                 break;
-  
+            case Done:
+            Robot.driveTrain.Drive(0, 0);;
+            break;
         }
     }
     public void resetState(){

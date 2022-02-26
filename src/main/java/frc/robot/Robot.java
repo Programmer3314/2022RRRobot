@@ -109,6 +109,7 @@ public class Robot extends TimedRobot {
   public static double adjustShooterDistance;
   public static boolean increaseDistance;
   public static boolean decreaseDistance;
+  public static boolean teststopTunnel;
   /**
    * get joystick value and turn on shoot one or shoot all bool, want tap joystick
    * not hold it
@@ -166,8 +167,8 @@ public class Robot extends TimedRobot {
 
     controllerDriver = new Joystick(Constants.kJoystickDriver);
     controllerOperator = new Joystick(Constants.kJoystickOperator);
-    speedAxis = new MMJoystickAxis(4, 1, .2, Constants.kMaxSpeed);
-    turnAxis = new MMJoystickAxis(4, 4, .2, Constants.kMaxTurnRate);
+    speedAxis = new MMJoystickAxis(4, 1, .05, Constants.kMaxSpeed);
+    turnAxis = new MMJoystickAxis(4, 4, .05, Constants.kMaxTurnRate);
     buttonBox1 = new Joystick(1);
 
 
@@ -192,20 +193,20 @@ public class Robot extends TimedRobot {
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                .setBrakeMode(false),
+                .setBrakeMode(true),
             new MMFXMotorController(Constants.kCanMCDriveLeft2)
                 .setInverted(Constants.kLeftMGInverted) // This MUST MATCH LEAD!
-                .setBrakeMode(false)),
+                .setBrakeMode(true)),
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveRight1)
                 .setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                .setBrakeMode(false),
+                .setBrakeMode(true),
             new MMFXMotorController(Constants.kCanMCDriveRight2)
                 .setInverted(Constants.kRightMGInverted)
-                .setBrakeMode(false) // This MUST MATCH LEAD!
+                .setBrakeMode(true) // This MUST MATCH LEAD!
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 

@@ -64,12 +64,12 @@ public class Constants {
     public static int kOperatorAxisShootAll = 3;
 
     public static double kMaxSpeed = -10;
-    public static double kMaxTurnRate = 180;
+    public static double kMaxTurnRate = 300;
 
     public static double krpmMargin = 100;
     public static double kangleMargin = 10;
 
-    public static double kCameraVerticalAngle = 33;
+    public static double kCameraVerticalAngle = 35.5;//33.5
     public static double ktargetHeight=104/12.0;
     public static double kTargetCameraHeight=37/12.0;
     public static double kTargetingHeightDiff=ktargetHeight-kTargetCameraHeight;
@@ -77,7 +77,7 @@ public class Constants {
     public static double kRevPerFoot = 4.67;
     public static double kChassisRadius = 1.04;
 
-    public static double kNewRevPerFoot = 4.67;
+    public static double kNewRevPerFoot = 8;
     public static double kNewChassisRadius = 1.04;
 
     public static int kCanMCDriveRight1 = 1;
@@ -116,13 +116,13 @@ public class Constants {
 
     public static double kPRobotBallTurn = 3;
 
-    public static double kPRobotTargetTurn = 11;
+    public static double kPRobotTargetTurn = 5;
     public static double kIRobotTargetTurn = 0;
     public static double kDRobotTargetTurn = 0;
-    public static double kRobotAimTolerance = 2;
+    public static double kRobotAimTolerance = 0;
 
-    public static double kMaxRobotTurn = 500;
-    public static double kMinRobotTurn = 10;
+    public static double kMaxRobotTurn = 300;
+    public static double kMinRobotTurn = 22.5;
     public static double kToleranceRobotTurn = 0;
 
     public static double kPTurretTargetTurn =2;
