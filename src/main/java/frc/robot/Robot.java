@@ -127,8 +127,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // TODO IMMEDEYIT!!!!!!!!!
     // Autonomous Select Button
-    // Get the camera streams on shuffleboard
     // Expanded MMPIDController with minOutput and maxOutput
+    // Handle multiple same color balls in ball tracking/only detect same balls as alliance
 
     // TODO CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
