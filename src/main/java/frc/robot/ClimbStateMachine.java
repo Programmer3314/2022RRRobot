@@ -48,10 +48,15 @@
 
 package frc.robot;
 
+import java.text.RuleBasedCollator;
+
+import com.ctre.phoenix.motorcontrol.InvertType;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
@@ -61,7 +66,7 @@ import frc.robot.Constants.*;
 enum ClimbStates {
     Start, Home, Idle, ExtendToBar1, DriveToBar1, PullBar1ToStatHooks, PullBar1PastStatHooks,
     ExtendToBar2, ExtendToBar2Check, PullBar2ToStatHooks, PullBar2PastStatHooks, ExtendBar3Swing, WaitForCalm,
-    ExtendBar3Calm, ExtendToBar3Check, PullupBar3, Done, Pause
+    ExtendBar3Calm, ExtendToBar3Check, PullupBar3, Done, Pause, Manual
 }
 
 /** Add your docs here. */
@@ -94,13 +99,23 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double homePower = -0.15;
     DoubleSolenoid climberPosition;
     ClimbStates pauseState;
+    double manualMoveClimberUp;
+    double manualMoveClimberDown;
+    double manualClimbPosition;
+    boolean manualHome;
 
     public ClimbStateMachine() {
         super(ClimbStates.Start);
-       /** climbMotor = new MMFollowingMotorGroup(
+        climbMotor = new MMFollowingMotorGroup(
                 new MMFXMotorController(Constants.kCanMCClimber1)
-                        .setPIDFParameters(.15, 0, 1, 0)
-                        .setBrakeMode(true)); */
+                        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI, Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+                        .setBrakeMode(true)
+                        .setInverted(Constants.kClimberInvert),
+                new MMFXMotorController(Constants.kCanMCClimber2)
+                        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI, Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+                        .setBrakeMode(true)
+                        .setInverted(InvertType.OpposeMaster)
+                        );
 
         climberPosition = new DoubleSolenoid(Constants.kSolenoidModule, PneumaticsModuleType.CTREPCM,
                 Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
@@ -108,6 +123,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
     @Override
     public void update() {
+        //Manual buttons to move climber
+        manualMoveClimberUp = Robot.controllerDriver.getRawAxis(2);
+        manualMoveClimberDown = Robot.controllerDriver.getRawAxis(3);
+        manualHome = Robot.buttonBox1.getRawButton(Constants.kButtonBoxManualHome);
         // TODO Read Sensor Values
         leadHookContactLeft = Robot.buttonBox1.getRawButton(2);
         leadHookContactRight = Robot.buttonBox1.getRawButton(3);
@@ -121,12 +140,16 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
 
         super.update();
+
+        SmartDashboard.putNumber("Desired Climber Position: ", manualClimbPosition);
+        SmartDashboard.putNumber("Returned Climber Position: ", climbMotor.getRevolutions());
     }
 
     @Override
     public void CalcNextState() {
         switch (currentState) {
             case Start:
+            case Manual:
             case Home:
             case Idle:
             case ExtendToBar1:
@@ -144,7 +167,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         }
         switch (currentState) {
             case Start:
-                nextState = ClimbStates.Home;
+                // nextState = ClimbStates.Home;
+                nextState = ClimbStates.Manual;
                 break;
             case Home:
                 if (lowLimitSwitch) {
@@ -234,6 +258,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                     nextState = pauseState;
                 }
                 break;
+            case Manual:
+                
+                break;
         }
     }
 
@@ -309,14 +336,34 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.Pause)) {
             climbMotor.setPower(0);
         }
+        if(isTransitionTo(ClimbStates.Manual)){
+            climbMotor.setPower(0);
+        }
     }
 
     @Override
     public void doCurrentState() {
+        switch(currentState){
+            case Manual:
+                
+                if (manualMoveClimberUp > 0.25){
+                    manualClimbPosition += manualMoveClimberUp*5;
+                }
+                if (manualMoveClimberDown > 0.25){
+                    manualClimbPosition -= manualMoveClimberDown * 5;
+                }
+                if (manualHome){
+                    climbMotor.resetEncoders();
+                    manualClimbPosition = 0;
+                }
+                climbMotor.setPosition(manualClimbPosition);
+                break;
+        }
     }
 
     public void resetState() {
         currentState = ClimbStates.Start;
+
     }
 
 }

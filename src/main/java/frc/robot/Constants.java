@@ -57,6 +57,25 @@ public class Constants {
     public static double kFXCamMin = -1;
     public static double kFXCamMax = +1;
 
+    public static double kfalconClimbKI = 0.000000;
+    public static double kfalconClimbKD = 0.00025 ; 
+    public static double kfalconClimbKP = 0.002500;//5e-5
+    public static double kfalconClimbKIz = 0; 
+    public static double kfalconClimbKFF = 0.0000; 
+    public static double kfalconClimbKMaxOutput =  0.869990; 
+    public static double kfalconClimbKMinOutput = -0.869990;
+    public static double kfalconClimbTrackingMaxCorrection = 0.2; // = 0.1;
+    public static double kfalconClimbTrackingMinCorrection = 0.04;
+
+    
+    public static double kTurretKI = 0.000000;
+    public static double kTurretKD = 0.00025 ; 
+    public static double kTurretKP = 0.002500;//5e-5
+    public static double kTurretKIz = 0; 
+    public static double kTurretKFF = 0.0000; 
+
+    public static InvertType kClimberInvert = InvertType.InvertMotorOutput;
+
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
 
@@ -93,15 +112,15 @@ public class Constants {
 
     public static int kCanMCQueueBelt = 12;
 
-    //public static int kCanMCShooterTurret = 15;
+    public static int kCanMCShooterTurret = 15;
     public static int kCanMCShooterFeed = 16;
     public static int kCanMCShooterShoot = 17;
     public static int kCanMCShooterCam = 18;
 
     public static int kCanMCIntake = 20;
 
-  //  public static int kCanMCClimber1 = 30;
-  //  public static int kCanMCClimber2 = 31;
+   public static int kCanMCClimber1 = 30;
+   public static int kCanMCClimber2 = 31;
 
     public static int kCanPowerDistributionBoard = 1;
    
@@ -111,6 +130,10 @@ public class Constants {
     public static int kDIOTurretLimitSwitch = 2;
     public static int kDIOCamLimitSwitch = 8;
     public static int kDIOShooterBallGone = 9;
+
+    // public static int kDIOClimbWhite = ;
+    // public static int kDIOClimbRed = ;
+    // public static int kDIOClimb = ;
 
     public static int kShooterCounter = 10;
 
@@ -127,7 +150,7 @@ public class Constants {
 
     public static double kPTurretTargetTurn =2;
 
-    public static double kTurretDegreesPerRev = 10;
+    public static double kTurretDegreesPerRev = 180/12.06;
     public static double kTurretDegreesHome = -170;
     public static double kTurretLowLimit = -170;
     public static double kTurretHighLimit = 170;
@@ -144,6 +167,7 @@ public class Constants {
     public static int kButtonBoxResetRobot = 7;
     public static int kButtonBoxTacobell= 8;
     public static int kButtonBoxAbortShot = 9;
+    public static int kButtonBoxManualHome = 10;
 
     public static int kShooterLimeLight=4;
 

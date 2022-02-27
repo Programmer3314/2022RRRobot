@@ -6,6 +6,8 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -51,8 +53,10 @@ public class AimController {
     double toleranceRobotTurn;
 
     public AimController() {
-        //turret = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterTurret));
-        // this.turret = turret;
+        turret = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterTurret)
+                 .setPIDFParameters(Constants.kTurretKP, Constants.kTurretKI, Constants.kTurretKD, Constants.kTurretKFF)
+                 .setInverted(InvertType.None)
+                 .setBrakeMode(false));
         searchPower = -.15;
         robotAim = new PIDController(kPRobotTargetTurn, kIRobotTargetTurn, kDRobotTargetTurn);
         robotAim.setTolerance(kRobotAimTolerance);
@@ -154,6 +158,8 @@ public class AimController {
         //         // turret.setPosition(turretPosition);
         //     }
         // }
+        SmartDashboard.putNumber("Turret Revolutions", turret.getRevolutions());
+        SmartDashboard.putNumber("Turret Degrees", turret.getRevolutions()*Constants.kTurretDegreesPerRev);
         SmartDashboard.putNumber("Turn", turn);
         SmartDashboard.putString("aimMode", aimMode.toString());
         return turn;

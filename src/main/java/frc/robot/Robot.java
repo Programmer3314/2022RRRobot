@@ -110,6 +110,7 @@ public class Robot extends TimedRobot {
   public static boolean increaseDistance;
   public static boolean decreaseDistance;
   public static boolean teststopTunnel;
+  public static double currentShooterAngle;
   /**
    * get joystick value and turn on shoot one or shoot all bool, want tap joystick
    * not hold it
@@ -149,7 +150,7 @@ public class Robot extends TimedRobot {
 
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-
+    
     // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
     // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
     // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
@@ -158,7 +159,6 @@ public class Robot extends TimedRobot {
     powerDistribution = new PowerDistribution(Constants.kCanPowerDistributionBoard, ModuleType.kRev);
     powerDistribution.clearStickyFaults();
     
-
     navx = new AHRS(Port.kMXP);
     // navx = new AHRS(SerialPort.Port.USB);
     navx.reset();
@@ -179,7 +179,6 @@ public class Robot extends TimedRobot {
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
-
     // climbStateMachine = new ClimbStateMachine();
 
     aimController = new AimController(/* turret */);
@@ -376,6 +375,7 @@ public class Robot extends TimedRobot {
     resetRobot = buttonBox1.getRawButton(Constants.kButtonBoxResetRobot);
 
     currentAngle = cleanAngle(navx.getYaw());
+    currentShooterAngle = cleanAngle(currentAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + Constants.kCameraVerticalAngle;
     horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
     targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));

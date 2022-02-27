@@ -124,7 +124,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             Constants.kangleMargin));
 
                     SmartDashboard.putBoolean("Close to target Angle",
-                            closeEnough(Robot.currentAngle, Robot.autocorrectTargetAngle, target.turretMargin));
+                            closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin));
                     SmartDashboard.putBoolean("Target Active", target == null ? false : target.active);
 
                     SmartDashboard.putNumber("Auto correct Target angle", Robot.autocorrectTargetAngle);
@@ -135,7 +135,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                                     Constants.kangleMargin)
                             && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
                             && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
-                            && (closeEnough(Robot.currentAngle, Robot.autocorrectTargetAngle, target.turretMargin)
+                            && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin)
                             || Robot.pointBlankButton)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
