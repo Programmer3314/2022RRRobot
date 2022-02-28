@@ -98,6 +98,7 @@ public class AimController {
                 if (Math.abs(turn) < toleranceRobotTurn){
                     turn = 0;
                 } else{
+                    // TODO Confidence Check? 
                     double ratio = (Math.abs(turn) - toleranceRobotTurn)/(maxRobotTurn - toleranceRobotTurn);
                         turn = Math.signum(turn)*(ratio * (maxRobotTurn - minRobotTurn) + minRobotTurn);
                     
@@ -148,6 +149,7 @@ public class AimController {
         //         }
 
         //     } else {
+        //         // TODO Confidence Check? 
         //         desiredTurretPosition = (targetAngle - currentAngle) / Constants.kTurretDegreesPerRev;
         //         if (desiredTurretPosition >= Constants.kTurretHighLimit) {
         //             // turretPosition = Constants.kTurretHighLimit;
