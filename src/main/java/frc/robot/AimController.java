@@ -60,11 +60,12 @@ public class AimController {
         searchPower = -.15;
         robotAim = new PIDController(kPRobotTargetTurn, kIRobotTargetTurn, kDRobotTargetTurn);
         robotAim.setTolerance(kRobotAimTolerance);
-        turretHomed = true;
+        turretHomed = false;
         setAimMode(AimMode.driver);
         maxRobotTurn = Constants.kMaxRobotTurn;
         minRobotTurn = Constants.kMinRobotTurn;
         toleranceRobotTurn = Constants.kToleranceRobotTurn;
+        turretLowLimitSwitch = new DigitalInput(Constants.kDIOTurretLimitSwitch);
     }
 
     public void setAimMode(AimMode aimMode) {
@@ -125,45 +126,48 @@ public class AimController {
                 break;
 
         }
-        // if (!turretHomed) {
-        //     // turret.setPower(-.15);
-        // }
-        // if (turretLowLimitSwitch.get()) {
-        //     turretHomed = true;
-        //     // turret.setEncoderRevolutions(Constants.kTurretDegreesHome/Constants.kTurretDegreesPerRev);
-        // }
+        if (!turretHomed) {
+           // turret.setPower(-.08);
+        }
+        if (turretLowLimitSwitch.get()) {
+            turretHomed = true;
+            turret.setEncoderRevolutions(Constants.kTurretDegreesHome/Constants.kTurretDegreesPerRev);
+        }
 
-        // if (turretHomed) {
-        //     if (searching) {
-        //         if (turret.getRevolutions() < Constants.kTurretLowLimit / Constants.kTurretDegreesPerRev) {
-        //             searchPower = .15;
-        //         }
-        //         if (turret.getRevolutions() > Constants.kTurretHighLimit / Constants.kTurretDegreesPerRev) {
-        //             searchPower = -.15;
-        //         }
+        if (turretHomed) {
+            if (searching) {
+                if (turret.getRevolutions() < Constants.kTurretLowLimit / Constants.kTurretDegreesPerRev) {
+                    searchPower = .15;
+                }
+                if (turret.getRevolutions() > Constants.kTurretHighLimit / Constants.kTurretDegreesPerRev) {
+                    searchPower = -.15;
+                }
 
-        //         turret.setPower(searchPower);
-        //         if (Robot.confidenceCounter > 0) {
-        //             searching = false;
-        //             turret.setPower(0);
-        //         }
+                turret.setPower(searchPower);
+                if (Robot.confidenceCounter > 0) {
+                    searching = false;
+                    turret.setPower(0);
+                }
 
-        //     } else {
-        //         // TODO Confidence Check? 
-        //         desiredTurretPosition = (targetAngle - currentAngle) / Constants.kTurretDegreesPerRev;
-        //         if (desiredTurretPosition >= Constants.kTurretHighLimit) {
-        //             // turretPosition = Constants.kTurretHighLimit;
-        //         }
-        //         if (desiredTurretPosition <= Constants.kTurretLowLimit) {
-        //             // turretPosition = Constants.kTurretHighLimit;
-        //         }
-        //         // turret.setPosition(turretPosition);
-        //     }
-        // }
+            } else {
+                // TODO Confidence Check? 
+                desiredTurretPosition = (targetAngle - currentAngle) / Constants.kTurretDegreesPerRev;
+                if (desiredTurretPosition >= Constants.kTurretHighLimit) {
+                    desiredTurretPosition = Constants.kTurretHighLimit;
+                }
+                if (desiredTurretPosition <= Constants.kTurretLowLimit) {
+                    desiredTurretPosition = Constants.kTurretHighLimit;
+                }
+                 //turret.setPosition(desiredTurretPosition);
+            }
+        }
         SmartDashboard.putNumber("Turret Revolutions", turret.getRevolutions());
         SmartDashboard.putNumber("Turret Degrees", turret.getRevolutions()*Constants.kTurretDegreesPerRev);
         SmartDashboard.putNumber("Turn", turn);
         SmartDashboard.putString("aimMode", aimMode.toString());
+        SmartDashboard.putBoolean("turret  homed", turretHomed);
+        SmartDashboard.putBoolean("turret limit", turretLowLimitSwitch.get());
+        SmartDashboard.putNumber("Desired Turret Position", desiredTurretPosition);
         return turn;
     }
 
@@ -172,8 +176,8 @@ public class AimController {
     }
 
     public double turretError() {
-        return 0;
-        //return desiredTurretPosition - turret.getRevolutions() * Constants.kTurretDegreesPerRev;
+        //return 0;
+        return desiredTurretPosition - turret.getRevolutions() * Constants.kTurretDegreesPerRev;
     }
     public void searchRequest() {
         searching = true;

@@ -74,7 +74,7 @@ public class Constants {
     public static double kTurretKIz = 0; 
     public static double kTurretKFF = 0.0000; 
 
-    public static InvertType kClimberInvert = InvertType.InvertMotorOutput;
+    public static InvertType kClimberInvert = InvertType.None;
 
     public static int kNeoShooterWheelsStallLimit = 40;
     public static int kNeoShooterWheelsFreeLimit = 40;
@@ -119,21 +119,25 @@ public class Constants {
 
     public static int kCanMCIntake = 20;
 
-   public static int kCanMCClimber1 = 30;
-   public static int kCanMCClimber2 = 31;
+   public static int kCanMCClimber1 = 30;//white side
+   public static int kCanMCClimber2 = 31;//red side
 
     public static int kCanPowerDistributionBoard = 1;
    
     public static int kDIOQueueBreakBeam = 0;
     public static int kDIOTunnelBreakBeam = 1;
-
     public static int kDIOTurretLimitSwitch = 2;
+    public static int kDIOBRed=4;//second hook sensor
+    public static int kDIOClimbLimit = 3;
+    public static int kDIOBarWhite = 5;
+    public static int kDIOCRed = 6;
+    public static int kDIOARed= 7;
     public static int kDIOCamLimitSwitch = 8;
     public static int kDIOShooterBallGone = 9;
 
-    // public static int kDIOClimbWhite = ;
-    // public static int kDIOClimbRed = ;
-    // public static int kDIOClimb = ;
+    public static int kNAVXBWhite = 21;
+    public static int kNAVXCWhite = 22;
+    public static int kNAVXBarRed = 23;
 
     public static int kShooterCounter = 10;
 

@@ -9,6 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -179,9 +180,9 @@ public class Robot extends TimedRobot {
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
-    // climbStateMachine = new ClimbStateMachine();
+     climbStateMachine = new ClimbStateMachine();
 
-    aimController = new AimController(/* turret */);
+    aimController = new AimController();
     pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
     shootLimeLight = pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
 
@@ -244,7 +245,7 @@ public class Robot extends TimedRobot {
     // lightRing4.set(false);
     // climbStateMachine.currentState = ClimbStates.Start;
     // TODO: Comment these lines before competition
-    // climbStateMachine.resetState();
+    climbStateMachine.resetState();
     tunnelStateMachine.resetState();
     queueStateMachine.resetState();
     shooterStateMachine.resetState();
@@ -351,16 +352,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    commonInit();
+      //commonInit();
     // tunnelStateMachine = new TunnelStateMachine();
-    tunnelStateMachine.resetState();
+      //tunnelStateMachine.resetState();
     // climbStateMachine.resetState();
   }
 
   @Override
   public void testPeriodic() {
-    commonPeriodic();
-    commonUpdate();
+      // commonPeriodic();
+      // commonUpdate();
+    // DigitalInput testClimbLimit = new DigitalInput(Constants.kDIOClimbLimit);
+    // SmartDashboard.putBoolean("Climb Limit Value: ", testClimbLimit.get());
   }
 
   public void commonInit() {
@@ -375,7 +378,7 @@ public class Robot extends TimedRobot {
     resetRobot = buttonBox1.getRawButton(Constants.kButtonBoxResetRobot);
 
     currentAngle = cleanAngle(navx.getYaw());
-    currentShooterAngle = cleanAngle(currentAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
+    currentShooterAngle = cleanAngle(currentAngle + ( aimController.turret.getRevolutions() *Constants.kTurretDegreesPerRev));
     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + Constants.kCameraVerticalAngle;
     horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
     targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
@@ -393,15 +396,14 @@ public class Robot extends TimedRobot {
       shooterStateMachine.resetState();
       tunnelStateMachine.resetState();
       queueStateMachine.resetState();
-      
-      // climbStateMachine.resetState();
+       climbStateMachine.resetState();
     }
     // TODO Clean up autocorrectTargetAngle/firingSolution with respect to
     // when they are valid. I'm not sure what this looks like but it seems odd
     // that we use .active and confidenceCounter...
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
       autocorrectTargetAngle = cleanAngle(currentAngle + horizontalAngle +
-          (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
+          ( aimController.turret.getRevolutions() * Constants.kTurretDegreesPerRev));
 
       confidenceCounter = 500;
     } else {
@@ -436,7 +438,7 @@ public class Robot extends TimedRobot {
 
   public void commonUpdate() {
     tunnelStateMachine.update();
-    // climbStateMachine.update();
+     climbStateMachine.update();
     queueStateMachine.update();
     shooterStateMachine.update();
 
@@ -448,9 +450,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Distance", targetDistance);
     SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
-    // SmartDashboard.putString("climbStateMachine",
-    // climbStateMachine.currentState.toString());
-    // SmartDashboard.putNumber("Climb Encoder Value",
+     //SmartDashboard.putString("climbStateMachine",
+     //climbStateMachine.currentState.toString());
+     //SmartDashboard.putNumber("Climb Encoder Value",
     // climbStateMachine.climbMotor.getRevolutions());
 
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);

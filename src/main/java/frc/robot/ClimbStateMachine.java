@@ -52,6 +52,8 @@ import java.text.RuleBasedCollator;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -84,65 +86,100 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean raiseLeadHooks;
     boolean lowerLeadHooks;
     boolean startClimb;
-    double revolutionsToBar1 = 10;
-    double revolutionsToBar2 = 10;
-    double revolutionsNearBar3 = 5;
-    double revolutionsToBar3 = 10;
+    double revolutionsToBar1 = 70;
+    double revolutionsToBar2 = 70;
+    double revolutionsNearBar3 = 60;
+    double revolutionsToBar3 = 70;
     double revolutionsToBar3Final = 7;
     boolean navxCalm = true;
     double rpmForBarExtend = 100;
-    double pwrForBarExtend = .7;
+    double pwrForBarExtend = .15;
     double rpmForBarPull = -200;
-    double pwrForBarPull = -.8;
+    double pwrForBarPull = -.4;
     double rpmForPullPast = -150;
-    double pwrForPullPast = -.6;
+    double pwrForPullPast = -.4;
     double homePower = -0.15;
     DoubleSolenoid climberPosition;
     ClimbStates pauseState;
-    double manualMoveClimberUp;
-    double manualMoveClimberDown;
+    boolean manualMoveClimberUp;
+    boolean manualMoveClimberDown;
     double manualClimbPosition;
     boolean manualHome;
+    boolean climberHomed;
+    DigitalInput climblimit;
+    boolean climbbool;
+    boolean prevLimitSwitch;
+    DigitalInput leadcontactLeft;
+    DigitalInput leadcontactRight;
+    DigitalInput deflectionCRed;
+    DigitalInput deflectionCWhite;
 
+    /* go up to 72 revs
+    bring top hook between hooks 1 and 2
+    72
+    Hook 1
+    72
+    (lower)Hook 1 = 
+    Hook 2 = 
+    */
     public ClimbStateMachine() {
         super(ClimbStates.Start);
-        climbMotor = new MMFollowingMotorGroup(
-                new MMFXMotorController(Constants.kCanMCClimber1)
-                        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI, Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
-                        .setBrakeMode(true)
-                        .setInverted(Constants.kClimberInvert),
-                new MMFXMotorController(Constants.kCanMCClimber2)
-                        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI, Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
-                        .setBrakeMode(true)
-                        .setInverted(InvertType.OpposeMaster)
-                        );
+        climbMotor = new MMFollowingMotorGroup(//TODO 73 is our highest point
+        new MMFXMotorController(Constants.kCanMCClimber1)
+        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
+        Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+        .setBrakeMode(true)
+        .setInverted(Constants.kClimberInvert),
+        new MMFXMotorController(Constants.kCanMCClimber2)
+        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
+        Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+        .setBrakeMode(true)
+        .setInverted(InvertType.OpposeMaster)
+        );
+        leadcontactLeft = new DigitalInput(Constants.kDIOBarWhite);
+        leadcontactRight = new DigitalInput(Constants.kNAVXBarRed);
+        deflectionCRed = new DigitalInput(Constants.kDIOCRed);
+        deflectionCWhite = new DigitalInput(Constants.kNAVXCWhite);
 
+        climblimit = new DigitalInput(Constants.kDIOClimbLimit);
         climberPosition = new DoubleSolenoid(Constants.kSolenoidModule, PneumaticsModuleType.CTREPCM,
                 Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
+        climberHomed = false;
+        
     }
 
     @Override
     public void update() {
-        //Manual buttons to move climber
-        manualMoveClimberUp = Robot.controllerDriver.getRawAxis(2);
-        manualMoveClimberDown = Robot.controllerDriver.getRawAxis(3);
+        // Manual buttons to move climber
+        manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
+        manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
+
         manualHome = Robot.buttonBox1.getRawButton(Constants.kButtonBoxManualHome);
+
         // TODO Read Sensor Values
-        leadHookContactLeft = Robot.buttonBox1.getRawButton(2);
-        leadHookContactRight = Robot.buttonBox1.getRawButton(3);
-        statHookDeflectionLeft = !Robot.buttonBox1.getRawButton(5);
-        statHookDeflectionRight = !Robot.buttonBox1.getRawButton(6);
-        lowLimitSwitch = Robot.buttonBox1.getRawButton(9);
+        leadHookContactLeft = !leadcontactLeft.get();
+        leadHookContactRight = !leadcontactRight.get();
+        statHookDeflectionLeft = !deflectionCRed.get();
+        statHookDeflectionRight = !deflectionCWhite.get();
+        lowLimitSwitch = !climblimit.get();
+
         // TODO: double check this code for errors
         raiseLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorRaiseHooks);
         lowerLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorLowerHooksButton);
         startClimb = Robot.controllerOperator.getRawButton(Constants.kOperatorClimbButton);
 
-
         super.update();
 
         SmartDashboard.putNumber("Desired Climber Position: ", manualClimbPosition);
         SmartDashboard.putNumber("Returned Climber Position: ", climbMotor.getRevolutions());
+        SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberUp);
+        SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberDown);
+        SmartDashboard.putBoolean("Climber Limit: ", lowLimitSwitch);
+        SmartDashboard.putBoolean("RaiseLeadHooks : ", raiseLeadHooks);
+        SmartDashboard.putBoolean("LowerLeadHooks : ", lowerLeadHooks);
+        SmartDashboard.putBoolean("Lead Contact Left: ", leadHookContactLeft);
+        SmartDashboard.putBoolean("Lead Contact Right: ", leadHookContactRight);
+        SmartDashboard.putString("Climb State: ", currentState.toString());
     }
 
     @Override
@@ -167,8 +204,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         }
         switch (currentState) {
             case Start:
-                // nextState = ClimbStates.Home;
-                nextState = ClimbStates.Manual;
+                 nextState = ClimbStates.Home;
+                //nextState = ClimbStates.Manual;
                 break;
             case Home:
                 if (lowLimitSwitch) {
@@ -183,8 +220,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             case ExtendToBar1:
                 if (climbMotor.getRevolutions() >= revolutionsToBar1) {
                     nextState = ClimbStates.DriveToBar1;
+                    //nextState = ClimbStates.Home;
                 }
-                if (lowerLeadHooks){
+                if (lowerLeadHooks) {
                     nextState = ClimbStates.Home;
                 }
                 break;
@@ -192,7 +230,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 if (leadHookContactLeft && leadHookContactRight && startClimb) {
                     nextState = ClimbStates.PullBar1ToStatHooks;
                 }
-                if (lowerLeadHooks){
+                if (lowerLeadHooks) {
                     nextState = ClimbStates.Home;
                 }
                 break;
@@ -208,7 +246,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
             case ExtendToBar2:
                 if (climbMotor.getRevolutions() >= revolutionsToBar2) {
-                    nextState = ClimbStates.ExtendToBar2Check;
+                   // nextState = ClimbStates.ExtendToBar2Check;
+                    nextState = ClimbStates.Done;
                 }
                 break;
             case ExtendToBar2Check:
@@ -259,7 +298,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case Manual:
-                
+
                 break;
         }
     }
@@ -292,12 +331,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.ExtendToBar2)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
-            climberPosition.set(Value.kReverse);
+            //climberPosition.set(Value.kReverse);
         }
         if (isTransitionFrom(ClimbStates.ExtendToBar2)) {
             // climbMotor.setVelocity(0);
             climbMotor.setPower(0);
-            climberPosition.set(Value.kForward);
+            //climberPosition.set(Value.kForward);
         }
         if (isTransitionTo(ClimbStates.PullBar2ToStatHooks)) {
             // climbMotor.setVelocity(rpmForBarPull);
@@ -336,34 +375,38 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.Pause)) {
             climbMotor.setPower(0);
         }
-        if(isTransitionTo(ClimbStates.Manual)){
+        if (isTransitionTo(ClimbStates.Manual)) {
             climbMotor.setPower(0);
         }
     }
 
     @Override
     public void doCurrentState() {
-        switch(currentState){
+        switch (currentState) {
             case Manual:
-                
-                if (manualMoveClimberUp > 0.25){
-                    manualClimbPosition += manualMoveClimberUp*5;
+                if (manualMoveClimberUp) {
+                    manualClimbPosition += 3;
                 }
-                if (manualMoveClimberDown > 0.25){
-                    manualClimbPosition -= manualMoveClimberDown * 5;
+                if (manualMoveClimberDown) {
+                    manualClimbPosition -= 3;
                 }
-                if (manualHome){
+                if (lowLimitSwitch) {
                     climbMotor.resetEncoders();
+                    if(lowLimitSwitch && !prevLimitSwitch){
                     manualClimbPosition = 0;
+                    
+                    }
+                    climberHomed = true;
                 }
-                climbMotor.setPosition(manualClimbPosition);
+                prevLimitSwitch= lowLimitSwitch;
+                if(climberHomed){
+                climbMotor.setPosition(manualClimbPosition);}
                 break;
         }
     }
 
     public void resetState() {
         currentState = ClimbStates.Start;
-
     }
 
 }
