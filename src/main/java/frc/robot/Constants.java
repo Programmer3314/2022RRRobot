@@ -69,8 +69,8 @@ public class Constants {
 
     
     public static double kTurretKI = 0.000000;
-    public static double kTurretKD = 0.00025 ; 
-    public static double kTurretKP = 0.002500;//5e-5
+    public static double kTurretKD = 1.1 ; 
+    public static double kTurretKP = 0.0450000;//5e-5
     public static double kTurretKIz = 0; 
     public static double kTurretKFF = 0.0000; 
 
@@ -127,8 +127,8 @@ public class Constants {
     public static int kDIOQueueBreakBeam = 0;
     public static int kDIOTunnelBreakBeam = 1;
     public static int kDIOTurretLimitSwitch = 2;
-    public static int kDIOBRed=4;//second hook sensor
     public static int kDIOClimbLimit = 3;
+    public static int kDIOBRed=4;//second hook sensor
     public static int kDIOBarWhite = 5;
     public static int kDIOCRed = 6;
     public static int kDIOARed= 7;

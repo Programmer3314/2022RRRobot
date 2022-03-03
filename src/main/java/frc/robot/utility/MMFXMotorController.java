@@ -46,6 +46,17 @@ public class MMFXMotorController extends MMMotorController {
         mc.configPeakOutputReverse(-1, kMMTimeoutMs);
 
     }
+    public MMFXMotorController setNominalOutput(double forward, double reverse){
+        mc.configNominalOutputForward(forward, kMMTimeoutMs);
+        mc.configNominalOutputReverse(reverse, kMMTimeoutMs);
+        return this;
+    }
+
+    public MMFXMotorController setPeakOutput(double forward, double reverse){
+        mc.configPeakOutputForward(forward, kMMTimeoutMs);
+        mc.configPeakOutputReverse(reverse, kMMTimeoutMs);
+        return this;
+    }
 
     public MMFXMotorController setInverted(InvertType invertType) {
         mc.setInverted(invertType);

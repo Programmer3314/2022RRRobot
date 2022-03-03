@@ -88,7 +88,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public void CalcNextState() {
         if (Robot.tacoBell) {
             nextState = ShooterStates.RejectBall;
-        } else { // TODO finish taco bell
+        } else {
             // if (abortShot && currentState != ShooterStates.Home && currentState !=
             // ShooterStates.Start) {
             // nextState = ShooterStates.Idle;
