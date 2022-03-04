@@ -70,7 +70,7 @@ import frc.robot.Constants.*;
 enum ClimbStates {
     Start, Home, Idle, ExtendToBar1, DriveToBar1, 
     PullBar1ToStatHooksC, PullBar1PastStatHooksC, ExtendtoHookA, ExtendPastA, PulltoHookB, PullPastHookB,
-    ExtendToBar2, ExtendToBar2Check, PullBar2ToStatHooksC, PullBar2PastStatHooksC, ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2,
+    Pause1, ExtendToBar2, ExtendToBar2Check, PullBar2ToStatHooksC, PullBar2PastStatHooksC, ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2,
     ExtendBar3Swing, WaitForCalm, ExtendBar3Calm, ExtendToBar3Check, PullupBar3, Done, Pause, Manual
 }
 
@@ -79,8 +79,6 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
     boolean lowLimitSwitch;
     boolean highLimitSwitch;
-    boolean statHookDeflectionLeft;// true if not deflected
-    boolean statHookDeflectionRight;// true if not deflected
     boolean leadHookContactLeft;
     boolean leadHookContactRight;
     boolean leadHookPocketLeft;
@@ -100,7 +98,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double rpmForBarPull = -200;
     double pwrForBarPull = -.4;
     double rpmForPullPast = -150;
-    double pwrForPullPast = -.4;
+    double pwrForPullPast = -.5;
     double homePower = -0.15;
     DoubleSolenoid climberPosition;
     ClimbStates pauseState;
@@ -122,6 +120,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     DigitalInput deflectionBWhite;
     boolean deflectionRedB;
     boolean deflectionWhiteB;
+    boolean deflectionWhiteC;
+    boolean deflectionRedC;
 
     /* go up to 72 revs
     bring top hook between hooks 1 and 2
@@ -133,18 +133,18 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     */
     public ClimbStateMachine() {
         super(ClimbStates.Start);
-        // climbMotor = new MMFollowingMotorGroup(//TODO 73 is our highest point
-        // new MMFXMotorController(Constants.kCanMCClimber1)
-        // .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
-        // Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
-        // .setBrakeMode(true)
-        // .setInverted(Constants.kClimberInvert),
-        // new MMFXMotorController(Constants.kCanMCClimber2)
-        // .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
-        // Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
-        // .setBrakeMode(true)
-        // .setInverted(InvertType.OpposeMaster)
-        // );
+         climbMotor = new MMFollowingMotorGroup(//TODO 73 is our highest point
+        new MMFXMotorController(Constants.kCanMCClimber1)
+        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
+        Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+        .setBrakeMode(true)
+        .setInverted(Constants.kClimberInvert),
+        new MMFXMotorController(Constants.kCanMCClimber2)
+        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
+        Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+        .setBrakeMode(true)
+        .setInverted(InvertType.OpposeMaster)
+        );
         leadcontactLeft = new DigitalInput(Constants.kDIOBarWhite);
         leadcontactRight = new DigitalInput(Constants.kNAVXBarRed);
         deflectionCRed = new DigitalInput(Constants.kDIOCRed);
@@ -170,13 +170,15 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
         leadHookContactLeft = !leadcontactLeft.get();
         leadHookContactRight = !leadcontactRight.get();
-        statHookDeflectionLeft = !deflectionCRed.get();
-        statHookDeflectionRight = !deflectionCWhite.get();
+
         lowLimitSwitch = !climblimit.get();
 
-        deflectionA = !deflectionAred.get();
-        deflectionWhiteB = !deflectionBWhite.get();
-        deflectionRedB = !deflectionBRed.get();
+        deflectionA = deflectionAred.get();
+        deflectionWhiteB = deflectionBWhite.get();
+        deflectionRedB = deflectionBRed.get();
+        deflectionWhiteC=deflectionCWhite.get();
+        deflectionRedC=deflectionCRed.get();
+
 
 
         // TODO: double check this code for errors
@@ -197,6 +199,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         SmartDashboard.putBoolean("Lead Contact Right: ", leadHookContactRight);
         SmartDashboard.putBoolean("Deflection A", deflectionA);
         SmartDashboard.putBoolean("Deflection White B", deflectionWhiteB);
+        SmartDashboard.putBoolean("Deflection Red B", deflectionRedB);
+        SmartDashboard.putBoolean("Deflection White C", deflectionWhiteC);
+        SmartDashboard.putBoolean("Deflection Red C", deflectionRedC);
         SmartDashboard.putBoolean("Deflection Red B", deflectionRedB);
         SmartDashboard.putString("Climb State: ", currentState.toString());
     }
@@ -254,12 +259,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PullBar1ToStatHooksC:
-                if (!statHookDeflectionLeft || !statHookDeflectionRight) {
+                if (deflectionRedC && deflectionWhiteC) {
                     nextState = ClimbStates.PullBar1PastStatHooksC;
                 }
                 break;
             case PullBar1PastStatHooksC:
-                if (statHookDeflectionLeft && statHookDeflectionRight) {
+                if (!deflectionRedC && !deflectionWhiteC) {
                     // nextState = ClimbStates.ExtendToBar2;
                     nextState = ClimbStates.ExtendtoHookA;
                 }
@@ -276,20 +281,25 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PulltoHookB:
-                if (deflectionWhiteB || deflectionRedB){
+                if (deflectionWhiteB && deflectionRedB){
                     nextState = ClimbStates.PullPastHookB;
                 }
                 break;
             case PullPastHookB:
                 if (!deflectionWhiteB && !deflectionRedB){
-                    nextState = ClimbStates.ExtendToBar2;
+                    nextState = ClimbStates.Pause1;
                 }
                 break;
 
+            case Pause1:
+                if(secondsInState>2) {
+                    nextState = ClimbStates.ExtendToBar2;
+                }
+                break;
             case ExtendToBar2:
                 if (climbMotor.getRevolutions() >= revolutionsToBar2) {
                    // nextState = ClimbStates.ExtendToBar2Check;
-                    nextState = ClimbStates.Done;
+                    nextState = ClimbStates.PullBar2ToStatHooksC;
                 }
                 break;
             case ExtendToBar2Check:
@@ -298,13 +308,13 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PullBar2ToStatHooksC:
-                if (!statHookDeflectionLeft || !statHookDeflectionRight) {
+                if (deflectionWhiteC && deflectionRedC) {
                     nextState = ClimbStates.PullBar2PastStatHooksC;
                 }
                 break;
             case PullBar2PastStatHooksC:
-                if (statHookDeflectionLeft && statHookDeflectionRight) {
-                    nextState = ClimbStates.ExtendBar3Swing;
+                if (!deflectionWhiteC &&!deflectionRedC) {
+                    nextState = ClimbStates.Done;
                 } //ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2
                 break;
 
@@ -319,7 +329,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PulltoHookB2:
-                if (deflectionWhiteB || deflectionRedB){
+                if (deflectionWhiteB && deflectionRedB){
                     nextState = ClimbStates.PullPastHookB2;
                 }
                 break;
@@ -404,6 +414,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.PullPastHookB)){
             climbMotor.setPower(pwrForPullPast);
         }
+        if (isTransitionFrom(ClimbStates.PullPastHookB)){
+            climbMotor.setPower(0);
+        }
+        if(isTransitionTo(ClimbStates.Pause1)) {
+            climbMotor.setPower(0);
+        }
         if (isTransitionTo(ClimbStates.ExtendToBar2)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
@@ -464,6 +480,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             climbMotor.setPower(0);
         }
         if (isTransitionTo(ClimbStates.Manual)) {
+            climbMotor.setPower(0);
+        }
+        if(isTransitionTo(ClimbStates.Done)){
             climbMotor.setPower(0);
         }
     }
