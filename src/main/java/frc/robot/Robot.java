@@ -185,7 +185,7 @@ public class Robot extends TimedRobot {
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
-    // climbStateMachine = new ClimbStateMachine();
+     climbStateMachine = new ClimbStateMachine();
 
     aimController = new AimController();
     pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
@@ -250,9 +250,9 @@ public class Robot extends TimedRobot {
     aimController.setAimMode(AimMode.driver);
     if (lastModeRan == "teleop") {
       // lightRing4.set(false);
-      // climbStateMachine.currentState = ClimbStates.Start;
+       climbStateMachine.currentState = ClimbStates.Start;
       // TODO: Comment these lines before competition
-      // climbStateMachine.resetState();
+      climbStateMachine.resetState();
       tunnelStateMachine.resetState();
       queueStateMachine.resetState();
       shooterStateMachine.resetState();
@@ -350,7 +350,7 @@ public class Robot extends TimedRobot {
     // commonInit();
     // tunnelStateMachine = new TunnelStateMachine();
     // tunnelStateMachine.resetState();
-    // climbStateMachine.resetState();
+     climbStateMachine.resetState();
     lastModeRan = "test";
 
   }
@@ -367,6 +367,7 @@ public class Robot extends TimedRobot {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
     shootLimeLight.set(true);
+    intake.idle();
     
 
   }
@@ -395,7 +396,7 @@ public class Robot extends TimedRobot {
       shooterStateMachine.resetState();
       tunnelStateMachine.resetState();
       queueStateMachine.resetState();
-      // climbStateMachine.resetState();
+       climbStateMachine.resetState();
     }
     // TODO Clean up autocorrectTargetAngle/firingSolution with respect to
     // when they are valid. I'm not sure what this looks like but it seems odd
@@ -438,7 +439,7 @@ public class Robot extends TimedRobot {
 
   public void commonUpdate() {
     tunnelStateMachine.update();
-    // climbStateMachine.update();
+     climbStateMachine.update();
     queueStateMachine.update();
     shooterStateMachine.update();
 
@@ -450,10 +451,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Distance", targetDistance);
     SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
-    // SmartDashboard.putString("climbStateMachine",
-    // climbStateMachine.currentState.toString());
-    // SmartDashboard.putNumber("Climb Encoder Value",
-    // climbStateMachine.climbMotor.getRevolutions());
+     SmartDashboard.putString("climbStateMachine",
+     climbStateMachine.currentState.toString());
+     SmartDashboard.putNumber("Climb Encoder Value",
+     climbStateMachine.climbMotor.getRevolutions());
 
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());

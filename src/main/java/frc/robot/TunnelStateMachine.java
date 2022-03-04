@@ -53,7 +53,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
         breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
-        frontColorSensor = new ColorSensorV3(Port.kMXP);
+        frontColorSensor = new ColorSensorV3(Port.kOnboard);
     }
 
     @Override

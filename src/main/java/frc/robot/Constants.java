@@ -88,9 +88,9 @@ public class Constants {
     public static double krpmMargin = 100;
     public static double kangleMargin = 10;
 
-    public static double kCameraVerticalAngle = 35.5;//33.5
+    public static double kCameraVerticalAngle = 34.5;//33.5
     public static double ktargetHeight=104/12.0;
-    public static double kTargetCameraHeight=37/12.0;
+    public static double kTargetCameraHeight=40/12.0;
     public static double kTargetingHeightDiff=ktargetHeight-kTargetCameraHeight;
 
     public static double kRevPerFoot = 4.67;
@@ -135,9 +135,9 @@ public class Constants {
     public static int kDIOCamLimitSwitch = 8;
     public static int kDIOShooterBallGone = 9;
 
-    public static int kNAVXBWhite = 21;
+    public static int kNAVXBWhite = 23;//21
     public static int kNAVXCWhite = 22;
-    public static int kNAVXBarRed = 23;
+    public static int kNAVXBarRed = 21;
 
     public static int kShooterCounter = 10;
 
