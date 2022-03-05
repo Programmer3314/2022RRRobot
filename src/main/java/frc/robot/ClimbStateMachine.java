@@ -48,24 +48,14 @@
 
 package frc.robot;
 
-import java.text.RuleBasedCollator;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
-
 import com.ctre.phoenix.motorcontrol.InvertType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsControlModule;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
-import frc.robot.Constants.*;
 
 enum ClimbStates {
     Start, Home, Idle, ExtendToBar1fast, ExtendToBar1slow, DriveToBar1, 
@@ -102,7 +92,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double rpmForPullPast = -150;
     double pwrForPullPast = -.5;
     double homePower = -0.15;
-    DoubleSolenoid climberPosition;
+    //DoubleSolenoid climberPosition;
     ClimbStates pauseState;
     boolean manualMoveClimberUp;
     boolean manualMoveClimberDown;
@@ -157,8 +147,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         deflectionBWhite = new DigitalInput(Constants.kNAVXBWhite);
 
         climblimit = new DigitalInput(Constants.kDIOClimbLimit);
-        climberPosition = new DoubleSolenoid(Constants.kSolenoidModule, PneumaticsModuleType.CTREPCM,
-                Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
+        // climberPosition = new DoubleSolenoid(Constants.kSolenoidModule, PneumaticsModuleType.CTREPCM,
+        //         Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
         climberHomed = false;
         
     }
@@ -399,7 +389,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     public void doTransition() {
         if (isTransitionTo(ClimbStates.Home)) {
             climbMotor.setPower(homePower);
-            climberPosition.set(Value.kForward);
+            // climberPosition.set(Value.kForward);
         }
         if (isTransitionFrom(ClimbStates.Home)) {
             climbMotor.setPower(0);
@@ -474,7 +464,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.ExtendBar3Swing)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
-            climberPosition.set(Value.kReverse);
+            //climberPosition.set(Value.kReverse);
         }
         if (isTransitionFrom(ClimbStates.ExtendBar3Swing)) {
             // climbMotor.setVelocity(0);
@@ -487,7 +477,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionFrom(ClimbStates.ExtendBar3Calm)) {
             // climbMotor.setVelocity(0);
             climbMotor.setPower(0);
-            climberPosition.set(Value.kForward);
+            //climberPosition.set(Value.kForward);
         }
         if (isTransitionTo(ClimbStates.PullupBar3)) {
             // climbMotor.setVelocity(rpmForBarPull);

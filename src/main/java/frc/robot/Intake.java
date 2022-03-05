@@ -5,15 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
-
-import frc.robot.Constants.*;
 
 /** Add your docs here. */
 public class Intake {
@@ -22,9 +17,12 @@ public class Intake {
     DoubleSolenoid intakePosition;
 
     public Intake() {
-        intakeMotor = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCIntake)
-        .setBrakeMode(false));
-        intakePosition = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, Constants.kSolenoidIntakeForward, Constants.kSolenoidIntakeBackward);
+        intakeMotor = new MMFollowingMotorGroup(
+                new MMFXMotorController(Constants.kCanMCIntake)
+                        .setBrakeMode(false));
+        intakePosition = Robot.pneumaticHub.makeDoubleSolenoid(
+                Constants.kSolenoidIntakeForward,
+                Constants.kSolenoidIntakeBackward);
     }
 
     public void intake() {

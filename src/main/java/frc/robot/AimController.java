@@ -4,16 +4,14 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
-
-import com.ctre.phoenix.motorcontrol.InvertType;
+import static frc.robot.Constants.kDRobotTargetTurn;
+import static frc.robot.Constants.kIRobotTargetTurn;
+import static frc.robot.Constants.kPRobotTargetTurn;
+import static frc.robot.Constants.kRobotAimTolerance;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.utility.MMFXMotorController;
-import frc.robot.utility.MMFollowingMotorGroup;
-import frc.robot.utility.MMMotorGroup;
 
 /**
  * Aim the turret based on the vision software

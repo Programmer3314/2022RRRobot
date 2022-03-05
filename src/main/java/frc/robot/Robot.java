@@ -4,18 +4,16 @@
 
 package frc.robot;
 
-import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -158,16 +156,10 @@ public class Robot extends TimedRobot {
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
 
-    // lightRing1 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 4);
-    // lightRing2 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 5);
-    // lightRing3 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 6);
-    // lightRing4 = new Solenoid(1, PneumaticsModuleType.CTREPCM, 7);
-
     powerDistribution = new PowerDistribution(Constants.kCanPowerDistributionBoard, ModuleType.kRev);
     powerDistribution.clearStickyFaults();
 
     navx = new AHRS(Port.kMXP);
-    // navx = new AHRS(SerialPort.Port.USB);
     navx.reset();
 
     confidenceCounter = 0;
@@ -185,7 +177,7 @@ public class Robot extends TimedRobot {
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
-     climbStateMachine = new ClimbStateMachine();
+    climbStateMachine = new ClimbStateMachine();
 
     aimController = new AimController();
     pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
@@ -215,7 +207,6 @@ public class Robot extends TimedRobot {
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 
-    // pneumaticHub.enableCompressorDigital();
     pneumaticHub.enableCompressorDigital();
   }
 
