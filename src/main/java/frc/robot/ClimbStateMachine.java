@@ -78,7 +78,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean lowerLeadHooks;
     boolean startClimb;
     double revolutionsToBar1 = 73;
-    double revolutionsToBar1slow = 50;
+    double revolutionsToBar1slow = 65;
     double revolutionsToBar2 = 70;
     double revolutionsNearBar3 = 60;
     double revolutionsToBar3 = 70;

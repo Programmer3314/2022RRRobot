@@ -153,6 +153,8 @@ public class Robot extends TimedRobot {
     // TODO Create In/Out ball counter
     // TODO Create Log
 
+
+    
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
 
