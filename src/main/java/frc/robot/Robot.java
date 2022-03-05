@@ -198,20 +198,20 @@ public class Robot extends TimedRobot {
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                .setBrakeMode(true),
+                .setBrakeMode(false),
             new MMFXMotorController(Constants.kCanMCDriveLeft2)
                 .setInverted(Constants.kLeftMGInverted) // This MUST MATCH LEAD!
-                .setBrakeMode(true)),
+                .setBrakeMode(false)),
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveRight1)
                 .setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                .setBrakeMode(true),
+                .setBrakeMode(false),
             new MMFXMotorController(Constants.kCanMCDriveRight2)
                 .setInverted(Constants.kRightMGInverted)
-                .setBrakeMode(true) // This MUST MATCH LEAD!
+                .setBrakeMode(false) // This MUST MATCH LEAD!
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 

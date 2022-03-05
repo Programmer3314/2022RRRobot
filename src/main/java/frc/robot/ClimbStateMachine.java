@@ -68,7 +68,7 @@ import frc.robot.utility.MMStateMachine;
 import frc.robot.Constants.*;
 
 enum ClimbStates {
-    Start, Home, Idle, ExtendToBar1, DriveToBar1, 
+    Start, Home, Idle, ExtendToBar1fast, ExtendToBar1slow, DriveToBar1, 
     PullBar1ToStatHooksC, PullBar1PastStatHooksC, ExtendtoHookA, ExtendPastA, PulltoHookB, PullPastHookB,
     Pause1, ExtendToBar2, ExtendToBar2Check, PullBar2ToStatHooksC, PullBar2PastStatHooksC, ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2,
     ExtendBar3Swing, WaitForCalm, ExtendBar3Calm, ExtendToBar3Check, PullupBar3, Done, Pause, Manual
@@ -87,14 +87,16 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean raiseLeadHooks;
     boolean lowerLeadHooks;
     boolean startClimb;
-    double revolutionsToBar1 = 70;
+    double revolutionsToBar1 = 73;
+    double revolutionsToBar1slow = 50;
     double revolutionsToBar2 = 70;
     double revolutionsNearBar3 = 60;
     double revolutionsToBar3 = 70;
     double revolutionsToBar3Final = 7;
     boolean navxCalm = true;
     double rpmForBarExtend = 100;
-    double pwrForBarExtend = .15;
+    double pwrForBarExtend = .2;
+    double pwrForBarExtendslow = .1;
     double rpmForBarPull = -200;
     double pwrForBarPull = -.4;
     double rpmForPullPast = -150;
@@ -122,6 +124,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean deflectionWhiteB;
     boolean deflectionWhiteC;
     boolean deflectionRedC;
+    boolean overrideLeadHooks;
 
     /* go up to 72 revs
     bring top hook between hooks 1 and 2
@@ -163,8 +166,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     @Override
     public void update() {
         // Manual buttons to move climber
-        manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
-        manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
+        //manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
+        //manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
 
         manualHome = Robot.buttonBox1.getRawButton(Constants.kButtonBoxManualHome);
 
@@ -179,6 +182,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         deflectionWhiteC=deflectionCWhite.get();
         deflectionRedC=deflectionCRed.get();
 
+        overrideLeadHooks  = Robot.buttonBox1.getRawButton(5);
+
 
 
         // TODO: double check this code for errors
@@ -190,8 +195,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
         SmartDashboard.putNumber("Desired Climber Position: ", manualClimbPosition);
         SmartDashboard.putNumber("Returned Climber Position: ", climbMotor.getRevolutions());
-        SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberUp);
-        SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberDown);
+        // SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberUp);
+        // SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberDown);
         SmartDashboard.putBoolean("Climber Limit: ", lowLimitSwitch);
         SmartDashboard.putBoolean("RaiseLeadHooks : ", raiseLeadHooks);
         SmartDashboard.putBoolean("LowerLeadHooks : ", lowerLeadHooks);
@@ -204,6 +209,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         SmartDashboard.putBoolean("Deflection Red C", deflectionRedC);
         SmartDashboard.putBoolean("Deflection Red B", deflectionRedB);
         SmartDashboard.putString("Climb State: ", currentState.toString());
+        SmartDashboard.putBoolean("Manual Lead Hook Override", overrideLeadHooks);
     }
 
     @Override
@@ -213,7 +219,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             case Manual:
             case Home:
             case Idle:
-            case ExtendToBar1:
+            case ExtendToBar1fast:
+            case ExtendToBar1slow:
             case DriveToBar1:
             case Done:
             case Pause:
@@ -238,20 +245,31 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
             case Idle:
                 if (raiseLeadHooks) {
-                    nextState = ClimbStates.ExtendToBar1;
+                    nextState = ClimbStates.ExtendToBar1fast;
                 }
                 break;
-            case ExtendToBar1:
-                if (climbMotor.getRevolutions() >= revolutionsToBar1) {
-                    nextState = ClimbStates.DriveToBar1;
+            case ExtendToBar1fast:
+                if (climbMotor.getRevolutions() >= revolutionsToBar1slow) {
+                    nextState = ClimbStates.ExtendToBar1slow;
+                    //nextState = ClimbStates.DriveToBar1;
                     //nextState = ClimbStates.Home;
                 } 
                 if (lowerLeadHooks) {
                     nextState = ClimbStates.Home;
                 }
                 break;
+            case ExtendToBar1slow:
+                if (climbMotor.getRevolutions() >= revolutionsToBar1) {
+                    nextState = ClimbStates.DriveToBar1;
+                    //nextState = ClimbStates.DriveToBar1;
+                    //nextState = ClimbStates.Home;
+                }
+                if (lowerLeadHooks) {
+                    nextState = ClimbStates.Home;
+                }
+                break;
             case DriveToBar1:
-                if (leadHookContactLeft && leadHookContactRight && startClimb) {
+                if (((leadHookContactLeft && leadHookContactRight) || overrideLeadHooks)&& startClimb) {
                     nextState = ClimbStates.PullBar1ToStatHooksC;
                 }
                 if (lowerLeadHooks) {
@@ -303,7 +321,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendToBar2Check:
-                if (leadHookContactLeft && leadHookContactRight) {
+                if ((leadHookContactLeft && leadHookContactRight)|| overrideLeadHooks) {
                     nextState = ClimbStates.PullBar2ToStatHooksC;
                 }
                 break;
@@ -355,7 +373,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendToBar3Check:
-                if (leadHookContactRight && leadHookContactLeft) {
+                if ((leadHookContactRight && leadHookContactLeft) || overrideLeadHooks) {
                     nextState = ClimbStates.PullupBar3;
                 }
                 break;
@@ -387,11 +405,14 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             climbMotor.setPower(0);
             climbMotor.resetEncoders();
         }
-        if (isTransitionTo(ClimbStates.ExtendToBar1)) {
+        if (isTransitionTo(ClimbStates.ExtendToBar1fast)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionFrom(ClimbStates.ExtendToBar1)) {
+        if(isTransitionTo(ClimbStates.ExtendToBar1slow)){
+            climbMotor.setPower(pwrForBarExtendslow);
+        }
+        if (isTransitionFrom(ClimbStates.ExtendToBar1slow)) {
             climbMotor.setPower(0);
         }
         if (isTransitionTo(ClimbStates.PullBar1ToStatHooksC)) {
@@ -489,27 +510,27 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
     @Override
     public void doCurrentState() {
-        switch (currentState) {
-            case Manual:
-                if (manualMoveClimberUp) {
-                    manualClimbPosition += 3;
-                }
-                if (manualMoveClimberDown) {
-                    manualClimbPosition -= 3;
-                }
-                if (lowLimitSwitch) {
-                    climbMotor.resetEncoders();
-                    if(lowLimitSwitch && !prevLimitSwitch){
-                    manualClimbPosition = 0;
+        // switch (currentState) {
+        //     case Manual:
+        //         if (manualMoveClimberUp) {
+        //             manualClimbPosition += 3;
+        //         }
+        //         if (manualMoveClimberDown) {
+        //             manualClimbPosition -= 3;
+        //         }
+        //         if (lowLimitSwitch) {
+        //             climbMotor.resetEncoders();
+        //             if(lowLimitSwitch && !prevLimitSwitch){
+        //             manualClimbPosition = 0;
                     
-                    }
-                    climberHomed = true;
-                }
-                prevLimitSwitch= lowLimitSwitch;
-                if(climberHomed){
-                climbMotor.setPosition(manualClimbPosition);}
-                break;
-        }
+        //             }
+        //             climberHomed = true;
+        //         }
+        //         prevLimitSwitch= lowLimitSwitch;
+        //         if(climberHomed){
+        //         climbMotor.setPosition(manualClimbPosition);}
+        //         break;
+        // }
     }
 
     public void resetState() {

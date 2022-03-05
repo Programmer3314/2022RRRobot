@@ -44,7 +44,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 nextState = TBautoStates.DriveBack;
                 break;
             case DriveBack:
-                if (Robot.driveTrain.getDistanceFeet() <= -5.0) {
+                if (Robot.driveTrain.getDistanceFeet() <= -3.25) {
                     nextState = TBautoStates.Buffer;
                 }
                 break;
