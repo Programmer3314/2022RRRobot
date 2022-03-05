@@ -78,7 +78,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean raiseLeadHooks;
     boolean lowerLeadHooks;
     boolean startClimb;
-    double revolutionsToBar1 = 73;
+    double revolutionsToBar1 = 74;
     double revolutionsToBar1slow = 65;
     double revolutionsToBar2 = 70;
     double revolutionsNearBar3 = 60;
@@ -300,9 +300,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
 
             case Pause1:
-                if (secondsInState > 2) {
                     nextState = ClimbStates.ExtendToBar2;
-                }
                 break;
             case ExtendToBar2:
                 if (climbMotor.getRevolutions() >= revolutionsToBar2) {

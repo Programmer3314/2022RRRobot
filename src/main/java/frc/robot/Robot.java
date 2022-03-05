@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.FireAnimation;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,6 +63,7 @@ public class Robot extends TimedRobot {
   public static MMDiffDriveTrain driveTrain;
   public static Joystick controllerDriver;
   public static Joystick buttonBox1;
+  public static Joystick buttonBox2;
   public static Joystick controllerOperator;
   MMJoystickAxis speedAxis, turnAxis;
   MMMotorGroup shooterWheels;
@@ -102,7 +105,7 @@ public class Robot extends TimedRobot {
   public static boolean abortShootButton;
   public static boolean disableCompressor;
   public static boolean tacoBell; // Take out all balls within the robot
-  public static PowerDistribution powerDistribution;
+  // public static PowerDistribution powerDistribution;
   public static boolean resetRobot;
   public static double adjustShooterDistance;
   public static boolean increaseDistance;
@@ -110,6 +113,7 @@ public class Robot extends TimedRobot {
   public static boolean teststopTunnel;
   public static double currentShooterAngle;
   public static String lastModeRan;
+  public static boolean autoChangeDistance;
 
   /**
    * get joystick value and turn on shoot one or shoot all bool, want tap joystick
@@ -127,6 +131,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    adjustShooterDistance = .5;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
     // measure and tune cam angle/height and get those values in code
     // practice everything with bot
@@ -158,8 +163,9 @@ public class Robot extends TimedRobot {
     visiontable = nt.getTable("Retroreflective Tape Target");
 
     // Define devices that do not belong to a specific system
-    powerDistribution = new PowerDistribution(Constants.kCanPowerDistributionBoard, ModuleType.kRev);
-    powerDistribution.clearStickyFaults();
+    // powerDistribution = new
+    // PowerDistribution(Constants.kCanPowerDistributionBoard, ModuleType.kRev);
+    // powerDistribution.clearStickyFaults();
     navx = new AHRS(Port.kMXP);
     navx.reset();
     pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
@@ -171,6 +177,7 @@ public class Robot extends TimedRobot {
     speedAxis = new MMJoystickAxis(4, 1, .05, Constants.kMaxSpeed);
     turnAxis = new MMJoystickAxis(4, 4, .05, Constants.kMaxTurnRate);
     buttonBox1 = new Joystick(1);
+    buttonBox2 = new Joystick(2);
 
     // Create Systems
     shooterFormula = new ShooterFormula();
@@ -208,6 +215,7 @@ public class Robot extends TimedRobot {
     confidenceCounter = 0;
     pneumaticHub.enableCompressorDigital();
     SmartDashboard.putNumber("Target Distance", 0);
+
   }
 
   @Override
@@ -218,6 +226,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     commonInit();
+    driveTrain.resetEncoders();
     tunnelStateMachine.resetState();
     queueStateMachine.resetState();
     shooterStateMachine.resetState();
@@ -225,6 +234,7 @@ public class Robot extends TimedRobot {
     aimController.setAimMode(AimMode.driver);
     autonomous = new TwoBallAuto();
     lastModeRan = "auto";
+    autoChangeDistance = buttonBox2.getRawButton(14);
   }
 
   @Override
@@ -232,6 +242,7 @@ public class Robot extends TimedRobot {
     commonPeriodic();
     autonomous.periodic();
     commonUpdate();
+    SmartDashboard.putNumber("Driver Distance", driveTrain.getDistanceFeet());
   }
 
   @Override
@@ -248,6 +259,7 @@ public class Robot extends TimedRobot {
       aimController.resetTurret();
     }
     lastModeRan = "teleop";
+    shooterStateMachine.shootOne = false;
 
   }
 
@@ -270,14 +282,15 @@ public class Robot extends TimedRobot {
     autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
+    SmartDashboard.putBoolean("Intake Out:", intakeButton);
 
     abortShootButton = controllerOperator.getRawButton(Constants.kOperatorAbortShot) ||
         buttonBox1.getRawButton(Constants.kButtonBoxAbortShot);
     if (increaseDistance) {
-      adjustShooterDistance++;
+      adjustShooterDistance+=.5;
     }
     if (decreaseDistance) {
-      adjustShooterDistance--;
+      adjustShooterDistance-=.5;
     }
 
     if (abortShootButton) {
@@ -355,7 +368,6 @@ public class Robot extends TimedRobot {
     navx.resetDisplacement();
     shootLimeLight.set(true);
     intake.idle();
-
   }
 
   public void commonPeriodic() {
@@ -402,9 +414,11 @@ public class Robot extends TimedRobot {
     // TODO add condition for confidence and send inactive firing solution if there
     // is no confidence
     SmartDashboard.putNumber("Adjust Shooter Distance", adjustShooterDistance);
+    SmartDashboard.putBoolean("Point Blank Button", pointBlankButton);
+
     TargetPoint firingSolution = shooterFormula
         .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
-
+    //SmartDashboard.putNumber("Target Distance: ", firingsolution.distance);
     if (firingSolution == null) {
       SmartDashboard.putNumber("TargetRPM", -1);
       SmartDashboard.putNumber("TargetAngle", -1);
@@ -412,7 +426,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
 
-      if (confidenceCounter > 0) {
+      if (confidenceCounter > 0||pointBlankButton) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;

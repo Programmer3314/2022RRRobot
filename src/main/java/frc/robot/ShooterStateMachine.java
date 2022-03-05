@@ -97,7 +97,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     nextState = ShooterStates.Home;
                     break;
                 case Home:
-                    if (homed && Robot.aimController.isHomed()) {
+                    if (homed/**  && Robot.aimController.isHomed()*/) {
                         nextState = ShooterStates.Idle;
                     }
                     break;
@@ -241,6 +241,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     camAngle.setPower(0);
                     camAngle.resetEncoders();
                 }
+                SmartDashboard.putString("HOMECheck:", "YESSIRE");
                 homed = camhomed;
                 break;
             case Preparing:
@@ -264,6 +265,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         airBall = !ballGoneBreakBeam.get()||Robot.controllerOperator.getRawButton(3);//manual override for airball
         SmartDashboard.putBoolean("shootAll", shootAll);
         SmartDashboard.putBoolean("ShootOne", shootOne);
+        SmartDashboard.putBoolean("CamHOMED", homed);
+        SmartDashboard.putBoolean("HOMEAimController", Robot.aimController.isHomed());
         if (target != null) {
             // target.rpm = shooterSpeed;
             // target.feedrpm = shooterSpeed;

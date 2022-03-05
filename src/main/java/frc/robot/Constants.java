@@ -146,7 +146,7 @@ public class Constants {
   public static int kNAVXCWhite = 22;
   public static int kNAVXBWhite = 23;
 
-  public static int kShooterCounter = 10;
+  public static int kShooterCounter = 5;
 
   public static double kPRobotBallTurn = 3;
 

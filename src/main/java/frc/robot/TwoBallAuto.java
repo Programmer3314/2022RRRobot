@@ -14,12 +14,14 @@ enum TBautoStates {
     Start, DriveBack, Buffer, Shoot, Done
 };
 
+
 /**
  * Steps:
  * Drive back certain distance+Stop(3ft in tests)
  * Turn robot away from target(10Degrees), then Autoturn back to the goal
  */
 public class TwoBallAuto extends MMAutonomous<TBautoStates> {
+    double autoMoveBack;
     double goalAngle;
     double autoTargetRunCounter;
 
@@ -33,8 +35,14 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void periodic() {
+        if(Robot.autoChangeDistance){
+            autoMoveBack = -5.0;
+        }else{
+            autoMoveBack = -3.5;
+        }
         update();
         SmartDashboard.putString("Auto State", currentState.toString());
+        
     }
 
     @Override
@@ -44,7 +52,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 nextState = TBautoStates.DriveBack;
                 break;
             case DriveBack:
-                if (Robot.driveTrain.getDistanceFeet() <= -3.25) {
+                if (Robot.driveTrain.getDistanceFeet() <=autoMoveBack) {
                     nextState = TBautoStates.Buffer;
                 }
                 break;
@@ -61,6 +69,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
             case Done:
                 break;
             
+
         }
     }
 
@@ -70,7 +79,6 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
             Robot.driveTrain.resetEncoders();
             Robot.intake.intake();
             Robot.driveTrain.Drive(-2, 0);
-
         }
 
         if (isTransitionFrom(TBautoStates.DriveBack)){
@@ -94,9 +102,10 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
             case Shoot:
                 double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
                 Robot.driveTrain.Drive(0, turn);
+                Robot.shooterStateMachine.homed = true;
                 break;
             case Done:
-            Robot.driveTrain.Drive(0, 0);;
+            Robot.driveTrain.Drive(0, 0);
             break;
         }
     }
