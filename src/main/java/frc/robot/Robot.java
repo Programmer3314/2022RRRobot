@@ -127,10 +127,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP 
+    // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
     // measure and tune cam angle/height and get those values in code
     // practice everything with bot
-    // 
+    //
 
     // Autonomous Select Button
     // Expanded MMPIDController with minOutput and maxOutput
@@ -153,38 +153,33 @@ public class Robot extends TimedRobot {
     // TODO Create In/Out ball counter
     // TODO Create Log
 
-
-    
+    // define variables use throughout code
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
 
+    // Define devices that do not belong to a specific system
     powerDistribution = new PowerDistribution(Constants.kCanPowerDistributionBoard, ModuleType.kRev);
     powerDistribution.clearStickyFaults();
-
     navx = new AHRS(Port.kMXP);
     navx.reset();
+    pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
+    shootLimeLight = pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
 
-    confidenceCounter = 0;
-
+    // Human Input devices
     controllerDriver = new Joystick(Constants.kJoystickDriver);
     controllerOperator = new Joystick(Constants.kJoystickOperator);
     speedAxis = new MMJoystickAxis(4, 1, .05, Constants.kMaxSpeed);
     turnAxis = new MMJoystickAxis(4, 4, .05, Constants.kMaxTurnRate);
     buttonBox1 = new Joystick(1);
 
+    // Create Systems
     shooterFormula = new ShooterFormula();
-    SmartDashboard.putNumber("Target Distance", 0);
-
     intake = new Intake();
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
     climbStateMachine = new ClimbStateMachine();
-
     aimController = new AimController();
-    pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
-    shootLimeLight = pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
-
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveLeft1)
@@ -209,7 +204,10 @@ public class Robot extends TimedRobot {
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 
+    // Misc that should probably be better organized
+    confidenceCounter = 0;
     pneumaticHub.enableCompressorDigital();
+    SmartDashboard.putNumber("Target Distance", 0);
   }
 
   @Override
@@ -242,15 +240,12 @@ public class Robot extends TimedRobot {
 
     aimController.setAimMode(AimMode.driver);
     if (lastModeRan == "teleop") {
-      // lightRing4.set(false);
-       climbStateMachine.currentState = ClimbStates.Start;
-      // TODO: Comment these lines before competition
+      climbStateMachine.currentState = ClimbStates.Start;
       climbStateMachine.resetState();
       tunnelStateMachine.resetState();
       queueStateMachine.resetState();
       shooterStateMachine.resetState();
       aimController.resetTurret();
-
     }
     lastModeRan = "teleop";
 
@@ -311,7 +306,6 @@ public class Robot extends TimedRobot {
       pneumaticHub.disableCompressor();
     }
 
-
     if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget) && confidenceCounter > 0) {
       aimController.setAimMode(AimMode.robotShoot);
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)) {
@@ -343,7 +337,7 @@ public class Robot extends TimedRobot {
     // commonInit();
     // tunnelStateMachine = new TunnelStateMachine();
     // tunnelStateMachine.resetState();
-     climbStateMachine.resetState();
+    climbStateMachine.resetState();
     lastModeRan = "test";
 
   }
@@ -361,7 +355,6 @@ public class Robot extends TimedRobot {
     navx.resetDisplacement();
     shootLimeLight.set(true);
     intake.idle();
-    
 
   }
 
@@ -371,7 +364,7 @@ public class Robot extends TimedRobot {
 
     currentAngle = cleanAngle(navx.getYaw());
     currentShooterAngle = cleanAngle(
-        currentAngle + (/*aimController.turret.getRevolutions()*/ 0 * Constants.kTurretDegreesPerRev));
+        currentAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
     verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + Constants.kCameraVerticalAngle;
     horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
     targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
@@ -389,14 +382,14 @@ public class Robot extends TimedRobot {
       shooterStateMachine.resetState();
       tunnelStateMachine.resetState();
       queueStateMachine.resetState();
-       climbStateMachine.resetState();
+      climbStateMachine.resetState();
     }
     // TODO Clean up autocorrectTargetAngle/firingSolution with respect to
     // when they are valid. I'm not sure what this looks like but it seems odd
     // that we use .active and confidenceCounter...
     if (visiontable.getEntry("Confidence").getBoolean(false)) {
       autocorrectTargetAngle = cleanAngle(currentAngle + horizontalAngle +
-          (/*aimController.turret.getRevolutions()*/ 0 * Constants.kTurretDegreesPerRev));
+          (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
 
       confidenceCounter = 500;
     } else {
@@ -432,7 +425,7 @@ public class Robot extends TimedRobot {
 
   public void commonUpdate() {
     tunnelStateMachine.update();
-     climbStateMachine.update();
+    climbStateMachine.update();
     queueStateMachine.update();
     shooterStateMachine.update();
 
@@ -444,10 +437,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Distance", targetDistance);
     SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
-     SmartDashboard.putString("climbStateMachine",
-     climbStateMachine.currentState.toString());
-     SmartDashboard.putNumber("Climb Encoder Value",
-     climbStateMachine.climbMotor.getRevolutions());
+    SmartDashboard.putString("climbStateMachine",
+        climbStateMachine.currentState.toString());
+    SmartDashboard.putNumber("Climb Encoder Value",
+        climbStateMachine.climbMotor.getRevolutions());
 
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());

@@ -58,9 +58,10 @@ import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
 
 enum ClimbStates {
-    Start, Home, Idle, ExtendToBar1fast, ExtendToBar1slow, DriveToBar1, 
+    Start, Home, Idle, ExtendToBar1fast, ExtendToBar1slow, DriveToBar1,
     PullBar1ToStatHooksC, PullBar1PastStatHooksC, ExtendtoHookA, ExtendPastA, PulltoHookB, PullPastHookB,
-    Pause1, ExtendToBar2, ExtendToBar2Check, PullBar2ToStatHooksC, PullBar2PastStatHooksC, ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2,
+    Pause1, ExtendToBar2, ExtendToBar2Check, PullBar2ToStatHooksC, PullBar2PastStatHooksC, ExtendtoHookA2, ExtendPastA2,
+    PulltoHookB2, PullPastHookB2,
     ExtendBar3Swing, WaitForCalm, ExtendBar3Calm, ExtendToBar3Check, PullupBar3, Done, Pause, Manual
 }
 
@@ -92,7 +93,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double rpmForPullPast = -150;
     double pwrForPullPast = -.5;
     double homePower = -0.15;
-    //DoubleSolenoid climberPosition;
+    // DoubleSolenoid climberPosition;
     ClimbStates pauseState;
     boolean manualMoveClimberUp;
     boolean manualMoveClimberDown;
@@ -116,28 +117,28 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean deflectionRedC;
     boolean overrideLeadHooks;
 
-    /* go up to 72 revs
-    bring top hook between hooks 1 and 2
-    72
-    Hook 1
-    72
-    (lower)Hook 1 = 
-    Hook 2 = 
-    */
+    /*
+     * go up to 72 revs
+     * bring top hook between hooks 1 and 2
+     * 72
+     * Hook 1
+     * 72
+     * (lower)Hook 1 =
+     * Hook 2 =
+     */
     public ClimbStateMachine() {
         super(ClimbStates.Start);
-         climbMotor = new MMFollowingMotorGroup(//TODO 73 is our highest point
-        new MMFXMotorController(Constants.kCanMCClimber1)
-        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
-        Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
-        .setBrakeMode(true)
-        .setInverted(Constants.kClimberInvert),
-        new MMFXMotorController(Constants.kCanMCClimber2)
-        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
-        Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
-        .setBrakeMode(true)
-        .setInverted(InvertType.OpposeMaster)
-        );
+        climbMotor = new MMFollowingMotorGroup(// TODO 73 is our highest point
+                new MMFXMotorController(Constants.kCanMCClimber1)
+                        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
+                                Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+                        .setBrakeMode(true)
+                        .setInverted(Constants.kClimberInvert),
+                new MMFXMotorController(Constants.kCanMCClimber2)
+                        .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
+                                Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
+                        .setBrakeMode(true)
+                        .setInverted(InvertType.OpposeMaster));
         leadcontactLeft = new DigitalInput(Constants.kDIOBarWhite);
         leadcontactRight = new DigitalInput(Constants.kNAVXBarRed);
         deflectionCRed = new DigitalInput(Constants.kDIOCRed);
@@ -147,17 +148,18 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         deflectionBWhite = new DigitalInput(Constants.kNAVXBWhite);
 
         climblimit = new DigitalInput(Constants.kDIOClimbLimit);
-        // climberPosition = new DoubleSolenoid(Constants.kSolenoidModule, PneumaticsModuleType.CTREPCM,
-        //         Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
+        // climberPosition = new DoubleSolenoid(Constants.kSolenoidModule,
+        // PneumaticsModuleType.CTREPCM,
+        // Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
         climberHomed = false;
-        
+
     }
 
     @Override
     public void update() {
         // Manual buttons to move climber
-        //manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
-        //manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
+        // manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
+        // manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
 
         manualHome = Robot.buttonBox1.getRawButton(Constants.kButtonBoxManualHome);
 
@@ -169,12 +171,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         deflectionA = deflectionAred.get();
         deflectionWhiteB = deflectionBWhite.get();
         deflectionRedB = deflectionBRed.get();
-        deflectionWhiteC=deflectionCWhite.get();
-        deflectionRedC=deflectionCRed.get();
+        deflectionWhiteC = deflectionCWhite.get();
+        deflectionRedC = deflectionCRed.get();
 
-        overrideLeadHooks  = Robot.buttonBox1.getRawButton(5);
-
-
+        overrideLeadHooks = Robot.buttonBox1.getRawButton(5);
 
         // TODO: double check this code for errors
         raiseLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorRaiseHooks);
@@ -225,8 +225,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         }
         switch (currentState) {
             case Start:
-                 nextState = ClimbStates.Home;
-                //nextState = ClimbStates.Manual;
+                nextState = ClimbStates.Home;
+                // nextState = ClimbStates.Manual;
                 break;
             case Home:
                 if (lowLimitSwitch) {
@@ -241,9 +241,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             case ExtendToBar1fast:
                 if (climbMotor.getRevolutions() >= revolutionsToBar1slow) {
                     nextState = ClimbStates.ExtendToBar1slow;
-                    //nextState = ClimbStates.DriveToBar1;
-                    //nextState = ClimbStates.Home;
-                } 
+                    // nextState = ClimbStates.DriveToBar1;
+                    // nextState = ClimbStates.Home;
+                }
                 if (lowerLeadHooks) {
                     nextState = ClimbStates.Home;
                 }
@@ -251,15 +251,15 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             case ExtendToBar1slow:
                 if (climbMotor.getRevolutions() >= revolutionsToBar1) {
                     nextState = ClimbStates.DriveToBar1;
-                    //nextState = ClimbStates.DriveToBar1;
-                    //nextState = ClimbStates.Home;
+                    // nextState = ClimbStates.DriveToBar1;
+                    // nextState = ClimbStates.Home;
                 }
                 if (lowerLeadHooks) {
                     nextState = ClimbStates.Home;
                 }
                 break;
             case DriveToBar1:
-                if (((leadHookContactLeft && leadHookContactRight) || overrideLeadHooks)&& startClimb) {
+                if (((leadHookContactLeft && leadHookContactRight) || overrideLeadHooks) && startClimb) {
                     nextState = ClimbStates.PullBar1ToStatHooksC;
                 }
                 if (lowerLeadHooks) {
@@ -279,39 +279,39 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
 
             case ExtendtoHookA:
-                if (deflectionA){
+                if (deflectionA) {
                     nextState = ClimbStates.ExtendPastA;
                 }
                 break;
             case ExtendPastA:
-                if(!deflectionA){
-                    nextState = ClimbStates.PulltoHookB; 
+                if (!deflectionA) {
+                    nextState = ClimbStates.PulltoHookB;
                 }
                 break;
             case PulltoHookB:
-                if (deflectionWhiteB && deflectionRedB){
+                if (deflectionWhiteB && deflectionRedB) {
                     nextState = ClimbStates.PullPastHookB;
                 }
                 break;
             case PullPastHookB:
-                if (!deflectionWhiteB && !deflectionRedB){
+                if (!deflectionWhiteB && !deflectionRedB) {
                     nextState = ClimbStates.Pause1;
                 }
                 break;
 
             case Pause1:
-                if(secondsInState>2) {
+                if (secondsInState > 2) {
                     nextState = ClimbStates.ExtendToBar2;
                 }
                 break;
             case ExtendToBar2:
                 if (climbMotor.getRevolutions() >= revolutionsToBar2) {
-                   // nextState = ClimbStates.ExtendToBar2Check;
+                    // nextState = ClimbStates.ExtendToBar2Check;
                     nextState = ClimbStates.PullBar2ToStatHooksC;
                 }
                 break;
             case ExtendToBar2Check:
-                if ((leadHookContactLeft && leadHookContactRight)|| overrideLeadHooks) {
+                if ((leadHookContactLeft && leadHookContactRight) || overrideLeadHooks) {
                     nextState = ClimbStates.PullBar2ToStatHooksC;
                 }
                 break;
@@ -321,28 +321,28 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PullBar2PastStatHooksC:
-                if (!deflectionWhiteC &&!deflectionRedC) {
+                if (!deflectionWhiteC && !deflectionRedC) {
                     nextState = ClimbStates.Done;
-                } //ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2
+                } // ExtendtoHookA2, ExtendPastA2, PulltoHookB2, PullPastHookB2
                 break;
 
             case ExtendtoHookA2:
-                if (deflectionA){
+                if (deflectionA) {
                     nextState = ClimbStates.ExtendPastA2;
                 }
                 break;
             case ExtendPastA2:
-                if(!deflectionA){
-                    nextState = ClimbStates.PulltoHookB2; 
+                if (!deflectionA) {
+                    nextState = ClimbStates.PulltoHookB2;
                 }
                 break;
             case PulltoHookB2:
-                if (deflectionWhiteB && deflectionRedB){
+                if (deflectionWhiteB && deflectionRedB) {
                     nextState = ClimbStates.PullPastHookB2;
                 }
                 break;
             case PullPastHookB2:
-                if (!deflectionWhiteB && !deflectionRedB){
+                if (!deflectionWhiteB && !deflectionRedB) {
                     nextState = ClimbStates.ExtendBar3Swing;
                 }
                 break;
@@ -399,7 +399,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
         }
-        if(isTransitionTo(ClimbStates.ExtendToBar1slow)){
+        if (isTransitionTo(ClimbStates.ExtendToBar1slow)) {
             climbMotor.setPower(pwrForBarExtendslow);
         }
         if (isTransitionFrom(ClimbStates.ExtendToBar1slow)) {
@@ -412,34 +412,34 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.PullBar1PastStatHooksC)) {
             // climbMotor.setVelocity(rpmForPullPast);
             climbMotor.setPower(pwrForPullPast);
-        }                 
-        if (isTransitionTo(ClimbStates.ExtendtoHookA)){
+        }
+        if (isTransitionTo(ClimbStates.ExtendtoHookA)) {
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionTo(ClimbStates.ExtendPastA)){
+        if (isTransitionTo(ClimbStates.ExtendPastA)) {
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionTo(ClimbStates.PulltoHookB)){
+        if (isTransitionTo(ClimbStates.PulltoHookB)) {
             climbMotor.setPower(pwrForBarPull);
         }
-        if (isTransitionTo(ClimbStates.PullPastHookB)){
+        if (isTransitionTo(ClimbStates.PullPastHookB)) {
             climbMotor.setPower(pwrForPullPast);
         }
-        if (isTransitionFrom(ClimbStates.PullPastHookB)){
+        if (isTransitionFrom(ClimbStates.PullPastHookB)) {
             climbMotor.setPower(0);
         }
-        if(isTransitionTo(ClimbStates.Pause1)) {
+        if (isTransitionTo(ClimbStates.Pause1)) {
             climbMotor.setPower(0);
         }
         if (isTransitionTo(ClimbStates.ExtendToBar2)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
-            //climberPosition.set(Value.kReverse);
+            // climberPosition.set(Value.kReverse);
         }
         if (isTransitionFrom(ClimbStates.ExtendToBar2)) {
             // climbMotor.setVelocity(0);
             climbMotor.setPower(0);
-            //climberPosition.set(Value.kForward);
+            // climberPosition.set(Value.kForward);
         }
         if (isTransitionTo(ClimbStates.PullBar2ToStatHooksC)) {
             // climbMotor.setVelocity(rpmForBarPull);
@@ -449,22 +449,22 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             // climbMotor.setVelocity(rpmForPullPast);
             climbMotor.setPower(pwrForPullPast);
         }
-        if (isTransitionTo(ClimbStates.ExtendtoHookA2)){
+        if (isTransitionTo(ClimbStates.ExtendtoHookA2)) {
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionTo(ClimbStates.ExtendPastA2)){
+        if (isTransitionTo(ClimbStates.ExtendPastA2)) {
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionTo(ClimbStates.PulltoHookB2)){
+        if (isTransitionTo(ClimbStates.PulltoHookB2)) {
             climbMotor.setPower(pwrForBarPull);
         }
-        if (isTransitionTo(ClimbStates.PullPastHookB2)){
+        if (isTransitionTo(ClimbStates.PullPastHookB2)) {
             climbMotor.setPower(pwrForPullPast);
         }
         if (isTransitionTo(ClimbStates.ExtendBar3Swing)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
-            //climberPosition.set(Value.kReverse);
+            // climberPosition.set(Value.kReverse);
         }
         if (isTransitionFrom(ClimbStates.ExtendBar3Swing)) {
             // climbMotor.setVelocity(0);
@@ -477,7 +477,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionFrom(ClimbStates.ExtendBar3Calm)) {
             // climbMotor.setVelocity(0);
             climbMotor.setPower(0);
-            //climberPosition.set(Value.kForward);
+            // climberPosition.set(Value.kForward);
         }
         if (isTransitionTo(ClimbStates.PullupBar3)) {
             // climbMotor.setVelocity(rpmForBarPull);
@@ -493,7 +493,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.Manual)) {
             climbMotor.setPower(0);
         }
-        if(isTransitionTo(ClimbStates.Done)){
+        if (isTransitionTo(ClimbStates.Done)) {
             climbMotor.setPower(0);
         }
     }
@@ -501,25 +501,25 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     @Override
     public void doCurrentState() {
         // switch (currentState) {
-        //     case Manual:
-        //         if (manualMoveClimberUp) {
-        //             manualClimbPosition += 3;
-        //         }
-        //         if (manualMoveClimberDown) {
-        //             manualClimbPosition -= 3;
-        //         }
-        //         if (lowLimitSwitch) {
-        //             climbMotor.resetEncoders();
-        //             if(lowLimitSwitch && !prevLimitSwitch){
-        //             manualClimbPosition = 0;
-                    
-        //             }
-        //             climberHomed = true;
-        //         }
-        //         prevLimitSwitch= lowLimitSwitch;
-        //         if(climberHomed){
-        //         climbMotor.setPosition(manualClimbPosition);}
-        //         break;
+        // case Manual:
+        // if (manualMoveClimberUp) {
+        // manualClimbPosition += 3;
+        // }
+        // if (manualMoveClimberDown) {
+        // manualClimbPosition -= 3;
+        // }
+        // if (lowLimitSwitch) {
+        // climbMotor.resetEncoders();
+        // if(lowLimitSwitch && !prevLimitSwitch){
+        // manualClimbPosition = 0;
+
+        // }
+        // climberHomed = true;
+        // }
+        // prevLimitSwitch= lowLimitSwitch;
+        // if(climberHomed){
+        // climbMotor.setPosition(manualClimbPosition);}
+        // break;
         // }
     }
 
