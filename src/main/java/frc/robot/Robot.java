@@ -114,6 +114,8 @@ public class Robot extends TimedRobot {
   public static double currentShooterAngle;
   public static String lastModeRan;
   public static boolean autoChangeDistance;
+  public static boolean bottomBasket;
+  public static double targetpovdistance;
 
   /**
    * get joystick value and turn on shoot one or shoot all bool, want tap joystick
@@ -279,6 +281,7 @@ public class Robot extends TimedRobot {
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
     pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPointBlankPOV) == 0;
+    bottomBasket = controllerOperator.getPOV(Constants.kOperatorBottomBasketPV)==180;
     autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
@@ -333,6 +336,7 @@ public class Robot extends TimedRobot {
     driveTrain.Drive(requestedSpeed, requestedTurn);
 
     SmartDashboard.putNumber("Manual Feed:", 0);
+    SmartDashboard.putNumber("intake Speed: ", intake.intakeMotor.getVelocity());
 
     commonUpdate();
   }
@@ -415,9 +419,22 @@ public class Robot extends TimedRobot {
     // is no confidence
     SmartDashboard.putNumber("Adjust Shooter Distance", adjustShooterDistance);
     SmartDashboard.putBoolean("Point Blank Button", pointBlankButton);
+    SmartDashboard.putBoolean("Bottom Basket Button", bottomBasket);
 
-    TargetPoint firingSolution = shooterFormula
-        .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
+    // TargetPoint firingSolution = shooterFormula
+      //   .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
+      if(pointBlankButton){
+        targetpovdistance = 0;
+      }
+      else if(bottomBasket){
+        targetpovdistance = -5;
+      }
+      else{
+        targetpovdistance = targetDistance + adjustShooterDistance;
+      }
+      TargetPoint firingSolution = shooterFormula
+    .calculate(targetpovdistance);
+      
     //SmartDashboard.putNumber("Target Distance: ", firingsolution.distance);
     if (firingSolution == null) {
       SmartDashboard.putNumber("TargetRPM", -1);
@@ -426,7 +443,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
 
-      if (confidenceCounter > 0||pointBlankButton) {
+      if (confidenceCounter > 0||pointBlankButton||bottomBasket) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;

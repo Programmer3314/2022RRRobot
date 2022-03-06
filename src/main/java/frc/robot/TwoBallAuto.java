@@ -36,7 +36,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     @Override
     public void periodic() {
         if(Robot.autoChangeDistance){
-            autoMoveBack = -5.0;
+            autoMoveBack = -7.5;
         }else{
             autoMoveBack = -3.5;
         }

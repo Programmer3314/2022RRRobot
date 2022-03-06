@@ -114,7 +114,7 @@ public class Constants {
   public static int kCanMCQueueBelt = 12;
 
   // Shooter
-  public static int kCanMCShooterTurret = 15;
+  //public static int kCanMCShooterTurret = 15;
   public static int kCanMCShooterFeed = 16;
   public static int kCanMCShooterShoot = 17;
   public static int kCanMCShooterCam = 18;
@@ -168,6 +168,7 @@ public class Constants {
 
   public static int kOperatorSearchButton = 7;
   public static int kOperatorPointBlankPOV = 0;
+  public static int kOperatorBottomBasketPV = 0;
   public static int kOperatorRaiseHooks = 1;
   public static int kOperatorLowerHooksButton = 8;
   public static int kOperatorClimbButton = 2;
