@@ -57,6 +57,11 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     boolean abortShot;
     double shooterSpeed;
     double camControl;
+
+    double shooterRPM;
+    double feedRPM;
+    double camRevs;
+    boolean queueIsFull;
     
 
     public ShooterStateMachine() {
@@ -82,6 +87,63 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         shootAll = false;
         shootOne = false;
     }
+
+    @Override
+    public void update() {
+        camhomed = !camlimitswitch.get();
+        queueIsFull = Robot.queueStateMachine.isFull();
+        // airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
+        airBall = !ballGoneBreakBeam.get()||Robot.controllerOperator.getRawButton(3);//manual override for airball
+        SmartDashboard.putBoolean("shootAll", shootAll);
+        SmartDashboard.putBoolean("ShootOne", shootOne);
+        SmartDashboard.putBoolean("CamHOMED", homed);
+        SmartDashboard.putBoolean("HOMEAimController", Robot.aimController.isHomed());
+        if (target != null) {
+            // target.rpm = shooterSpeed;
+            // target.feedrpm = shooterSpeed;
+            // // target.angle = camControl;
+            // SmartDashboard.putNumber("Manual Shooter", shooterSpeed);
+            SmartDashboard.putNumber("Requested Shooter", target.rpm);
+            SmartDashboard.putNumber("Requested Cam", target.angle);
+            // SmartDashboard.putNumber("Manual Cam", camControl);
+        }
+
+        // if (Robot.controllerDriver.getPOV() == 0) {
+        // shooterSpeed += 200;
+        // }
+        // if (Robot.controllerDriver.getPOV() == 180) {
+        // shooterSpeed -= 200;
+        // }
+
+        // if (Robot.controllerDriver.getPOV() == 90) {
+        // camControl += 5;
+        // }
+        // if (Robot.controllerDriver.getPOV() == 270) {
+        // camControl -= 5;
+        // }
+        shooterRPM = shooter.getVelocity();
+        feedRPM = feed.getVelocity();
+        camRevs = camAngle.getRevolutions();
+        super.update();
+
+        // camAngle.setPower(camPower.get());
+        // camAngle.setPosition(camControl);
+        // shooter.setVelocity(shooterSpeed);
+        // feed.setVelocity(manualFeedPower);
+
+        SmartDashboard.putBoolean("Air Ball", airBall);
+        SmartDashboard.putString("Shooter SM", currentState.toString());
+
+        SmartDashboard.putBoolean("CamLimitSwitch", camlimitswitch.get());
+        SmartDashboard.putNumber("Returned Feed result", feedRPM);
+        SmartDashboard.putNumber("Returned Shooter", shooterRPM);
+        SmartDashboard.putNumber("Returned Cam", camRevs);
+        SmartDashboard.putNumber("Pass Through Counter", passThroughCounter);
+
+        SmartDashboard.putBoolean("Queue Full", queueIsFull);
+        SmartDashboard.putBoolean("Shooter Abort", abortShot);
+    }
+
 
     @Override
     public void CalcNextState() {
@@ -116,10 +178,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
                     SmartDashboard.putString("In Preparing ", "Yessir");
                     SmartDashboard.putBoolean("close to shooter velocity",
-                            closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin));
+                            closeEnough(shooterRPM, target.rpm, Constants.krpmMargin));
                     SmartDashboard.putBoolean("close to feed velocity",
-                            closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin));
-                    SmartDashboard.putBoolean("Close to cam angle", closeEnough(camAngle.getRevolutions(), target.angle,
+                            closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin));
+                    SmartDashboard.putBoolean("Close to cam angle", closeEnough(camRevs, target.angle,
                             Constants.kangleMargin));
 
                     SmartDashboard.putBoolean("Close to target Angle",
@@ -129,11 +191,11 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     SmartDashboard.putNumber("Auto correct Target angle", Robot.autocorrectTargetAngle);
                     SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
                     
-                    if (target.active && Robot.queueStateMachine.isFull()
-                            && closeEnough(camAngle.getRevolutions(), target.angle,
+                    if (target.active && queueIsFull
+                            && closeEnough(camRevs, target.angle,
                                     Constants.kangleMargin)
-                            && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
-                            && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
+                            && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
+                            && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
                             && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin)
                             || Robot.pointBlankButton || Robot.bottomBasket)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
@@ -258,57 +320,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         // passThroughCounter = 0;
     }
 
-    @Override
-    public void update() {
-        camhomed = !camlimitswitch.get();
-        // airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
-        airBall = !ballGoneBreakBeam.get()||Robot.controllerOperator.getRawButton(3);//manual override for airball
-        SmartDashboard.putBoolean("shootAll", shootAll);
-        SmartDashboard.putBoolean("ShootOne", shootOne);
-        SmartDashboard.putBoolean("CamHOMED", homed);
-        SmartDashboard.putBoolean("HOMEAimController", Robot.aimController.isHomed());
-        if (target != null) {
-            // target.rpm = shooterSpeed;
-            // target.feedrpm = shooterSpeed;
-            // // target.angle = camControl;
-            // SmartDashboard.putNumber("Manual Shooter", shooterSpeed);
-            SmartDashboard.putNumber("Requested Shooter", target.rpm);
-            SmartDashboard.putNumber("Requested Cam", target.angle);
-            // SmartDashboard.putNumber("Manual Cam", camControl);
-        }
-
-        // if (Robot.controllerDriver.getPOV() == 0) {
-        // shooterSpeed += 200;
-        // }
-        // if (Robot.controllerDriver.getPOV() == 180) {
-        // shooterSpeed -= 200;
-        // }
-
-        // if (Robot.controllerDriver.getPOV() == 90) {
-        // camControl += 5;
-        // }
-        // if (Robot.controllerDriver.getPOV() == 270) {
-        // camControl -= 5;
-        // }
-        super.update();
-
-        // camAngle.setPower(camPower.get());
-        // camAngle.setPosition(camControl);
-        // shooter.setVelocity(shooterSpeed);
-        // feed.setVelocity(manualFeedPower);
-
-        SmartDashboard.putBoolean("Air Ball", airBall);
-        SmartDashboard.putString("Shooter SM", currentState.toString());
-
-        SmartDashboard.putBoolean("CamLimitSwitch", camlimitswitch.get());
-        SmartDashboard.putNumber("Returned Feed result", feed.getVelocity());
-        SmartDashboard.putNumber("Returned Shooter", shooter.getVelocity());
-        SmartDashboard.putNumber("Returned Cam", camAngle.getRevolutions());
-        SmartDashboard.putNumber("Pass Through Counter", passThroughCounter);
-
-        SmartDashboard.putBoolean("Queue Full", Robot.queueStateMachine.isFull());
-        SmartDashboard.putBoolean("Shooter Abort", abortShot);
-    }
 
     public void resetState() {
         currentState = ShooterStates.Start;
@@ -335,13 +346,13 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     }
     public void LogHeader(){
         Logger.Header("FeedRPM, ShooterRPM, CamAngle,"
-        +"BallGone, CamHomeSwitch, QueueFull"
+        +"BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket"
         +"ShooterState"
         );
     }
     public void LogData(){
-        Logger.doubles(feed.getVelocity(), shooter.getVelocity(), camAngle.getRevolutions());
-        Logger.booleans(ballGoneBreakBeam.get(), camlimitswitch.get());
+        Logger.doubles(feedRPM,shooterRPM, camRevs);
+        Logger.booleans(airBall, camhomed,Robot.pointBlankButton,Robot.bottomBasket);
         Logger.singleEnum(currentState);
     }
 }

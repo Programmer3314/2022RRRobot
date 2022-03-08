@@ -4,11 +4,6 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kDRobotTargetTurn;
-import static frc.robot.Constants.kIRobotTargetTurn;
-import static frc.robot.Constants.kPRobotTargetTurn;
-import static frc.robot.Constants.kRobotAimTolerance;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,8 +53,8 @@ public class AimController {
         //         .setBrakeMode(false)
         //         .setPeakOutput(0.20, -0.20)); // 0.25;-0.25
         searchPower = -.15;
-        robotAim = new PIDController(kPRobotTargetTurn, kIRobotTargetTurn, kDRobotTargetTurn);
-        robotAim.setTolerance(kRobotAimTolerance);
+        robotAim = new PIDController(Constants.kPRobotTargetTurn, Constants.kIRobotTargetTurn, Constants.kDRobotTargetTurn);
+        robotAim.setTolerance(Constants.kRobotAimTolerance);
         turretHomed = false;
         setAimMode(AimMode.driver);
         maxRobotTurn = Constants.kMaxRobotTurn;
@@ -194,7 +189,6 @@ public class AimController {
 
     public void resetTurret() {
         turretHomed = false;
-
     }
 
 }

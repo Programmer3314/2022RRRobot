@@ -48,20 +48,24 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     DigitalInput breakBeamOne;
     int baseBlue;
     int baseRed;
+    double tunnelBeltRPM;
+    double tunnelWheelsRPM;
+    boolean queueIsFull;
+    int red,blue;
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
-        breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
+        //breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
         frontColorSensor = new ColorSensorV3(Port.kMXP);
     }
 
     @Override
     public void update() {
         // TODO make desired ball laggy
-        int red = frontColorSensor.getRed();
-        int blue = frontColorSensor.getBlue();
+        red = frontColorSensor.getRed();
+        blue = frontColorSensor.getBlue();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
         // isRed = red > baseRed*1.05;
@@ -72,15 +76,18 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                 || (Robot.alliance == Alliance.Red && isRed && !isBlue)); // && !breakBeamOne.get();
         // desiredBall =
         // Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
+        tunnelBeltRPM = tunnelBelt.getVelocity();
+        tunnelWheelsRPM = tunnelWheels.getVelocity();
+        queueIsFull = Robot.queueStateMachine.isFull();
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
         SmartDashboard.putBoolean("isBlue", isBlue);
         SmartDashboard.putString("Tunnel State", currentState.toString());
-        SmartDashboard.putNumber("Amount of Red Detected:", frontColorSensor.getRed());
-        SmartDashboard.putNumber("Amount of Blue Detected: ", frontColorSensor.getBlue());
-        SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
-        SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheels.getVelocity());
+        SmartDashboard.putNumber("Amount of Red Detected:", red);
+        SmartDashboard.putNumber("Amount of Blue Detected: ", blue);
+        //SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
+        SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheelsRPM);
 
         super.update();
     }
@@ -100,12 +107,12 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     }
                     break;
                 case BallDetected:
-                    if (!Robot.queueStateMachine.isFull()) {
+                    if (!queueIsFull) {
                         nextState = TunnelStates.MoveToQueue;
                     }
                     break;
                 case MoveToQueue:
-                    if (Robot.queueStateMachine.isFull()) {
+                    if (queueIsFull) {
                         nextState = TunnelStates.Idle;
                     }
                     break;
@@ -143,8 +150,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Start:
-                baseRed = frontColorSensor.getRed();
-                baseBlue = frontColorSensor.getBlue();
+                baseRed = red;
+                baseBlue = blue;
             case Idle:
                 tunnelBelt.setPower(0.15);
 
@@ -162,14 +169,14 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     }
 
     public void LogHeader(){
-        Logger.Header("TunnelBelt,"
-        +"colorSensorRed, colorSensorBlue,"
+        Logger.Header("TunnelBeltRPM,tunnelWheelsRPM,"
+        +"colorSensorRed, colorSensorBlue,desiredBall"
         +"TunnelState"
         );
     }
     public void LogData(){
-        Logger.doubles(tunnelBelt.getVelocity());
-        Logger.booleans(isRed, isBlue);
+        Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM);
+        Logger.booleans(isRed, isBlue,desiredBall);
         Logger.singleEnum(currentState);
     }
 }

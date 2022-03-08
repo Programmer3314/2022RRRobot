@@ -5,13 +5,12 @@
 
 package frc.robot;
 
-import frc.robot.utility.MMStateMachine;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
-import frc.robot.Constants.*;
+import frc.robot.utility.MMStateMachine;
 
 /**
  * Expected Hardware configuration:
@@ -30,12 +29,11 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     boolean takeBallFromTunnel = false;
     boolean ballPositionInQueue = false;
     boolean shooterBallRequest = false;
-    public static boolean queueFull = false;
+    boolean queueFull = false;
     DigitalInput ballInQueue;
 
     public QueueStateMachine() {
         super(QueueStates.Start);
-        //ballInqueue = new DigitalInput(Constants.kDIOQueueBreakBeam);
         ballInQueue = new DigitalInput(Constants.kDIOQueueBreakBeam);
         queueBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCQueueBelt));
     }
@@ -149,12 +147,12 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     }
     public void LogHeader(){
         Logger.Header("QueueBeltSpeed,"
-        +"BallInQueue, TakeBallRequest,"
+        +"ballPositionInQueue,TakeBallRequest,shooterBallRequest,queueFull,"
         +"QueueState");
     }
     public void LogData(){
         Logger.doubles(queueBelt.getRevolutions());
-        Logger.booleans(ballInQueue.get(), takeBallFromTunnel);
+        Logger.booleans(ballPositionInQueue, takeBallFromTunnel, shooterBallRequest, queueFull);
         Logger.singleEnum(currentState);
     }
 }

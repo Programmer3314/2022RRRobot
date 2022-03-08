@@ -116,6 +116,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean deflectionWhiteC;
     boolean deflectionRedC;
     boolean overrideLeadHooks;
+    double climbMotorRevs;
+    double climbMotorRPM;
 
     /*
      * go up to 72 revs
@@ -160,6 +162,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         // Manual buttons to move climber
         // manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
         // manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
+
+        climbMotorRevs = climbMotor.getRevolutions();
+        climbMotorRPM = climbMotor.getVelocity();
 
         manualHome = Robot.buttonBox1.getRawButton(Constants.kButtonBoxManualHome);
 
@@ -239,7 +244,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendToBar1fast:
-                if (climbMotor.getRevolutions() >= revolutionsToBar1slow) {
+                if (climbMotorRevs >= revolutionsToBar1slow) {
                     nextState = ClimbStates.ExtendToBar1slow;
                     // nextState = ClimbStates.DriveToBar1;
                     // nextState = ClimbStates.Home;
@@ -249,7 +254,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendToBar1slow:
-                if (climbMotor.getRevolutions() >= revolutionsToBar1) {
+                if (climbMotorRevs >= revolutionsToBar1) {
                     nextState = ClimbStates.DriveToBar1;
                     // nextState = ClimbStates.DriveToBar1;
                     // nextState = ClimbStates.Home;
@@ -300,10 +305,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
 
             case Pause1:
-                    nextState = ClimbStates.ExtendToBar2;
+                nextState = ClimbStates.ExtendToBar2;
                 break;
             case ExtendToBar2:
-                if (climbMotor.getRevolutions() >= revolutionsToBar2) {
+                if (climbMotorRevs >= revolutionsToBar2) {
                     // nextState = ClimbStates.ExtendToBar2Check;
                     nextState = ClimbStates.PullBar2ToStatHooksC;
                 }
@@ -346,7 +351,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
 
             case ExtendBar3Swing:
-                if (climbMotor.getRevolutions() >= revolutionsNearBar3) {
+                if (climbMotorRevs >= revolutionsNearBar3) {
                     nextState = ClimbStates.WaitForCalm;
                 }
                 break;
@@ -356,7 +361,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendBar3Calm:
-                if (climbMotor.getRevolutions() >= revolutionsToBar3) {
+                if (climbMotorRevs >= revolutionsToBar3) {
                     nextState = ClimbStates.ExtendToBar3Check;
                 }
                 break;
@@ -366,7 +371,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PullupBar3:
-                if (climbMotor.getRevolutions() <= revolutionsToBar3Final) {
+                if (climbMotorRevs <= revolutionsToBar3Final) {
                     nextState = ClimbStates.Done;
                 }
                 break;
@@ -524,15 +529,17 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     public void resetState() {
         currentState = ClimbStates.Start;
     }
-    public void LogHeader(){
-        Logger.Header("ClimbRPM,"
-        +"RaiseLeadH, lowerLeadH, LeftLead, RightLead, DEFA, RedDEFB, WhiteDEFB, RedDEFC, WhiteDEFC"
-        +"ClimbState");
+
+    public void LogHeader() {
+        Logger.Header("climbMotorRevs,climbMotorRPM,"
+                + "climberHomed,startClimb,overrideLeadHooks,manualHome,lowLimitSwitch,RaiseLeadH, lowerLeadH, LeftLead, RightLead, DEFA, RedDEFB, WhiteDEFB, RedDEFC, WhiteDEFC"
+                + "ClimbState");
     }
-    public void LogData(){
-        Logger.doubles(climbMotor.getRevolutions());
-        Logger.booleans(raiseLeadHooks, lowerLeadHooks, leadHookContactLeft, leadHookContactRight, 
-        deflectionA, deflectionRedB, deflectionWhiteB, deflectionRedC, deflectionWhiteC);
+
+    public void LogData() {
+        Logger.doubles(climbMotorRevs, climbMotorRPM);
+        Logger.booleans(climberHomed,startClimb,overrideLeadHooks,manualHome,lowLimitSwitch, raiseLeadHooks, lowerLeadHooks, leadHookContactLeft, leadHookContactRight,
+                deflectionA, deflectionRedB, deflectionWhiteB, deflectionRedC, deflectionWhiteC);
         Logger.singleEnum(currentState);
     }
 

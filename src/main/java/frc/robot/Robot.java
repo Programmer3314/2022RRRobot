@@ -158,17 +158,22 @@ public class Robot extends TimedRobot {
     // - minimum correction to apply (if any +/- correction use at least a minimum
     // value)
     // - maximum correction to apply
-    // TODO Create In/Out ball counter
-    // TODO Create Log
-    //TODO Lower Lead Hooks
-    //TODO Adjust QueueBelt Speed
-    //TODO change extend to each bar
-    //TODO remove turret code
-    //TODO find good shot
-    //TODO Dom's autos:
-    //-wall auto, once shot, turn and drive away based on selected distance
-    //-ALL(After shot, drive near ball)
-    //TODO optimize ball camera
+    
+    // TODO Create Log - in work
+
+    // TODO Lower Lead Hooks
+    // TODO Adjust QueueBelt Speed and change from power to RPM
+    // TODO change climb processes 
+    // - adjust length of extend to bar 2
+    // - add hard breaks climb sequence 
+    // TODO remove turret code
+    // TODO look for low goal shots
+    // TODO shot tuning to attemp flatten trajectories
+    // TODO Dom's autos:
+    // -In wall auto, optionally turn and drive away
+    // -For middle position optionally start driving toward terminal in auto
+    // TODO optimize ball camera
+    // TODO Setup new driverstation computer
 
     // define variables use throughout code
     nt = NetworkTableInstance.getDefault();
