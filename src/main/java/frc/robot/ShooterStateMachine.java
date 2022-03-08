@@ -333,4 +333,15 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         shootAll = false;
         shootOne = false;
     }
+    public void LogHeader(){
+        Logger.Header("FeedRPM, ShooterRPM, CamAngle,"
+        +"BallGone, CamHomeSwitch, QueueFull"
+        +"ShooterState"
+        );
+    }
+    public void LogData(){
+        Logger.doubles(feed.getVelocity(), shooter.getVelocity(), camAngle.getRevolutions());
+        Logger.booleans(ballGoneBreakBeam.get(), camlimitswitch.get());
+        Logger.singleEnum(currentState);
+    }
 }

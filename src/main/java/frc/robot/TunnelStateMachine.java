@@ -12,6 +12,7 @@ package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.cscore.CameraServerJNI.LoggerFunction;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C.Port;
@@ -158,5 +159,17 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void resetState() {
         desiredBall = false;
         currentState = TunnelStates.Start;
+    }
+
+    public void LogHeader(){
+        Logger.Header("TunnelBelt,"
+        +"colorSensorRed, colorSensorBlue,"
+        +"TunnelState"
+        );
+    }
+    public void LogData(){
+        Logger.doubles(tunnelBelt.getVelocity());
+        Logger.booleans(isRed, isBlue);
+        Logger.singleEnum(currentState);
     }
 }

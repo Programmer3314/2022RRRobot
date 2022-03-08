@@ -134,6 +134,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     adjustShooterDistance = .5;
+    Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
     // measure and tune cam angle/height and get those values in code
     // practice everything with bot
@@ -159,6 +160,15 @@ public class Robot extends TimedRobot {
     // - maximum correction to apply
     // TODO Create In/Out ball counter
     // TODO Create Log
+    //TODO Lower Lead Hooks
+    //TODO Adjust QueueBelt Speed
+    //TODO change extend to each bar
+    //TODO remove turret code
+    //TODO find good shot
+    //TODO Dom's autos:
+    //-wall auto, once shot, turn and drive away based on selected distance
+    //-ALL(After shot, drive near ball)
+    //TODO optimize ball camera
 
     // define variables use throughout code
     nt = NetworkTableInstance.getDefault();
@@ -249,7 +259,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    Logger.OpenLog("Tele");
     commonInit();
+    RobotLogHeader();
 
     aimController.setAimMode(AimMode.driver);
     if (lastModeRan == "teleop") {
@@ -262,12 +274,15 @@ public class Robot extends TimedRobot {
     }
     lastModeRan = "teleop";
     shooterStateMachine.shootOne = false;
-
+    Logger.EndLine();
   }
 
   @Override
   public void teleopPeriodic() {
+    Logger.StartLine();
+    RobotLogData();
     commonPeriodic();
+    
 
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
@@ -338,7 +353,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Manual Feed:", 0);
     SmartDashboard.putNumber("intake Speed: ", intake.intakeMotor.getVelocity());
 
+    tunnelStateMachine.LogData();
+    
+
     commonUpdate();
+    Logger.EndLine();
   }
 
   @Override
@@ -347,6 +366,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    Logger.CloseLog();
   }
 
   @Override
@@ -484,4 +504,23 @@ public class Robot extends TimedRobot {
 
     return ((((angle + 180) % 360) + 360) % 360) - 180;
   }
+  public void RobotLogHeader(){
+    Logger.Header("ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, BottomBasket, Aimbot, UpDistance, DownDistance");
+    //aimController.LogHeader();
+    climbStateMachine.LogHeader();
+    intake.LogHeader();
+    queueStateMachine.LogHeader();
+    shooterStateMachine.LogHeader();
+    tunnelStateMachine.LogHeader();
+  }
+  public void RobotLogData(){
+    Logger.booleans(shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton, pointBlankButton,
+    bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
+    climbStateMachine.LogData();
+    intake.LogData();
+    queueStateMachine.LogData();
+    shooterStateMachine.LogData();
+    tunnelStateMachine.LogData();
+  }
+
 }

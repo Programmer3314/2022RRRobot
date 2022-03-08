@@ -112,4 +112,12 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     public void resetState(){
         currentState = TBautoStates.Start;
     }
+    public void LogHeader(){
+        Logger.Header("AutoMove,"
+        +"AutoState");
+    }
+    public void LogData(){
+        Logger.doubles(autoMoveBack);
+        Logger.singleEnum(currentState);
+    }
 }

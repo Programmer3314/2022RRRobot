@@ -39,4 +39,12 @@ public class Intake {
         intakeMotor.setPower(0);
         intakePosition.set(Value.kReverse);
     }
+    public void LogHeader(){
+        Logger.Header("IntakeRPM"
+        +"IntakePosition");
+    }
+    public void LogData(){
+        Logger.doubles(intakeMotor.getRevolutions());
+        Logger.singleEnum(intakePosition.get());
+    }
 }

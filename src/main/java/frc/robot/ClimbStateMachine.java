@@ -524,5 +524,16 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     public void resetState() {
         currentState = ClimbStates.Start;
     }
+    public void LogHeader(){
+        Logger.Header("ClimbRPM,"
+        +"RaiseLeadH, lowerLeadH, LeftLead, RightLead, DEFA, RedDEFB, WhiteDEFB, RedDEFC, WhiteDEFC"
+        +"ClimbState");
+    }
+    public void LogData(){
+        Logger.doubles(climbMotor.getRevolutions());
+        Logger.booleans(raiseLeadHooks, lowerLeadHooks, leadHookContactLeft, leadHookContactRight, 
+        deflectionA, deflectionRedB, deflectionWhiteB, deflectionRedC, deflectionWhiteC);
+        Logger.singleEnum(currentState);
+    }
 
 }
