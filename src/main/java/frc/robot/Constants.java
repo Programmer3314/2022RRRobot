@@ -166,13 +166,13 @@ public class Constants {
   public static double kTurretLowLimit = -170;
   public static double kTurretHighLimit = 170;
 
-  public static int kOperatorSearchButton = 7;
   public static int kOperatorPointBlankPOV = 0;
   public static int kOperatorBottomBasketPV = 0;
   public static int kOperatorRaiseHooks = 1;
-  public static int kOperatorLowerHooksButton = 8;
   public static int kOperatorClimbButton = 2;
   public static int kOperatorAbortShot = 5;
+  public static int kOperatorSearchButton = 7;
+  public static int kOperatorLowerHooksButton = 8;
 
   public static int kButtonBoxIncreaseDistance = 3;
   public static int kButtonBoxDecreaseDistance = 6;
@@ -183,11 +183,11 @@ public class Constants {
 
   public static int kShooterLimeLight = 4;
 
-  public static int kDriverToggleBallLight = 9;
+  public static int kDriverAutoTurnToTarget = 1;
   public static int kDriverAutoBallPickup = 2;
   public static int kDriverIntake = 5;
   public static int kDriverEject = 6;
-  public static int kDriverAutoTurnToTarget = 1;
+  public static int kDriverToggleBallLight = 9;
 
   // public static int kPneumaticsHub = 0;
   // public static int kEjectPneumaticsHub = 1;

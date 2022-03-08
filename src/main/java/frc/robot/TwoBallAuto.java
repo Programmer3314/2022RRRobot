@@ -14,7 +14,6 @@ enum TBautoStates {
     Start, DriveBack, Buffer, Shoot, Done
 };
 
-
 /**
  * Steps:
  * Drive back certain distance+Stop(3ft in tests)
@@ -35,14 +34,14 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void periodic() {
-        if(Robot.autoChangeDistance){
+        if (Robot.autoChangeDistance) {
             autoMoveBack = -7.5;
-        }else{
+        } else {
             autoMoveBack = -3.5;
         }
         update();
         SmartDashboard.putString("Auto State", currentState.toString());
-        
+
     }
 
     @Override
@@ -52,42 +51,41 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 nextState = TBautoStates.DriveBack;
                 break;
             case DriveBack:
-                if (Robot.driveTrain.getDistanceFeet() <=autoMoveBack) {
+                if (Robot.driveTrain.getDistanceFeet() <= autoMoveBack) {
                     nextState = TBautoStates.Buffer;
                 }
                 break;
             case Buffer:
-                if (secondsInState >= 2){
+                if (secondsInState >= 2) {
                     nextState = TBautoStates.Shoot;
-                } 
+                }
                 break;
             case Shoot:
-                if (!Robot.shooterStateMachine.shootOne && !Robot.shooterStateMachine.shootAll){
+                if (!Robot.shooterStateMachine.shootOne && !Robot.shooterStateMachine.shootAll) {
                     nextState = TBautoStates.Done;
                 }
                 break;
             case Done:
                 break;
-            
 
         }
     }
 
     @Override
     public void doTransition() {
-        if (isTransitionTo(TBautoStates.DriveBack)){
+        if (isTransitionTo(TBautoStates.DriveBack)) {
             Robot.driveTrain.resetEncoders();
             Robot.intake.intake();
             Robot.driveTrain.Drive(-2, 0);
         }
 
-        if (isTransitionFrom(TBautoStates.DriveBack)){
+        if (isTransitionFrom(TBautoStates.DriveBack)) {
             Robot.driveTrain.Drive(0, 0);
 
         }
 
-        if (isTransitionTo(TBautoStates.Shoot)){
-            //Robot.driveTrain.Drive(0, 0);
+        if (isTransitionTo(TBautoStates.Shoot)) {
+            // Robot.driveTrain.Drive(0, 0);
             Robot.aimController.setAimMode(AimMode.robotShoot);
 
             Robot.shooterStateMachine.shootAll();
@@ -97,26 +95,31 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     }
 
     @Override
-    public void doCurrentState() {     
-        switch (currentState){
+    public void doCurrentState() {
+        switch (currentState) {
             case Shoot:
                 double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
                 Robot.driveTrain.Drive(0, turn);
                 Robot.shooterStateMachine.homed = true;
                 break;
             case Done:
-            Robot.driveTrain.Drive(0, 0);
-            break;
+                Robot.driveTrain.Drive(0, 0);
+                break;
+            default:
+                break;
         }
     }
-    public void resetState(){
+
+    public void resetState() {
         currentState = TBautoStates.Start;
     }
-    public void LogHeader(){
+
+    public void LogHeader() {
         Logger.Header("AutoMove,"
-        +"AutoState");
+                + "AutoState");
     }
-    public void LogData(){
+
+    public void LogData() {
         Logger.doubles(autoMoveBack);
         Logger.singleEnum(currentState);
     }

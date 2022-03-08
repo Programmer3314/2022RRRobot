@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.led.FireAnimation;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -13,10 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,29 +22,6 @@ import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
-
-/*
-Main TODO List:
-- Do CLEANUPS...
-
-- Drive robot to specific distance while pointing to target
-  and indicate when good.   
-
-- When possible start tuning the test chassis pids - we'll discuss this before you do it.
-
-- On Hold for now... Start on shooter code: 
-  This will likely be a question of adjusting the speed of the shooter and the release angle.
-  We don't know the final configuration, but there will probably be some number of shooter motors, 
-  and some number of hood adjust motors. Hopefully, Falcon500s. 
-  I would like the shoot method to take a distance as the primary input parameter. How will the 
-  adjustments be calculated from the desired shot distance? 
-
-*/
-
-//Control RPM of motors
-//Control position of CAM
-//Look at linear interpilation to determine firing solution
-//dream plan- have firing solution always at the ready during a match
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -118,15 +91,6 @@ public class Robot extends TimedRobot {
   public static double targetpovdistance;
 
   /**
-   * get joystick value and turn on shoot one or shoot all bool, want tap joystick
-   * not hold it
-   * if someone holds the shoot all button, shoot one ball then shoot all will be
-   * false
-   * and shoot one will become true
-   * 
-   */
-
-  /**
    * This function is run when the robot is first started up and should be used
    * for any
    * initialization code.
@@ -136,23 +100,18 @@ public class Robot extends TimedRobot {
     adjustShooterDistance = .5;
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
-    // measure and tune cam angle/height and get those values in code
-    // practice everything with bot
-    //
 
-    // Autonomous Select Button
+    // TODO Autonomous Select Button Dial
     // Expanded MMPIDController with minOutput and maxOutput
-    // Handle multiple same color balls in ball tracking/only detect same balls as
-    // alliance
 
     // TODO CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
     // Sensors together, Data init, etc.
-    // TODO Confirm Hardware Sensor requirements.
-    // check in each state machine and for the robot in general.
+
     // TODO Organize all human inputs into a single class with and update() call to
     // get data
     // convert button presses to more meaningful variables.
+
     // TODO ON-HOLD create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
     // - minimum correction to apply (if any +/- correction use at least a minimum
@@ -174,6 +133,7 @@ public class Robot extends TimedRobot {
     // -For middle position optionally start driving toward terminal in auto
     // TODO optimize ball camera
     // TODO Setup new driverstation computer
+
 
     // define variables use throughout code
     nt = NetworkTableInstance.getDefault();

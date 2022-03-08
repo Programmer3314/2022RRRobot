@@ -311,6 +311,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 camAngle.setPosition(target.angle);
                 feed.setVelocity(target.feedrpm);
                 break;
+            default:
+                break;
         }
 
     }
@@ -350,6 +352,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         +"ShooterState"
         );
     }
+    
     public void LogData(){
         Logger.doubles(feedRPM,shooterRPM, camRevs);
         Logger.booleans(airBall, camhomed,Robot.pointBlankButton,Robot.bottomBasket);
