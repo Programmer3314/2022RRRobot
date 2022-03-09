@@ -171,7 +171,7 @@ public class Constants {
   public static int kOperatorRaiseHooks = 1;
   public static int kOperatorClimbButton = 2;
   public static int kOperatorAbortShot = 5;
-  public static int kOperatorSearchButton = 7;
+  public static int kOperatorHighBarResume = 7;
   public static int kOperatorLowerHooksButton = 8;
 
   public static int kButtonBoxIncreaseDistance = 3;
@@ -180,6 +180,7 @@ public class Constants {
   public static int kButtonBoxTacobell = 8;
   public static int kButtonBoxAbortShot = 9;
   public static int kButtonBoxManualHome = 10;
+  public static int kButtonBoxErrorButton = 2;
 
   public static int kShooterLimeLight = 4;
 

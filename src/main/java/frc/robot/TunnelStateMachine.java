@@ -171,8 +171,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     public void LogHeader(){
         Logger.Header("TunnelBeltRPM,tunnelWheelsRPM,"
-        +"colorSensorRed, colorSensorBlue,desiredBall"
-        +"TunnelState"
+        +"colorSensorRed, colorSensorBlue,desiredBall,"
+        +"TunnelState,"
         );
     }
     public void LogData(){

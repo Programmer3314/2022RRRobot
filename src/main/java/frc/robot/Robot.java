@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
   public static boolean autoChangeDistance;
   public static boolean bottomBasket;
   public static double targetpovdistance;
+  public static boolean logEvent;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -251,6 +252,7 @@ public class Robot extends TimedRobot {
 
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
+    logEvent = buttonBox1.getRawButton(Constants.kButtonBoxErrorButton);
 
     tacoBell = buttonBox1.getRawButton(Constants.kButtonBoxTacobell);
     double requestedSpeed = speedAxis.get();
@@ -360,7 +362,7 @@ public class Robot extends TimedRobot {
   }
 
   public void commonPeriodic() {
-    searchButton = controllerOperator.getRawButton(Constants.kOperatorSearchButton);
+    //searchButton = controllerOperator.getRawButton(Constants.kOperatorSearchButton);
     resetRobot = buttonBox1.getRawButton(Constants.kButtonBoxResetRobot);
 
     currentAngle = cleanAngle(navx.getYaw());
@@ -470,7 +472,7 @@ public class Robot extends TimedRobot {
     return ((((angle + 180) % 360) + 360) % 360) - 180;
   }
   public void RobotLogHeader(){
-    Logger.Header("ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, BottomBasket, Aimbot, UpDistance, DownDistance");
+    Logger.Header("EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, BottomBasket, Aimbot, UpDistance, DownDistance,");
     //aimController.LogHeader();
     climbStateMachine.LogHeader();
     intake.LogHeader();
@@ -479,7 +481,7 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.LogHeader();
   }
   public void RobotLogData(){
-    Logger.booleans(shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton, pointBlankButton,
+    Logger.booleans(logEvent,shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton, pointBlankButton,
     bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
     climbStateMachine.LogData();
     intake.LogData();

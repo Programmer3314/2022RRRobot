@@ -40,8 +40,8 @@ public class Intake {
         intakePosition.set(Value.kReverse);
     }
     public void LogHeader(){
-        Logger.Header("IntakeRPM"
-        +"IntakePosition");
+        Logger.Header("IntakeRPM,"
+        +"IntakePosition,");
     }
     public void LogData(){
         Logger.doubles(intakeMotor.getRevolutions());

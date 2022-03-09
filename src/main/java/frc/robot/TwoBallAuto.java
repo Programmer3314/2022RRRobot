@@ -116,7 +116,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     public void LogHeader() {
         Logger.Header("AutoMove,"
-                + "AutoState");
+                + "AutoState,");
     }
 
     public void LogData() {

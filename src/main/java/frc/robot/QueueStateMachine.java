@@ -148,7 +148,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public void LogHeader(){
         Logger.Header("QueueBeltSpeed,"
         +"ballPositionInQueue,TakeBallRequest,shooterBallRequest,queueFull,"
-        +"QueueState");
+        +"QueueState,");
     }
     public void LogData(){
         Logger.doubles(queueBelt.getRevolutions());

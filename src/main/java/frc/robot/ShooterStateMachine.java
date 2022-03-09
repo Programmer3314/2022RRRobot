@@ -348,8 +348,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     }
     public void LogHeader(){
         Logger.Header("FeedRPM, ShooterRPM, CamAngle,"
-        +"BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket"
-        +"ShooterState"
+        +"BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,"
+        +"ShooterState,"
         );
     }
     
