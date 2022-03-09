@@ -309,6 +309,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Manual Feed:", 0);
     SmartDashboard.putNumber("intake Speed: ", intake.intakeMotor.getVelocity());
 
+    // TODO I think the next line is a "duplicate"
     tunnelStateMachine.LogData();
 
     commonUpdate();
