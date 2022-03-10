@@ -110,6 +110,7 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
+    // TODO Auto Align with bar for climb
     // TODO Autonomous Select Button Dial
     // Expanded MMPIDController with minOutput and maxOutput
 
@@ -133,18 +134,31 @@ public class Robot extends TimedRobot {
     // TODO Dom's autos:
     // -In wall auto, optionally turn and drive away
     // -For middle position optionally start driving toward terminal in auto
-    // TODO optimize ball camera
     // TODO Setup new driverstation computer
+    // TODO look for low goal shots
+    // TODO shot tuning to attemp flatten trajectories
 
+    // TODO On-Hold remove turret code
+    // TODO On-Hold optimize ball camera
+    // TODO ON-HOLD create custom PIDF controller that includes:
+    // - small amount of error around zero to be ignored
+    // - minimum correction to apply (if any +/- correction use at least a minimum
+    // value)
+    // - maximum correction to apply
+    // TODO On-Hold Organize all human inputs into a single class with and update()
+    // call to
+    // get data
+    // convert button presses to more meaningful variables.
+    // TODO On-Hold CLEANUP Organize the init code to group simillar code
+    // like Motor devices together, Human inputs together,
+    // Sensors together, Data init, etc.
+    // TODO On-Hold Expanded MMPIDController with minOutput and maxOutput
 
     // define variables use throughout code
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
 
     // Define devices that do not belong to a specific system
-    // powerDistribution = new
-    // PowerDistribution(Constants.kCanPowerDistributionBoard, ModuleType.kRev);
-    // powerDistribution.clearStickyFaults();
     navx = new AHRS(Port.kMXP);
     navx.reset();
     pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
@@ -260,7 +274,6 @@ public class Robot extends TimedRobot {
     Logger.StartLine();
     RobotLogData();
     commonPeriodic();
-    
 
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
@@ -275,7 +288,7 @@ public class Robot extends TimedRobot {
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
     pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPointBlankPOV) == 0;
-    bottomBasket = controllerOperator.getPOV(Constants.kOperatorBottomBasketPV)==180;
+    bottomBasket = controllerOperator.getPOV(Constants.kOperatorBottomBasketPV) == 180;
     autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
@@ -284,10 +297,10 @@ public class Robot extends TimedRobot {
     abortShootButton = controllerOperator.getRawButton(Constants.kOperatorAbortShot) ||
         buttonBox1.getRawButton(Constants.kButtonBoxAbortShot);
     if (increaseDistance) {
-      adjustShooterDistance+=.5;
+      adjustShooterDistance += .5;
     }
     if (decreaseDistance) {
-      adjustShooterDistance-=.5;
+      adjustShooterDistance -= .5;
     }
 
     if (abortShootButton) {
@@ -341,8 +354,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Requested Turn: ", requestedTurn);
     SmartDashboard.putNumber("Intake RPM", intake.intakeMotor.getVelocity());
 
+    // TODO I think the next line is a "duplicate"
     tunnelStateMachine.LogData();
-    
 
     commonUpdate();
     Logger.EndLine();
@@ -383,7 +396,8 @@ public class Robot extends TimedRobot {
   }
 
   public void commonPeriodic() {
-    //searchButton = controllerOperator.getRawButton(Constants.kOperatorSearchButton);
+    // searchButton =
+    // controllerOperator.getRawButton(Constants.kOperatorSearchButton);
     resetRobot = buttonBox1.getRawButton(Constants.kButtonBoxResetRobot);
 
     currentAngle = cleanAngle(navx.getYaw());
@@ -430,20 +444,18 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Bottom Basket Button", bottomBasket);
 
     // TargetPoint firingSolution = shooterFormula
-      //   .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
-      if(pointBlankButton){
-        targetpovdistance = 0;
-      }
-      else if(bottomBasket){
-        targetpovdistance = -5;
-      }
-      else{
-        targetpovdistance = targetDistance + adjustShooterDistance;
-      }
-      TargetPoint firingSolution = shooterFormula
-    .calculate(targetpovdistance);
-      
-    //SmartDashboard.putNumber("Target Distance: ", firingsolution.distance);
+    // .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
+    if (pointBlankButton) {
+      targetpovdistance = 0;
+    } else if (bottomBasket) {
+      targetpovdistance = -5;
+    } else {
+      targetpovdistance = targetDistance + adjustShooterDistance;
+    }
+    TargetPoint firingSolution = shooterFormula
+        .calculate(targetpovdistance);
+
+    // SmartDashboard.putNumber("Target Distance: ", firingsolution.distance);
     if (firingSolution == null) {
       SmartDashboard.putNumber("TargetRPM", -1);
       SmartDashboard.putNumber("TargetAngle", -1);
@@ -451,7 +463,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
 
-      if (confidenceCounter > 0||pointBlankButton||bottomBasket) {
+      if (confidenceCounter > 0 || pointBlankButton || bottomBasket) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;
@@ -492,9 +504,11 @@ public class Robot extends TimedRobot {
 
     return ((((angle + 180) % 360) + 360) % 360) - 180;
   }
-  public void RobotLogHeader(){
-    Logger.Header("EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, BottomBasket, Aimbot, UpDistance, DownDistance,");
-    //aimController.LogHeader();
+
+  public void RobotLogHeader() {
+    Logger.Header(
+        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, BottomBasket, Aimbot, UpDistance, DownDistance,");
+    // aimController.LogHeader();
     climbStateMachine.LogHeader();
     intake.LogHeader();
     queueStateMachine.LogHeader();
@@ -502,9 +516,11 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.LogHeader();
     aimController.LogHeader();
   }
-  public void RobotLogData(){
-    Logger.booleans(logEvent,shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton, pointBlankButton,
-    bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
+
+  public void RobotLogData() {
+    Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton,
+        pointBlankButton,
+        bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
     climbStateMachine.LogData();
     intake.LogData();
     queueStateMachine.LogData();
