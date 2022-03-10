@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
+import frc.robot.utility.MMBCDReturn;
 import frc.robot.utility.MMDiffDriveTrain;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
@@ -32,6 +33,10 @@ import frc.robot.utility.MMMotorGroup;
  * build.gradle file in the
  * project.
  */
+
+ enum Position{
+   Left, Right, Center
+ }
 public class Robot extends TimedRobot {
   public static MMDiffDriveTrain driveTrain;
   public static Joystick controllerDriver;
@@ -86,10 +91,13 @@ public class Robot extends TimedRobot {
   public static boolean teststopTunnel;
   public static double currentShooterAngle;
   public static String lastModeRan;
-  public static boolean autoChangeDistance;
   public static boolean bottomBasket;
   public static double targetpovdistance;
   public static boolean logEvent;
+  public static boolean autoLockBar;
+  public static int autoSelect;
+  public static MMBCDReturn bcdReturn;
+  public static Position position;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -118,15 +126,8 @@ public class Robot extends TimedRobot {
     // - minimum correction to apply (if any +/- correction use at least a minimum
     // value)
     // - maximum correction to apply
-    
-    // TODO Create Log - in work
 
-    // TODO Lower Lead Hooks
     // TODO Adjust QueueBelt Speed and change from power to RPM
-    // TODO change climb processes 
-    // - adjust length of extend to bar 2
-    // - add hard breaks climb sequence 
-    // TODO remove turret code
     // TODO look for low goal shots
     // TODO shot tuning to attemp flatten trajectories
     // TODO Dom's autos:
@@ -204,15 +205,26 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     commonInit();
+    autoSelect = bcdReturn.GetDial();
     driveTrain.resetEncoders();
     tunnelStateMachine.resetState();
     queueStateMachine.resetState();
     shooterStateMachine.resetState();
     aimController.resetTurret();
     aimController.setAimMode(AimMode.driver);
-    autonomous = new TwoBallAuto();
+    
     lastModeRan = "auto";
-    autoChangeDistance = buttonBox2.getRawButton(14);
+
+    if (buttonBox1.getRawButton(13)){
+      position = Position.Left;
+    } else {
+      if (buttonBox1.getRawButton(14)){
+        position = Position.Right;
+      } else{
+        position = Position.Center;
+      }
+    }
+    autonomous = new TwoBallAuto(position, autoSelect);
   }
 
   @Override
@@ -312,13 +324,22 @@ public class Robot extends TimedRobot {
       aimController.setAimMode(AimMode.ballChase);
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoBallPickup)) {
       aimController.setAimMode(AimMode.driver);
+    } else if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoBarLock)){
+      aimController.setAimMode(AimMode.lockBar);
+    }else if(controllerDriver.getRawButtonReleased(Constants.kDriverAutoBarLock)){
+      aimController.setAimMode(AimMode.driver);
     }
-    requestedTurn = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle);
+    DriveParameters dp = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle, 
+    climbStateMachine.leadHookContactLeft, climbStateMachine.leadHookContactRight, requestedSpeed);
 
+    requestedTurn = dp.turn;
+    requestedSpeed = dp.drive;
     driveTrain.Drive(requestedSpeed, requestedTurn);
 
     SmartDashboard.putNumber("Manual Feed:", 0);
     SmartDashboard.putNumber("intake Speed: ", intake.intakeMotor.getVelocity());
+    SmartDashboard.putNumber("Requested Turn: ", requestedTurn);
+    SmartDashboard.putNumber("Intake RPM", intake.intakeMotor.getVelocity());
 
     tunnelStateMachine.LogData();
     
@@ -479,6 +500,7 @@ public class Robot extends TimedRobot {
     queueStateMachine.LogHeader();
     shooterStateMachine.LogHeader();
     tunnelStateMachine.LogHeader();
+    aimController.LogHeader();
   }
   public void RobotLogData(){
     Logger.booleans(logEvent,shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton, pointBlankButton,
@@ -488,6 +510,7 @@ public class Robot extends TimedRobot {
     queueStateMachine.LogData();
     shooterStateMachine.LogData();
     tunnelStateMachine.LogData();
+    aimController.LogData();
   }
 
 }

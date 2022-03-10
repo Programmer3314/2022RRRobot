@@ -14,6 +14,8 @@ enum TBautoStates {
     Start, DriveBack, Buffer, Shoot, Done
 };
 
+
+
 /**
  * Steps:
  * Drive back certain distance+Stop(3ft in tests)
@@ -23,9 +25,13 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     double autoMoveBack;
     double goalAngle;
     double autoTargetRunCounter;
+    Position position;
+    int autoDial;
 
-    public TwoBallAuto() {
+    public TwoBallAuto(Position position, int autoDial) {
         super(TBautoStates.Start);
+        this.position = position;
+        this.autoDial = autoDial;
     }
 
     @Override
@@ -34,11 +40,12 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void periodic() {
-        if (Robot.autoChangeDistance) {
-            autoMoveBack = -7.5;
-        } else {
-            autoMoveBack = -3.5;
-        }
+        // if (Robot.autoRightIncreaseDistance) {
+        //     autoMoveBack = -7.5;
+        // } else {
+        //     autoMoveBack = -3.5;
+        // }
+        autoMoveBack = -5;
         update();
         SmartDashboard.putString("Auto State", currentState.toString());
 
@@ -98,7 +105,8 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     public void doCurrentState() {
         switch (currentState) {
             case Shoot:
-                double turn = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0);
+                DriveParameters dp = Robot.aimController.calculate(0, autocorrectTargetAngle, currentAngle, 0, false,false, 0);
+                double turn = dp.turn;
                 Robot.driveTrain.Drive(0, turn);
                 Robot.shooterStateMachine.homed = true;
                 break;

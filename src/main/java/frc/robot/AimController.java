@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 enum AimMode {
-    turretShoot, robotShoot, turretMixedShoot, ballChase, driver, autonomous
+    turretShoot, robotShoot, turretMixedShoot, ballChase, driver, autonomous, lockBar
 }
 
 public class AimController {
@@ -68,7 +68,8 @@ public class AimController {
         this.aimMode = aimMode;
     }
 
-    public double calculate(double DriverTurn, double targetAngle, double currentAngle, double ballAngle) {
+    public DriveParameters calculate(double DriverTurn, double targetAngle, double currentAngle, double ballAngle, 
+    boolean contactLeft, boolean contactRight, double drive) {
         double turn = 0;
         switch (aimMode) {
             case autonomous:
@@ -115,6 +116,20 @@ public class AimController {
             case turretShoot:
                 turn = DriverTurn;
                 break;
+            case lockBar:
+            if(!contactLeft && contactRight){
+                turn = 50;
+            }
+            else if (!contactRight && contactLeft){
+                turn = -50;
+            }
+            else if(!contactLeft && !contactRight){
+                drive = .75;
+            }
+            else if(contactLeft && contactRight){
+                drive = 0;
+            }
+            break;
             default:
                 turn = DriverTurn;
                 break;
@@ -171,7 +186,7 @@ public class AimController {
         SmartDashboard.putNumber("TURshooter Angle:", Robot.currentShooterAngle);
         SmartDashboard.putBoolean("Searching??", searching);
 
-        return turn;
+        return new DriveParameters(drive, turn);
     }
 
     public boolean isHomed() {
@@ -189,6 +204,12 @@ public class AimController {
 
     public void resetTurret() {
         turretHomed = false;
+    }
+    public void LogHeader(){
+        Logger.Header("AimMode");
+    }
+    public void LogData(){
+        Logger.singleEnum(aimMode);
     }
 
 }

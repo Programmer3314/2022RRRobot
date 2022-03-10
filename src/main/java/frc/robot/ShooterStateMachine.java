@@ -266,7 +266,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         if (isTransitionTo(ShooterStates.Preparing)) {
             shooter.setVelocity(target.rpm);
             camAngle.setPosition(target.angle);
-            feed.setVelocity(target.feedrpm*0.7);
+            feed.setVelocity(target.feedrpm);
             // Robot.aimController.setAimMode(AimMode.robotShoot);
 
             // shooter.setVelocity(shooterSpeed);

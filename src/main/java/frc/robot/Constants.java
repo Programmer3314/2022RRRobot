@@ -188,6 +188,7 @@ public class Constants {
   public static int kDriverAutoBallPickup = 2;
   public static int kDriverIntake = 5;
   public static int kDriverEject = 6;
+  public static int kDriverAutoBarLock = 4;
   public static int kDriverToggleBallLight = 9;
 
   // public static int kPneumaticsHub = 0;
