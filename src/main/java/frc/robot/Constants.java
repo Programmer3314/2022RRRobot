@@ -201,8 +201,8 @@ public class Constants {
   public static int kJoystickOperator = 5;
 
   public static int kSolenoidModule = 1;
-  public static int kSolenoidIntakeForward = 0;
-  public static int kSolenoidIntakeBackward = 1;
+  public static int kSolenoidIntakeForward = 7;
+  public static int kSolenoidIntakeBackward = 6;
 
   // public static int kSolenoidClimberForward = 5;
   // public static int kSolenoidClimberBackward = 6;

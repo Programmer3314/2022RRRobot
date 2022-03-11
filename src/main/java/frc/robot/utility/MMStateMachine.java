@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Timer;
 
 // TODO Add secondsInState and cyclesInState variables
 
-
 /**
  * Generic State Machine
  */
@@ -23,8 +22,8 @@ public abstract class MMStateMachine<T> {
     public MMStateMachine(T initState) {
         currentState = initState;
         firstTimeRun = true;
-        cyclesInStates=0;
-        startCurrentStateTime =Timer.getFPGATimestamp();
+        cyclesInStates = 0;
+        startCurrentStateTime = Timer.getFPGATimestamp();
     }
 
     public void update() {
@@ -35,10 +34,10 @@ public abstract class MMStateMachine<T> {
                 doTransition();
                 currentState = nextState;
                 cyclesInStates = 0;
-                startCurrentStateTime=Timer.getFPGATimestamp();
+                startCurrentStateTime = Timer.getFPGATimestamp();
             }
         }
-        secondsInState = Timer.getFPGATimestamp()-startCurrentStateTime;
+        secondsInState = Timer.getFPGATimestamp() - startCurrentStateTime;
         doCurrentState();
         cyclesInStates++;
         firstTimeRun = false;
@@ -50,12 +49,22 @@ public abstract class MMStateMachine<T> {
 
     public abstract void doCurrentState();
 
-    public boolean isTransitionFrom(T state) {
-        return state == currentState;
+    public boolean isTransitionFrom(T... states) {
+        for (T state : states) {
+            if (state == currentState) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean isTransitionTo(T state) {
-        return state == nextState;
+    public boolean isTransitionTo(T... states) {
+        for (T state : states) {
+            if (state == nextState) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isTransition(T from, T to) {

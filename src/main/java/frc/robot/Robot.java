@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -78,7 +80,7 @@ public class Robot extends TimedRobot {
   public static boolean shootAllButton;
   public static AimController aimController;
   public static boolean searchButton;
-  public static PneumaticHub pneumaticHub;
+  public static PneumaticsControlModule pneumaticHub;
   public static Solenoid shootLimeLight;
   public static boolean abortShootButton;
   public static boolean disableCompressor;
@@ -110,8 +112,7 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-    // TODO Auto Align with bar for climb
-    // TODO Autonomous Select Button Dial
+   
     // Expanded MMPIDController with minOutput and maxOutput
 
     // TODO CLEANUP Organize the init code to group simillar code
@@ -131,14 +132,11 @@ public class Robot extends TimedRobot {
     // TODO Adjust QueueBelt Speed and change from power to RPM
     // TODO look for low goal shots
     // TODO shot tuning to attemp flatten trajectories
-    // TODO Dom's autos:
-    // -In wall auto, optionally turn and drive away
-    // -For middle position optionally start driving toward terminal in auto
+   
     // TODO Setup new driverstation computer
     // TODO look for low goal shots
     // TODO shot tuning to attemp flatten trajectories
 
-    // TODO On-Hold remove turret code
     // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
@@ -161,7 +159,7 @@ public class Robot extends TimedRobot {
     // Define devices that do not belong to a specific system
     navx = new AHRS(Port.kMXP);
     navx.reset();
-    pneumaticHub = new PneumaticHub(Constants.kSolenoidModule);
+    pneumaticHub = new PneumaticsControlModule(Constants.kSolenoidModule);
     shootLimeLight = pneumaticHub.makeSolenoid(Constants.kShooterLimeLight);
 
     // Human Input devices

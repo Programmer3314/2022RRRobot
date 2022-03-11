@@ -79,6 +79,11 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     @Override
     public void doTransition() {
+        if (isTransitionFrom(QueueStates.RejectBall)){
+            takeBallFromTunnel = false;
+            shooterBallRequest = false;
+        }
+
         if (isTransitionTo(QueueStates.DrawBallIn)) {
             // queueBelt.setVelocity(200);
             queueBelt.setPower(.4);
@@ -106,11 +111,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
         if (isTransitionTo(QueueStates.RejectBall)){
             queueBelt.setPower(-.4);
         }
-        if (isTransitionFrom(QueueStates.RejectBall)){
-            takeBallFromTunnel = false;
-            shooterBallRequest = false;
-        }
-
+     
     }
 
     @Override

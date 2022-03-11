@@ -258,6 +258,9 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     @Override
     public void doTransition() {
+        if (isTransitionFrom(ShooterStates.Shooting2)) {
+            // Robot.aimController.setAimMode(AimMode.driver);
+        }
         if (isTransitionTo(ShooterStates.Home)) {
             camAngle.setPower(-.4);
             target = null;
@@ -277,6 +280,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
             passThroughCounter = 0;
         }
+
         if (isTransitionTo(ShooterStates.Shooting1)) {
             Robot.queueStateMachine.shooterBallRequest();
         }
@@ -285,9 +289,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             camAngle.setPower(0);
             feed.setPower(0);
         }
-        if (isTransitionFrom(ShooterStates.Shooting2)) {
-            // Robot.aimController.setAimMode(AimMode.driver);
-        }
+      
         if(isTransitionTo(ShooterStates.RejectBall)){
             shooter.setPower(-.3);
             feed.setPower(-.3);
