@@ -11,9 +11,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -112,27 +110,9 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-   
-    // Expanded MMPIDController with minOutput and maxOutput
-
-    // TODO CLEANUP Organize the init code to group simillar code
-    // like Motor devices together, Human inputs together,
-    // Sensors together, Data init, etc.
-
-    // TODO Organize all human inputs into a single class with and update() call to
-    // get data
-    // convert button presses to more meaningful variables.
-
-    // TODO ON-HOLD create custom PIDF controller that includes:
-    // - small amount of error around zero to be ignored
-    // - minimum correction to apply (if any +/- correction use at least a minimum
-    // value)
-    // - maximum correction to apply
-
+    // TODO Fix autoMoveBack in TwoBallAuto!!!!
+    // TODO Finish Full Climb with button clicks - do transistions 
     // TODO Adjust QueueBelt Speed and change from power to RPM
-    // TODO look for low goal shots
-    // TODO shot tuning to attemp flatten trajectories
-   
     // TODO Setup new driverstation computer
     // TODO look for low goal shots
     // TODO shot tuning to attemp flatten trajectories
@@ -147,10 +127,10 @@ public class Robot extends TimedRobot {
     // call to
     // get data
     // convert button presses to more meaningful variables.
+    // TODO On-Hold Expanded MMPIDController with minOutput and maxOutput
     // TODO On-Hold CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
     // Sensors together, Data init, etc.
-    // TODO On-Hold Expanded MMPIDController with minOutput and maxOutput
 
     // define variables use throughout code
     nt = NetworkTableInstance.getDefault();

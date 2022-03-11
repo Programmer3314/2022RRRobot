@@ -7,7 +7,6 @@ package frc.robot;
 import static frc.robot.Robot.autocorrectTargetAngle;
 import static frc.robot.Robot.currentAngle;
 
-import edu.wpi.first.util.sendable.SendableBuilder.BackendKind;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
 
@@ -48,6 +47,8 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void periodic() {
+        // TODO Fix this... We still need this, 
+        // but it must be based on position
         // if (Robot.autoRightIncreaseDistance) {
         //     autoMoveBack = -7.5;
         // } else {
