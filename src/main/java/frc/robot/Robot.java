@@ -100,6 +100,7 @@ public class Robot extends TimedRobot {
   public static int autoSelect;
   public static MMBCDReturn bcdReturn;
   public static Position position;
+  public static NavXRoll navXRoll;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -152,6 +153,8 @@ public class Robot extends TimedRobot {
 
     // Create Systems
     shooterFormula = new ShooterFormula();
+    navXRoll = new NavXRoll();
+    bcdReturn = new MMBCDReturn();
     intake = new Intake();
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
@@ -207,10 +210,10 @@ public class Robot extends TimedRobot {
     
     lastModeRan = "auto";
 
-    if (buttonBox1.getRawButton(13)){
+    if (buttonBox2.getRawButton(13)){
       position = Position.Left;
     } else {
-      if (buttonBox1.getRawButton(14)){
+      if (buttonBox2.getRawButton(14)){
         position = Position.Right;
       } else{
         position = Position.Center;
@@ -252,6 +255,7 @@ public class Robot extends TimedRobot {
     Logger.StartLine();
     RobotLogData();
     commonPeriodic();
+    navXRoll.update(navx.getRoll());
 
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
@@ -339,8 +343,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Pitch", navx.getPitch());
     SmartDashboard.putNumber("Roll", navx.getRoll());
 
-    // TODO I think the next line is a "duplicate"
-    tunnelStateMachine.LogData();
+    //tunnelStateMachine.LogData();
 
     commonUpdate();
     Logger.EndLine();
@@ -505,6 +508,7 @@ public class Robot extends TimedRobot {
     shooterStateMachine.LogHeader();
     tunnelStateMachine.LogHeader();
     aimController.LogHeader();
+    navXRoll.LogHeader();
   }
 
   public void RobotLogData() {
@@ -518,6 +522,7 @@ public class Robot extends TimedRobot {
     shooterStateMachine.LogData();
     tunnelStateMachine.LogData();
     aimController.LogData();
+    navXRoll.LogData();
   }
 
 }

@@ -29,7 +29,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     int autoDial;
     double StartAngle;
     double StartDistance;
-    double desiredCenterTurn = 30;
+    double desiredCenterTurn = 60;//30
     double desiredCenterBack = -7;
     double desiredRightTurn = 90;
     double desiredRightForward = 2;
@@ -52,9 +52,10 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         } else {
             autoMoveBack = -3.5;
         }
-        autoMoveBack = -5;
+        //autoMoveBack = -5;
         update();
         SmartDashboard.putString("Auto State", currentState.toString());
+        SmartDashboard.putString("DialPosition", position.toString());
 
     }
 

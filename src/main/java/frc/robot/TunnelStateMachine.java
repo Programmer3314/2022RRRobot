@@ -50,13 +50,14 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     double tunnelBeltRPM;
     double tunnelWheelsRPM;
     boolean queueIsFull;
-    int red,blue;
+    int red, blue;
+    public boolean climbing;
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
-        //breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
+        // breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
         frontColorSensor = new ColorSensorV3(Port.kMXP);
     }
 
@@ -78,6 +79,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         tunnelBeltRPM = tunnelBelt.getVelocity();
         tunnelWheelsRPM = tunnelWheels.getVelocity();
         queueIsFull = Robot.queueStateMachine.isFull();
+        climbing = Robot.climbStateMachine.isClimbing();
 
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
@@ -85,7 +87,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         SmartDashboard.putString("Tunnel State", currentState.toString());
         SmartDashboard.putNumber("Amount of Red Detected:", red);
         SmartDashboard.putNumber("Amount of Blue Detected: ", blue);
-        //SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
+        // SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
         SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheelsRPM);
 
         super.update();
@@ -115,8 +117,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                         nextState = TunnelStates.Idle;
                     }
                     break;
-                    case RejectBall:
-                    if(!Robot.tacoBell){
+                case RejectBall:
+                    if (!Robot.tacoBell) {
                         nextState = TunnelStates.Idle;
 
                     }
@@ -138,7 +140,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
             tunnelWheels.setPower(0);
             counter++;
         }
-        if(isTransitionTo(TunnelStates.RejectBall)){
+        if (isTransitionTo(TunnelStates.RejectBall)) {
             tunnelWheels.setPower(-.4);
             tunnelBelt.setPower(.4);
         }
@@ -147,19 +149,24 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doCurrentState() {
-        switch (currentState) {
-            case Start:
-                baseRed = red;
-                baseBlue = blue;
-            case Idle:
-                tunnelBelt.setPower(0.15);
+        if (!climbing) {
+            switch (currentState) {
+                case Start:
+                    baseRed = red;
+                    baseBlue = blue;
+                case Idle:
+                    tunnelBelt.setPower(0.15);
 
-                break;
-            case BallDetected:
-                tunnelBelt.setPower(0.0);
-                break;
-            default:
-                break;
+                    break;
+                case BallDetected:
+                    tunnelBelt.setPower(0.0);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+
+            tunnelBelt.setPower(0);
         }
 
     }
@@ -169,15 +176,15 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         currentState = TunnelStates.Start;
     }
 
-    public void LogHeader(){
+    public void LogHeader() {
         Logger.Header("TunnelBeltRPM,tunnelWheelsRPM,"
-        +"colorSensorRed, colorSensorBlue,desiredBall,"
-        +"TunnelState,"
-        );
+                + "colorSensorRed, colorSensorBlue,desiredBall,"
+                + "TunnelState,");
     }
-    public void LogData(){
+
+    public void LogData() {
         Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM);
-        Logger.booleans(isRed, isBlue,desiredBall);
+        Logger.booleans(isRed, isBlue, desiredBall);
         Logger.singleEnum(currentState);
     }
 }

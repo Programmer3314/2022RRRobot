@@ -34,7 +34,7 @@ public class Logger {
             sb.append("Time,");
             int id = 0;
             while(id<10) {
-                fileName = "/home/lvuser/"+prefix+"Logging"+Integer.toString(id)+".csv";
+                fileName = "/home/lvuser/"+prefix+"Logging"/*+Integer.toString(id)*/+0+".csv";
                 if(!Files.exists(Path.of(fileName),LinkOption.NOFOLLOW_LINKS)) {
                     break;
                 }

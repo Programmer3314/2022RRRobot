@@ -90,7 +90,7 @@ public class Constants {
 
   public static double kCameraVerticalAngle = 34;// 33.5
   public static double ktargetHeight = 104 / 12.0;
-  public static double kTargetCameraHeight = 40 / 12.0;
+  public static double kTargetCameraHeight = 39 / 12.0;
   public static double kTargetingHeightDiff = ktargetHeight - kTargetCameraHeight;
 
   public static double kRevPerFoot = 4.67;

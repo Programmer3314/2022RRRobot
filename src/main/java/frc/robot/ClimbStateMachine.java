@@ -102,6 +102,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double pwrForBarExtendFast = .5;
     double rpmForBarPull = -200;
     double pwrForBarPull = -.4;
+    double pwrForBarFastPull =-.7;
     double rpmForPullPast = -150;
     double pwrForPullPast = -.5;
     double homePower = -0.15;
@@ -132,6 +133,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double climbMotorRPM;
     boolean highBarPressed;
     boolean highBarReleased;
+    boolean climbing;
 
     /*
      * go up to 72 revs
@@ -168,6 +170,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         // PneumaticsModuleType.CTREPCM,
         // Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
         climberHomed = false;
+        climbing = false;
     }
 
     @Override
@@ -295,6 +298,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 if (!deflectionRedC && !deflectionWhiteC) {
                     // nextState = ClimbStates.ExtendToBar2;
                     nextState = ClimbStates.ExtendtoHookA;
+                    climbing = true;
                 }
                 break;
 
@@ -353,12 +357,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendToBar2CheckPressed:
-                if (highBarPressed) {
+                if (/*highBarPressed*/Robot.navXRoll.isApproachingBar()) {
                     nextState = ClimbStates.ExtendToBar2CheckReleased;
                 }
                 break;
             case ExtendToBar2CheckReleased:
-            if(highBarReleased){
+            if(/*highBarReleased*/Robot.navXRoll.isBelowBar(60)){
                 nextState = ClimbStates.ExtendPastBar2;
             }
             break;
@@ -368,12 +372,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             }
             break;
             case PullToBar2CheckPresssed:
-            if(highBarPressed){
+            if(/*highBarPressed*/secondsInState>=2){
                 nextState = ClimbStates.PullToBar2CheckReleased;
             }
             break;
             case PullToBar2CheckReleased:
-            if(highBarReleased){
+            if(/*highBarReleased*/Robot.navXRoll.navxCalm()){
                 nextState = ClimbStates.PullBar2ToStatHooksC;
             }
             break;
@@ -448,12 +452,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             }
             break;
         case ExtendToBar3CheckPressed:
-            if (highBarPressed) {
+            if (/*highBarPressed*/Robot.navXRoll.isApproachingBar()) {
                 nextState = ClimbStates.ExtendToBar3CheckReleased;
             }
             break;
         case ExtendToBar3CheckReleased:
-        if(highBarReleased){
+        if(/*highBarReleased*/Robot.navXRoll.isBelowBar(57)){
             nextState = ClimbStates.ExtendPastBar3;
         }
         break;
@@ -463,12 +467,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         }
         break;
         case PullToBar3CheckPresssed:
-        if(highBarPressed){
+        if(/*highBarPressed*/secondsInState>=2){
             nextState = ClimbStates.PullToBar3CheckReleased;
         }
         break;
         case PullToBar3CheckReleased:
-        if(highBarReleased){
+        if(/*highBarReleased*/Robot.navXRoll.navxCalm()){
             nextState = ClimbStates.PullBar3ToStatHooksC;
         }
         break;
@@ -568,7 +572,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         // }
         if (isTransitionTo(ClimbStates.PullBar2ToStatHooksC, ClimbStates.PullBar3ToStatHooksC)) {
             // climbMotor.setVelocity(rpmForBarPull);
-            climbMotor.setPower(pwrForBarPull);
+            // climbMotor.setPower(pwrForBarPull);
+            climbMotor.setPower(pwrForBarFastPull);
         }
         if (isTransitionTo(ClimbStates.PullBar2PastStatHooksC, ClimbStates.PullBar3PastStatHooksC)) {
             // climbMotor.setVelocity(rpmForPullPast);
@@ -661,9 +666,13 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         // break;
         // }
     }
+    public boolean isClimbing(){
+        return climbing;
+    }
 
     public void resetState() {
         currentState = ClimbStates.Start;
+        climbing = false;
     }
 
     public void LogHeader() {
