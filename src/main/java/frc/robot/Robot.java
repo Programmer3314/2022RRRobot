@@ -335,6 +335,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("intake Speed: ", intake.intakeMotor.getVelocity());
     SmartDashboard.putNumber("Requested Turn: ", requestedTurn);
     SmartDashboard.putNumber("Intake RPM", intake.intakeMotor.getVelocity());
+    SmartDashboard.putNumber("Yaw",navx.getYaw());
+    SmartDashboard.putNumber("Pitch", navx.getPitch());
+    SmartDashboard.putNumber("Roll", navx.getRoll());
 
     // TODO I think the next line is a "duplicate"
     tunnelStateMachine.LogData();
@@ -494,7 +497,7 @@ public class Robot extends TimedRobot {
 
   public void RobotLogHeader() {
     Logger.Header(
-        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, POVLeft, POVRight, BottomBasket, Aimbot, UpDistance, DownDistance,");
+        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, POVLeft, POVRight, BottomBasket, Aimbot, UpDistance, DownDistance,Yaw,Pitch,Roll,");
     // aimController.LogHeader();
     climbStateMachine.LogHeader();
     intake.LogHeader();
@@ -508,6 +511,7 @@ public class Robot extends TimedRobot {
     Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton,
         pointBlankButton, povLeftShot, povRightShot,
         bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
+    Logger.doubles(navx.getYaw(),navx.getPitch(),navx.getRoll());
     climbStateMachine.LogData();
     intake.LogData();
     queueStateMachine.LogData();

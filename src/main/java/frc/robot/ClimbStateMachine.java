@@ -99,6 +99,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double rpmForBarExtend = 100;
     double pwrForBarExtend = .3;
     double pwrForBarExtendslow = .1;
+    double pwrForBarExtendFast = .5;
     double rpmForBarPull = -200;
     double pwrForBarPull = -.4;
     double rpmForPullPast = -150;
@@ -548,7 +549,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             climbMotor.setPower(pwrForBarExtendslow);
         }
         if(isTransitionTo(ClimbStates.ExtendPastBar2, ClimbStates.ExtendPastBar3)){
-            climbMotor.setPower(pwrForBarExtendslow);
+            //climbMotor.setPower(pwrForBarExtendslow);
+            //climbMotor.setPower(pwrForBarExtend);
+            climbMotor.setPower(pwrForBarExtendFast);
         }
         if (isTransitionTo(ClimbStates.Pause)) {
             climbMotor.setPower(0);
