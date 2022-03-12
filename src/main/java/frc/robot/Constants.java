@@ -80,8 +80,10 @@ public class Constants {
   public static int kOperatorAxisShootOne = 2;
   public static int kOperatorAxisShootAll = 3;
 
-  public static double kMaxSpeed = -10;
-  public static double kMaxTurnRate = 300;
+
+
+  public static double kMaxSpeed = -15;
+  public static double kMaxTurnRate = 400;
 
   public static double krpmMargin = 100;
   public static double kangleMargin = 10;
@@ -123,7 +125,7 @@ public class Constants {
   public static int kCanMCIntake = 20;
 
   // Climber
-  public static int kCanMCClimber1 = 30;// white side
+  public static int kCanMCClimber1 = 30;//  side
   public static int kCanMCClimber2 = 31;// red side
 
   // Power Distribution Hub Can bus ID
@@ -133,11 +135,11 @@ public class Constants {
   public static int kDIOQueueBreakBeam = 0;
   public static int kDIOTunnelBreakBeam = 1;
   public static int kDIOTurretLimitSwitch = 2;
-  public static int kDIOClimbLimit = 3;
-  public static int kDIOBRed = 4;// second hook sensor
-  public static int kDIOBarWhite = 5;
+  public static int kDIOClimbLimit = 4;
+  public static int kDIOBRed = 3;// second hook sensor
+  public static int kDIOBarWhite = 7;
   public static int kDIOCRed = 6;
-  public static int kDIOARed = 7;
+  public static int kDIOARed = 5;
   public static int kDIOCamLimitSwitch = 8;
   public static int kDIOShooterBallGone = 9;
 
@@ -155,7 +157,8 @@ public class Constants {
   public static double kDRobotTargetTurn = 0;
   public static double kRobotAimTolerance = 0;
 
-  public static double kMaxRobotTurn = 300;
+  public static double kMaxRobotTurn = 400;
+  public static double kMaxAutoTurn = 300;
   public static double kMinRobotTurn = 22.5;
   public static double kToleranceRobotTurn = 0;
 
@@ -166,8 +169,7 @@ public class Constants {
   public static double kTurretLowLimit = -170;
   public static double kTurretHighLimit = 170;
 
-  public static int kOperatorPointBlankPOV = 0;
-  public static int kOperatorBottomBasketPV = 0;
+  public static int kOperatorPOV = 0;
   public static int kOperatorRaiseHooks = 1;
   public static int kOperatorClimbButton = 2;
   public static int kOperatorAbortShot = 5;

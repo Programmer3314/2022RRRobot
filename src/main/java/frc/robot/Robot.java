@@ -75,6 +75,8 @@ public class Robot extends TimedRobot {
   public static boolean autoLockHoop;
   public static boolean pointBlankButton;
   public static boolean shootOneButton;
+  public static boolean povLeftShot;
+  public static boolean povRightShot;
   public static boolean shootAllButton;
   public static AimController aimController;
   public static boolean searchButton;
@@ -110,8 +112,6 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-    // TODO Fix autoMoveBack in TwoBallAuto!!!!
-    // TODO Finish Full Climb with button clicks - do transistions 
     // TODO Adjust QueueBelt Speed and change from power to RPM
     // TODO Setup new driverstation computer
     // TODO look for low goal shots
@@ -265,8 +265,12 @@ public class Robot extends TimedRobot {
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
-    pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPointBlankPOV) == 0;
-    bottomBasket = controllerOperator.getPOV(Constants.kOperatorBottomBasketPV) == 180;
+    pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPOV) == 0;
+    bottomBasket = controllerOperator.getPOV(Constants.kOperatorPOV) == 180;
+
+    povLeftShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 270;
+    povRightShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 90;
+
     autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
@@ -427,7 +431,11 @@ public class Robot extends TimedRobot {
       targetpovdistance = 0;
     } else if (bottomBasket) {
       targetpovdistance = -5;
-    } else {
+    } else if(povRightShot){
+      targetpovdistance = -2;
+    }else if(povRightShot){
+      targetpovdistance = -1;
+    }else{
       targetpovdistance = targetDistance + adjustShooterDistance;
     }
     TargetPoint firingSolution = shooterFormula
@@ -441,7 +449,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
 
-      if (confidenceCounter > 0 || pointBlankButton || bottomBasket) {
+      if (confidenceCounter > 0 || pointBlankButton || bottomBasket||povRightShot||povLeftShot) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;
@@ -474,6 +482,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     SmartDashboard.putString("Alliance Type", alliance.toString());
+    // SmartDashboard.putNumber("Time:", value);
 
     // SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
   }
@@ -485,7 +494,7 @@ public class Robot extends TimedRobot {
 
   public void RobotLogHeader() {
     Logger.Header(
-        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, BottomBasket, Aimbot, UpDistance, DownDistance,");
+        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, POVLeft, POVRight, BottomBasket, Aimbot, UpDistance, DownDistance,");
     // aimController.LogHeader();
     climbStateMachine.LogHeader();
     intake.LogHeader();
@@ -497,7 +506,7 @@ public class Robot extends TimedRobot {
 
   public void RobotLogData() {
     Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton,
-        pointBlankButton,
+        pointBlankButton, povLeftShot, povRightShot,
         bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
     climbStateMachine.LogData();
     intake.LogData();

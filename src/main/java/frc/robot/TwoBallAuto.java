@@ -47,13 +47,11 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
     @Override
     public void periodic() {
-        // TODO Fix this... We still need this, 
-        // but it must be based on position
-        // if (Robot.autoRightIncreaseDistance) {
-        //     autoMoveBack = -7.5;
-        // } else {
-        //     autoMoveBack = -3.5;
-        // }
+        if (position == Position.Center) {
+            autoMoveBack = -7.5;
+        } else {
+            autoMoveBack = -3.5;
+        }
         autoMoveBack = -5;
         update();
         SmartDashboard.putString("Auto State", currentState.toString());

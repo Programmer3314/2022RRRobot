@@ -42,6 +42,7 @@ public class AimController {
     boolean searching;
     double searchPower;
     double maxRobotTurn;
+    double maxAutoTurn;
     double minRobotTurn;
     double toleranceRobotTurn;
     boolean turretBool;
@@ -58,6 +59,7 @@ public class AimController {
         turretHomed = false;
         setAimMode(AimMode.driver);
         maxRobotTurn = Constants.kMaxRobotTurn;
+        maxAutoTurn = Constants.kMaxAutoTurn;
         minRobotTurn = Constants.kMinRobotTurn;
         toleranceRobotTurn = Constants.kToleranceRobotTurn;
         turretLowLimitSwitch = new DigitalInput(Constants.kDIOTurretLimitSwitch);

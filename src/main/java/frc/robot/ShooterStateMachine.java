@@ -197,7 +197,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
                             && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin)
-                            || Robot.pointBlankButton || Robot.bottomBasket)
+                            || Robot.pointBlankButton || Robot.bottomBasket||Robot.povRightShot||Robot.povLeftShot)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
                         passThroughCounter++;
@@ -350,14 +350,14 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     }
     public void LogHeader(){
         Logger.Header("FeedRPM, ShooterRPM, CamAngle,"
-        +"BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,"
+        +"BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
         +"ShooterState,"
         );
     }
     
     public void LogData(){
         Logger.doubles(feedRPM,shooterRPM, camRevs);
-        Logger.booleans(airBall, camhomed,Robot.pointBlankButton,Robot.bottomBasket);
+        Logger.booleans(airBall, camhomed,Robot.pointBlankButton,Robot.bottomBasket, Robot.povLeftShot, Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
     }
 }
