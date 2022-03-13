@@ -93,7 +93,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double revolutionsToBar3 = 53;
     double revolutionsPastHookA = 44;
     double revolutionsToHookA = 31;
-    double revolutionsToHookB=3.25;
+    double revolutionsToHookC = 8;
+    double revolutionsToHookB=15;
+    double revolutionsPastHookB = 3.25;
     double revolutionsToSafeBar3 = 11;
     boolean navxCalm = true;
     double rpmForBarExtend = 100;
@@ -290,9 +292,13 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case PullBar1ToStatHooksC:
-                if (deflectionRedC && deflectionWhiteC) {
+                // if (deflectionRedC && deflectionWhiteC) {
+                //     nextState = ClimbStates.PullBar1PastStatHooksC;
+                // }
+                if(climbMotorRevs<=revolutionsToHookC){
                     nextState = ClimbStates.PullBar1PastStatHooksC;
                 }
+                // break;
                 break;
             case PullBar1PastStatHooksC:
                 if (!deflectionRedC && !deflectionWhiteC) {
@@ -300,8 +306,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                     nextState = ClimbStates.ExtendtoHookA;
                     climbing = true;
                 }
-                break;
-
+            break;
             case ExtendtoHookA:
                 // if (deflectionA) {
                 //     nextState = ClimbStates.ExtendPastA;
@@ -318,7 +323,6 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                     }
             if(climbMotorRevs>=revolutionsPastHookA){
                 nextState = ClimbStates.Done;
-
             }
                 // if(climbMotorRevs>= revolutionsToHookA){
                 //     if (!deflectionA) {
@@ -335,9 +339,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 //     nextState = ClimbStates.PullPastHookB;
                 // }
                 // break;
-                nextState = ClimbStates.PullPastHookB;
+                if(climbMotorRevs<=revolutionsToHookB){
+                    nextState = ClimbStates.PullPastHookB;
+                }
+                break;
             case PullPastHookB:
-            if(climbMotorRevs<=revolutionsToHookB){
+             if(climbMotorRevs<=revolutionsPastHookB){
                 if (!deflectionWhiteB && !deflectionRedB) {
                     nextState = ClimbStates.Pause1;
                 }
@@ -382,7 +389,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             }
             break;
             case PullBar2ToStatHooksC:
-                if (deflectionWhiteC && deflectionRedC) {
+                // if (deflectionWhiteC && deflectionRedC) {
+                //     nextState = ClimbStates.PullBar2PastStatHooksC;
+                // }
+                if(climbMotorRevs<=revolutionsToHookC){
                     nextState = ClimbStates.PullBar2PastStatHooksC;
                 }
                 break;
@@ -399,7 +409,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
             break;
             case ExtendtoHookA2:
-                if (deflectionA) {
+                // if (deflectionA) {
+                //     nextState = ClimbStates.ExtendPastA2;
+                // }
+                if(climbMotorRevs>=revolutionsToHookA){
                     nextState = ClimbStates.ExtendPastA2;
                 }
                 break;
@@ -407,17 +420,32 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 if (!deflectionA) {
                     nextState = ClimbStates.PulltoHookB2;
                 }
+                if(climbMotorRevs>=revolutionsPastHookA){
+                    nextState = ClimbStates.Done;
+                }
                 break;
             case PulltoHookB2:
-                if (deflectionWhiteB && deflectionRedB) {
+                // if (deflectionWhiteB && deflectionRedB) {
+                //     nextState = ClimbStates.PullPastHookB2;
+                // }
+                if(climbMotorRevs<=revolutionsToHookB){
                     nextState = ClimbStates.PullPastHookB2;
                 }
                 break;
             case PullPastHookB2:
+            if(climbMotorRevs<=revolutionsPastHookB){
                 if (!deflectionWhiteB && !deflectionRedB) {
                     nextState = ClimbStates.ExtendNearBar3;
                 }
+                else{
+                    nextState= ClimbStates.Done;
+                }
+            }
                 break;
+                // if (!deflectionWhiteB && !deflectionRedB) {
+                //     nextState = ClimbStates.ExtendNearBar3;
+                // }
+                // break;
 
             // case ExtendBar3Swing:
             //     if (climbMotorRevs >= revolutionsNearBar3) {
@@ -477,7 +505,11 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         }
         break;
         case PullBar3ToStatHooksC:
-            if (deflectionWhiteC && deflectionRedC) {
+            // if (deflectionWhiteC && deflectionRedC) {
+            //     nextState = ClimbStates.PullBar3PastStatHooksC;
+            // }
+            // break;
+            if(climbMotorRevs<=revolutionsToHookC){
                 nextState = ClimbStates.PullBar3PastStatHooksC;
             }
             break;
@@ -582,9 +614,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.ExtendtoHookA2)) {
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionTo(ClimbStates.ExtendPastA2)) {
-            climbMotor.setPower(pwrForBarExtend);
-        }
+        // if (isTransitionTo(ClimbStates.ExtendPastA2)) {
+        //     climbMotor.setPower(pwrForBarExtend);
+        // }
         if (isTransitionTo(ClimbStates.PulltoHookB2)) {
             climbMotor.setPower(pwrForBarPull);
         }
@@ -626,7 +658,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.ExtendtoHookA)) {
             climbMotor.setPower(pwrForBarExtend);
         }
-        if (isTransitionTo(ClimbStates.ExtendPastA)) {
+        if (isTransitionTo(ClimbStates.ExtendPastA, ClimbStates.ExtendPastA2)) {
             climbMotor.setPower(pwrForBarExtendslow);
         }
         if (isTransitionTo(ClimbStates.PulltoHookB)) {
