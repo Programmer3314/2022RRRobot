@@ -61,7 +61,7 @@ public class ShooterFormula {
 
     public TargetPoint calculate(double targetDistance) {
         ArrayList<TargetPoint> targetPoints;
-        targetPoints = new ArrayList<>();
+        //targetPoints = new ArrayList<>();
         if (Robot.povLeftShot) {
             targetPoints = targetPointsLow;
         } else {
