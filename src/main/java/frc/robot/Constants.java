@@ -184,7 +184,8 @@ public class Constants {
   public static int kButtonBoxManualHome = 10;
   public static int kButtonBoxErrorButton = 2;
 
-  public static int kShooterLimeLight = 4;
+  // public static int kShooterLimeLight = 4;
+  public static int kShooterLimeLight = 1;
 
   public static int kDriverAutoTurnToTarget = 1;
   public static int kDriverAutoBallPickup = 2;

@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
   public static boolean searchButton;
   public static PneumaticsControlModule pneumaticHub;
   public static Solenoid shootLimeLight;
+  public static boolean stopWhiteBelt;
   public static boolean abortShootButton;
   public static boolean disableCompressor;
   public static boolean tacoBell; // Take out all balls within the robot
@@ -257,6 +258,7 @@ public class Robot extends TimedRobot {
     commonPeriodic();
     navXRoll.update(navx.getRoll());
 
+    stopWhiteBelt = buttonBox1.getRawButton(10);
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
     logEvent = buttonBox1.getRawButton(Constants.kButtonBoxErrorButton);
@@ -328,6 +330,9 @@ public class Robot extends TimedRobot {
     }else if(controllerDriver.getRawButtonReleased(Constants.kDriverAutoBarLock)){
       aimController.setAimMode(AimMode.driver);
     }
+    // if(stopWhiteBelt){
+    //   climbStateMachine.isClimbing();
+    // }
     DriveParameters dp = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle, 
     climbStateMachine.leadHookContactLeft, climbStateMachine.leadHookContactRight, requestedSpeed);
 

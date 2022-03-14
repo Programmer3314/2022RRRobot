@@ -59,10 +59,10 @@ import frc.robot.utility.MMStateMachine;
 
 enum ClimbStates {
     Start, Home, Idle, ExtendToBar1fast, ExtendToBar1slow, DriveToBar1,
-    PullBar1ToStatHooksC, PullBar1PastStatHooksC, ExtendtoHookA, ExtendPastA, PulltoHookB, PullPastHookB,
+    PullBar1ToStatHooksC, PullBar1PastStatHooksC, ExtendtoHookA, ExtendPastA, AnglePause1, PulltoHookB, PullPastHookB,
     Pause1, ExtendNearBar2, ExtendToBar2CheckPressed, ExtendToBar2CheckReleased, ExtendPastBar2,
     PullToBar2CheckPresssed, PullToBar2CheckReleased, PullBar2ToStatHooksC,
-    PullBar2PastStatHooksC, Bar2SafetyExtend, ExtendtoHookA2, ExtendPastA2,
+    PullBar2PastStatHooksC, Bar2SafetyExtend, ExtendtoHookA2, ExtendPastA2,  AnglePause2,
     PulltoHookB2, PullPastHookB2,
     ExtendNearBar3,ExtendToBar3CheckPressed, ExtendToBar3CheckReleased, ExtendPastBar3,
     PullToBar3CheckPresssed, PullToBar3CheckReleased, PullBar3ToStatHooksC,
@@ -95,7 +95,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double revolutionsToHookA = 31;
     double revolutionsToHookC = 8;
     double revolutionsToHookB=15;
-    double revolutionsPastHookB = 3.25;
+    double revolutionsPastHookB = 5;//3.25
     double revolutionsToSafeBar3 = 11;
     boolean navxCalm = true;
     double rpmForBarExtend = 100;
@@ -319,7 +319,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
             case ExtendPastA:
             if(!deflectionA){
-                        nextState = ClimbStates.PulltoHookB;
+                        // nextState = ClimbStates.PulltoHookB;
+                        nextState = ClimbStates.AnglePause1;
                     }
             if(climbMotorRevs>=revolutionsPastHookA){
                 nextState = ClimbStates.Done;
@@ -334,6 +335,11 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 // }
                 
                 break;
+            case AnglePause1:
+            if(Robot.navx.getRoll()>40){
+                nextState = ClimbStates.PulltoHookB;
+            }
+            break;
             case PulltoHookB:
                 // if (deflectionWhiteB && deflectionRedB) {
                 //     nextState = ClimbStates.PullPastHookB;
@@ -418,12 +424,18 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
             case ExtendPastA2:
                 if (!deflectionA) {
-                    nextState = ClimbStates.PulltoHookB2;
+                    // nextState = ClimbStates.PulltoHookB2;
+                    nextState = ClimbStates.AnglePause2;
                 }
                 if(climbMotorRevs>=revolutionsPastHookA){
                     nextState = ClimbStates.Done;
                 }
                 break;
+            case AnglePause2:
+                if(Robot.navx.getRoll()>40){
+                    nextState = ClimbStates.PulltoHookB2;
+                }
+            break;
             case PulltoHookB2:
                 // if (deflectionWhiteB && deflectionRedB) {
                 //     nextState = ClimbStates.PullPastHookB2;
@@ -699,6 +711,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         // }
     }
     public boolean isClimbing(){
+        //climbing = true;
         return climbing;
     }
 

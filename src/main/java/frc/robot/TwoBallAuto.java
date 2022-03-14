@@ -178,7 +178,8 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
 
             Robot.shooterStateMachine.shootAll();
 
-            Robot.intake.idle();
+            // Robot.intake.idle();
+            Robot.intake.intake();
         }
         if (isTransitionTo(TBautoStates.CenterTurn)){
             StartAngle = Robot.currentAngle;
