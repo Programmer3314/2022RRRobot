@@ -197,7 +197,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
                             && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin)
-                            || Robot.pointBlankButton || Robot.bottomBasket||Robot.povRightShot||Robot.povLeftShot)
+                            || Robot.pointBlankButton || Robot.bottomBasket||Robot.povRightShot||Robot.povLeftShot||Robot.autoSelect ==3)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
                         passThroughCounter++;

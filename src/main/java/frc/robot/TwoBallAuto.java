@@ -71,7 +71,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 }
                 break;
             case Buffer:
-                if (secondsInState >= 2) {
+                if (secondsInState >= 2||autoDial == 3) {
                     nextState = TBautoStates.Shoot;
                 }
                 break;
@@ -96,7 +96,6 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 break;
             case Done:
                 break;
-
             case CenterTurn:
                 if (Robot.currentAngle > StartAngle + desiredCenterTurn){
                     nextState = TBautoStates.CenterBack;
@@ -174,8 +173,12 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         }
         if (isTransitionTo(TBautoStates.Shoot)) {
             // Robot.driveTrain.Drive(0, 0);
-            Robot.aimController.setAimMode(AimMode.robotShoot);
-
+            if(autoDial==3){
+            Robot.aimController.setAimMode(AimMode.driver);
+            }
+            else{
+                Robot.aimController.setAimMode(AimMode.robotShoot);
+            }
             Robot.shooterStateMachine.shootAll();
 
             // Robot.intake.idle();
