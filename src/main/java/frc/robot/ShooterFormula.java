@@ -46,8 +46,8 @@ public class ShooterFormula {
         targetPointsHigh.add(new TargetPoint(-1.8, 2000, 20, 2500, 5));
         targetPointsHigh.add(new TargetPoint(-1.2, 2000, 20, 2500, 5));
         targetPointsHigh.add(new TargetPoint(-0.8, 2000, 20, 2500, 5));
-        targetPointsHigh.add(new TargetPoint(-0.2, 3100, 24, 2310, 5));
-        targetPointsHigh.add(new TargetPoint(0.2, 3100, 24, 2310, 5));
+        targetPointsHigh.add(new TargetPoint(-0.2, 3150, 24, 2310, 5));
+        targetPointsHigh.add(new TargetPoint(0.2, 3150, 24, 2310, 5));
         targetPointsHigh.add(new TargetPoint(3, 3640, 0, 2548, 5));
         targetPointsHigh.add(new TargetPoint(4, 3600, 25, 2625, 5));
         targetPointsHigh.add(new TargetPoint(7.5, 4100, 57, 2730, 5));

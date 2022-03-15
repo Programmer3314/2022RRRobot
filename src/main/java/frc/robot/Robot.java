@@ -201,6 +201,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    //Logger.OpenLog("Auto");
     commonInit();
     autoSelect = bcdReturn.GetDial();
     driveTrain.resetEncoders();
@@ -441,6 +442,16 @@ public class Robot extends TimedRobot {
 
     // TargetPoint firingSolution = shooterFormula
     // .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
+
+    // if(lastModeRan=="auto"&&autoDial ==3){
+        // if(position==left||position ==right){
+          // targetpovdistance=9
+        // }
+        // else{
+          // targetpovdistance= 13
+      // }
+      // 
+    // }
     if (pointBlankButton) {
       targetpovdistance = 0;
     } else if (bottomBasket) {

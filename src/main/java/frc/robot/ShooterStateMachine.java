@@ -357,7 +357,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     
     public void LogData(){
         Logger.doubles(feedRPM,shooterRPM, camRevs);
-        Logger.booleans(airBall, camhomed,Robot.pointBlankButton,Robot.bottomBasket, Robot.povLeftShot, Robot.povRightShot, shootOne, shootAll);
+        Logger.booleans(airBall, camhomed,queueIsFull,Robot.pointBlankButton, Robot.bottomBasket, Robot.povLeftShot, Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
     }
 }

@@ -180,7 +180,9 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 Robot.aimController.setAimMode(AimMode.robotShoot);
             }
             Robot.shooterStateMachine.shootAll();
-
+//Distance RightMoveBack = 7.25
+//Distance LeftMoveBack = 
+//Distance CenterMoveBAck = 
             // Robot.intake.idle();
             Robot.intake.intake();
         }

@@ -133,7 +133,7 @@ public class Constants {
 
   // roboRIO Digital I/O ports 0-9
   public static int kDIOQueueBreakBeam = 0;
-  public static int kDIOTunnelBreakBeam = 1;
+  public static int kDIOTunnelBreakBeam = 1;//add
   public static int kDIOTurretLimitSwitch = 2;
   public static int kDIOClimbLimit = 4;
   public static int kDIOBRed = 3;// second hook sensor

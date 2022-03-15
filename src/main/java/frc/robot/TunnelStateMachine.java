@@ -32,7 +32,7 @@ import frc.robot.utility.MMStateMachine;
  */
 
 enum TunnelStates {
-    Start, Idle, BallDetected, MoveToQueue, RejectBall
+    Start, Idle, BreakBeamTrue, DistancePause1, DistancePause2, BallDetected, MoveToQueue, RejectBall
 };
 
 /** Add your docs here. */
@@ -45,6 +45,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     MMMotorGroup tunnelWheels;
     ColorSensorV3 frontColorSensor;
     DigitalInput breakBeamOne;
+    DigitalInput tunnelBreakInput;
     int baseBlue;
     int baseRed;
     double tunnelBeltRPM;
@@ -52,6 +53,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     boolean queueIsFull;
     int red, blue;
     public boolean climbing;
+    public boolean tunnelBreakBeam;
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
@@ -59,6 +61,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
         // breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
         frontColorSensor = new ColorSensorV3(Port.kMXP);
+        tunnelBreakInput = new DigitalInput(Constants.kDIOTunnelBreakBeam);
     }
 
     @Override
@@ -66,6 +69,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         // TODO make desired ball laggy
         red = frontColorSensor.getRed();
         blue = frontColorSensor.getBlue();
+        tunnelBreakBeam = !tunnelBreakInput.get();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
         // isRed = red > baseRed*1.05;
@@ -89,6 +93,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         SmartDashboard.putNumber("Amount of Blue Detected: ", blue);
         // SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
         SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheelsRPM);
+        SmartDashboard.putBoolean("TunnelBreakBeam", tunnelBreakBeam);
+        SmartDashboard.putBoolean("RawTunnelBreakBeam", tunnelBreakInput.get());
 
         super.update();
     }
@@ -103,8 +109,28 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     nextState = TunnelStates.Idle;
                     break;
                 case Idle:
+                    if (tunnelBreakBeam) {
+                        // if(desiredBall){
+                        // nextState = TunnelStates.BallDetected;
+                        nextState = TunnelStates.DistancePause1;
+                    }
+                    break;
+                case DistancePause1:
+                if(!tunnelBreakBeam){
+                    nextState = TunnelStates.DistancePause2;
+                }
+                break;
+                case DistancePause2:
+                if(cyclesInStates>5){
+                    nextState = TunnelStates.BreakBeamTrue;
+                }
+                break;
+                case BreakBeamTrue:
                     if (desiredBall) {
-                        nextState = TunnelStates.BallDetected;
+                        nextState=TunnelStates.BallDetected;
+                    }
+                    else{
+                        nextState = TunnelStates.Idle;  
                     }
                     break;
                 case BallDetected:
@@ -177,14 +203,14 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     }
 
     public void LogHeader() {
-        Logger.Header("TunnelBeltRPM,tunnelWheelsRPM,"
-                + "colorSensorRed, colorSensorBlue,desiredBall,"
+        Logger.Header("TunnelBeltRPM,tunnelWheelsRPM, red, blue"
+                + "colorSensorRed, colorSensorBlue,desiredBall,tunnelbreakbeam,"
                 + "TunnelState,");
     }
 
     public void LogData() {
-        Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM);
-        Logger.booleans(isRed, isBlue, desiredBall);
+        Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM, red, blue);
+        Logger.booleans(isRed, isBlue, desiredBall, tunnelBreakBeam);
         Logger.singleEnum(currentState);
     }
 }
