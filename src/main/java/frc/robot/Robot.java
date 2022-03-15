@@ -138,6 +138,7 @@ public class Robot extends TimedRobot {
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
 
+
     // Define devices that do not belong to a specific system
     navx = new AHRS(Port.kMXP);
     navx.reset();
@@ -356,6 +357,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    visiontable.getEntry("Enable Log").setBoolean(false);
   }
 
   @Override
@@ -385,6 +387,7 @@ public class Robot extends TimedRobot {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
     shootLimeLight.set(true);
+    visiontable.getEntry("Enable Log").setBoolean(false);
     intake.idle();
   }
 
