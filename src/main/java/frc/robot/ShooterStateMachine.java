@@ -164,7 +164,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     }
                     break;
                 case Idle:
-                    if (target != null && target.active && (shootOne || shootAll)) {
+                    if (((target != null && target.active)||Robot.autoSelect==3) && (shootOne || shootAll)) {
                         nextState = ShooterStates.Preparing;
                     }
                     break;

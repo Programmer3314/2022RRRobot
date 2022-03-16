@@ -201,7 +201,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    //Logger.OpenLog("Auto");
+    Logger.OpenLog("Auto");
+    RobotLogHeader();
     commonInit();
     autoSelect = bcdReturn.GetDial();
     driveTrain.resetEncoders();
@@ -223,14 +224,18 @@ public class Robot extends TimedRobot {
       }
     }
     autonomous = new TwoBallAuto(position, autoSelect);
+    Logger.EndLine();
   }
 
   @Override
   public void autonomousPeriodic() {
+    Logger.StartLine();
+    RobotLogData();
     commonPeriodic();
     autonomous.periodic();
     commonUpdate();
     SmartDashboard.putNumber("Driver Distance", driveTrain.getDistanceFeet());
+    Logger.EndLine();
   }
 
   @Override
@@ -443,15 +448,15 @@ public class Robot extends TimedRobot {
     // TargetPoint firingSolution = shooterFormula
     // .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
 
-    // if(lastModeRan=="auto"&&autoDial ==3){
-        // if(position==left||position ==right){
-          // targetpovdistance=9
-        // }
-        // else{
-          // targetpovdistance= 13
-      // }
-      // 
-    // }
+    if(lastModeRan=="auto"&&autoSelect ==3){
+        if(position==Position.Left||position ==Position.Right){
+          targetpovdistance=9;
+        }
+        else{
+          targetpovdistance= 13;
+      }
+      
+    }
     if (pointBlankButton) {
       targetpovdistance = 0;
     } else if (bottomBasket) {

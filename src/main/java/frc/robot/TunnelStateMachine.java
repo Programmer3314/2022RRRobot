@@ -122,7 +122,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                 break;
                 case DistancePause2:
                 if(cyclesInStates>5){
-                    nextState = TunnelStates.BreakBeamTrue;
+                   // nextState = TunnelStates.BreakBeamTrue;
+                   nextState=TunnelStates.BallDetected;
                 }
                 break;
                 case BreakBeamTrue:
