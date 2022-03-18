@@ -402,6 +402,8 @@ public class Robot extends TimedRobot {
     // controllerOperator.getRawButton(Constants.kOperatorSearchButton);
     resetRobot = buttonBox1.getRawButton(Constants.kButtonBoxResetRobot);
 
+    // TODO Let's clean up variable names to make them clearer...
+    // There are several angles, so maybe currentAngle should be currentRobotAngle
     currentAngle = cleanAngle(navx.getYaw());
     currentShooterAngle = cleanAngle(
         currentAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
@@ -448,6 +450,10 @@ public class Robot extends TimedRobot {
     // TargetPoint firingSolution = shooterFormula
     // .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
 
+    // TODO change the flow of this to use something like "overridenHubDistance" 
+    // and set it to the automatic distance (from the active vision system + adjustment)
+    // then set it to a fixed value it one of the following overrides applies
+    // It will have a cleaner feel - I hope.
     if(lastModeRan=="auto"&&autoSelect ==3){
         if(position==Position.Left||position ==Position.Right){
           targetpovdistance=9;
