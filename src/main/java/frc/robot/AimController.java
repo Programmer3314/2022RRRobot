@@ -208,7 +208,7 @@ public class AimController {
         turretHomed = false;
     }
     public void LogHeader(){
-        Logger.Header("AimMode");
+        Logger.Header("AimMode,");
     }
     public void LogData(){
         Logger.singleEnum(aimMode);

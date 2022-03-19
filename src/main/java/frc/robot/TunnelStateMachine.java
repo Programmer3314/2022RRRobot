@@ -32,7 +32,7 @@ import frc.robot.utility.MMStateMachine;
  */
 
 enum TunnelStates {
-    Start, Idle, BreakBeamTrue, DistancePause1, DistancePause2, BallDetected, MoveToQueue, RejectBall
+    Start, Idle, BallIsLive, EncoderDelay, BallInPosition, BallDetected, MoveToQueue, RejectBall
 };
 
 /** Add your docs here. */
@@ -53,12 +53,19 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     boolean queueIsFull;
     int red, blue;
     public boolean climbing;
-    public boolean tunnelBreakBeam;
+    public boolean tunnelBreakBeamBroken;
+    double whiteBeltCurrent;
+    double whiteBeltOffset = 2.0-1.61;
+    double whiteBeltSensorOffset=1.61;
+    double whiteBeltGoal;
+    boolean ignoreColorSensor;
+    double whiteBeltNormalSpeed = 0.275;
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
-        tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt));
+        tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt)
+        .setBrakeMode(true));
         // breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
         frontColorSensor = new ColorSensorV3(Port.kMXP);
         tunnelBreakInput = new DigitalInput(Constants.kDIOTunnelBreakBeam);
@@ -69,15 +76,18 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         // TODO make desired ball laggy
         red = frontColorSensor.getRed();
         blue = frontColorSensor.getBlue();
-        tunnelBreakBeam = !tunnelBreakInput.get();
+        tunnelBreakBeamBroken = !tunnelBreakInput.get();
         isRed = red > blue * 2;
         isBlue = blue > red * 2;
+        whiteBeltCurrent = tunnelBelt.getRevolutions();
+        ignoreColorSensor = Robot.buttonBox1.getRawButton(Constants.kButtonBoxIgnoreColorSensor);
         // isRed = red > baseRed*1.05;
         // isBlue = blue > baseBlue*1.05;
         // desiredBall = ((Robot.alliance == Alliance.Blue && isBlue) || (Robot.alliance
         // == Alliance.Red && isRed));
-        desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed)
-                || (Robot.alliance == Alliance.Red && isRed && !isBlue)); // && !breakBeamOne.get();
+        // desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed)
+        // || (Robot.alliance == Alliance.Red && isRed && !isBlue) ||
+        // ignoreColorSensor); // && !breakBeamOne.get();
         // desiredBall =
         // Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
         tunnelBeltRPM = tunnelBelt.getVelocity();
@@ -85,6 +95,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         queueIsFull = Robot.queueStateMachine.isFull();
         climbing = Robot.climbStateMachine.isClimbing();
 
+        SmartDashboard.putBoolean("Ignore Color Sensor", ignoreColorSensor);
         SmartDashboard.putBoolean("Desired Ball", desiredBall);
         SmartDashboard.putBoolean("isRed", isRed);
         SmartDashboard.putBoolean("isBlue", isBlue);
@@ -93,7 +104,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         SmartDashboard.putNumber("Amount of Blue Detected: ", blue);
         // SmartDashboard.putBoolean("breakBeamOne", breakBeamOne.get());
         SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheelsRPM);
-        SmartDashboard.putBoolean("TunnelBreakBeam", tunnelBreakBeam);
+        SmartDashboard.putBoolean("TunnelBreakBeam", tunnelBreakBeamBroken);
         SmartDashboard.putBoolean("RawTunnelBreakBeam", tunnelBreakInput.get());
 
         super.update();
@@ -109,31 +120,32 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     nextState = TunnelStates.Idle;
                     break;
                 case Idle:
-                    if (tunnelBreakBeam) {
+                    if (tunnelBreakBeamBroken) {
                         // if(desiredBall){
                         // nextState = TunnelStates.BallDetected;
-                        nextState = TunnelStates.DistancePause1;
+                        nextState = TunnelStates.BallIsLive;
                     }
                     break;
-                case DistancePause1:
-                if(!tunnelBreakBeam){
-                    nextState = TunnelStates.DistancePause2;
+                case BallIsLive:
+                    if (whiteBeltCurrent >= whiteBeltGoal) {
+                        nextState = TunnelStates.EncoderDelay;
+                    }
+                    break;
+                
+                case EncoderDelay:
+                    
+                if (whiteBeltCurrent >= whiteBeltGoal) {
+                    nextState = TunnelStates.BallInPosition;
                 }
-                break;
-                case DistancePause2:
-                if(cyclesInStates>5){
-                   // nextState = TunnelStates.BreakBeamTrue;
-                   nextState=TunnelStates.BallDetected;
-                }
-                break;
-                case BreakBeamTrue:
+                    break;
+                case BallInPosition:
                     if (desiredBall) {
-                        nextState=TunnelStates.BallDetected;
-                    }
-                    else{
-                        nextState = TunnelStates.Idle;  
+                        nextState = TunnelStates.BallDetected;
+                    } else {
+                        nextState = TunnelStates.Idle;
                     }
                     break;
+
                 case BallDetected:
                     if (!queueIsFull) {
                         nextState = TunnelStates.MoveToQueue;
@@ -159,10 +171,25 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         // the Queue is ready. The problem seems to be that we're not moving to
         // MoveToQueue
         // or we are but there is another problem
+
+
+
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
             tunnelWheels.setPower(0.6);
         }
+        if(isTransitionFrom(TunnelStates.BallInPosition)){
+            desiredBall = false;
+        }
+        
+        if (isTransitionTo(TunnelStates.BallIsLive)) {
+            whiteBeltGoal = whiteBeltCurrent + whiteBeltSensorOffset;
+           }
+        if (isTransitionTo(TunnelStates.EncoderDelay)) {
+            whiteBeltGoal = whiteBeltCurrent + whiteBeltOffset;
+            desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed)
+            || (Robot.alliance == Alliance.Red && isRed && !isBlue) || ignoreColorSensor);
+           }
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
             counter++;
@@ -182,7 +209,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     baseRed = red;
                     baseBlue = blue;
                 case Idle:
-                    tunnelBelt.setPower(0.15);
+                    tunnelBelt.setPower(whiteBeltNormalSpeed);
 
                     break;
                 case BallDetected:
@@ -204,14 +231,14 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     }
 
     public void LogHeader() {
-        Logger.Header("TunnelBeltRPM,tunnelWheelsRPM, red, blue"
+        Logger.Header("TunnelBeltRPM,tunnelWheelsRPM, red, blue, TunnelEncoder,"
                 + "colorSensorRed, colorSensorBlue,desiredBall,tunnelbreakbeam,"
                 + "TunnelState,");
     }
 
     public void LogData() {
-        Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM, red, blue);
-        Logger.booleans(isRed, isBlue, desiredBall, tunnelBreakBeam);
+        Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM, red, blue, tunnelBelt.getRevolutions());
+        Logger.booleans(isRed, isBlue, desiredBall, tunnelBreakBeamBroken);
         Logger.singleEnum(currentState);
     }
 }

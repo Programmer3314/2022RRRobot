@@ -182,6 +182,7 @@ public class Constants {
   public static int kButtonBoxTacobell = 8;
   public static int kButtonBoxAbortShot = 9;
   public static int kButtonBoxManualHome = 10;
+  public static int kButtonBoxIgnoreColorSensor = 11;
   public static int kButtonBoxErrorButton = 2;
 
   // public static int kShooterLimeLight = 4;

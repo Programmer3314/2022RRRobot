@@ -68,8 +68,8 @@ public class NavXRoll {
 
     }
     public void LogHeader(){
-        Logger.Header("AproachBar, BelowBar60, BelowBar57 ,NavXCalm, "
-        +"minValue, maxValue");
+        Logger.Header("ApproachBar, BelowBar60, BelowBar57 ,NavXCalm, "
+        +"minValue, maxValue,");
     }
     public void LogData(){
         Logger.booleans(isApproachingBar(), isBelowBar(60), isBelowBar(57), navxCalm());
