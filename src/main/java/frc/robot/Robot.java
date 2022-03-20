@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -48,7 +51,7 @@ public class Robot extends TimedRobot {
   MMMotorGroup shooterWheels;
   MMMotorGroup shooterCAM;
   ShooterFormula shooterFormula;
-  public static Solenoid lightRing;
+  // public static Solenoid lightRing;
   // public static Solenoid lightRing1;
   // public static Solenoid lightRing2;
   // public static Solenoid lightRing3;
@@ -105,6 +108,12 @@ public class Robot extends TimedRobot {
   public static Position position;
   public static NavXRoll navXRoll;
   public static boolean useLimeLight=true;
+  public static double snapshotCounterLeft=32;
+  public static boolean useVision;
+  public static NetworkTableEntry ledMode;
+  public static NetworkTableEntry camMode;
+  public static NetworkTableEntry snapshot;
+  public static TargetSamples targetSamples;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -137,6 +146,10 @@ public class Robot extends TimedRobot {
     visiontable = nt.getTable("Retroreflective Tape Target");
     limelighTable = nt.getTable("limelight");
 
+    ledMode = limelighTable.getEntry("ledMode");
+    camMode = limelighTable.getEntry("camMode");
+    snapshot = limelighTable.getEntry("snapshot");
+
     // Define devices that do not belong to a specific system
     navx = new AHRS(Port.kMXP);
     navx.reset();
@@ -156,6 +169,7 @@ public class Robot extends TimedRobot {
     navXRoll = new NavXRoll();
     bcdReturn = new MMBCDReturn();
     intake = new Intake();
+    targetSamples = new TargetSamples();
     queueStateMachine = new QueueStateMachine();
     shooterStateMachine = new ShooterStateMachine();
     tunnelStateMachine = new TunnelStateMachine();
@@ -185,6 +199,7 @@ public class Robot extends TimedRobot {
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 
+    
     // Misc that should probably be better organized
     confidenceCounter = 0;
     pneumaticHub.enableCompressorDigital();
@@ -199,6 +214,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    snapshotCounterLeft=32;
     Logger.OpenLog("Auto");
     RobotLogHeader();
     commonInit();
@@ -211,6 +227,9 @@ public class Robot extends TimedRobot {
     aimController.setAimMode(AimMode.driver);
 
     lastModeRan = "auto";
+
+    configVision();
+
 
     if (buttonBox2.getRawButton(13)) {
       position = Position.Left;
@@ -250,6 +269,7 @@ public class Robot extends TimedRobot {
       queueStateMachine.resetState();
       shooterStateMachine.resetState();
       aimController.resetTurret();
+      snapshotCounterLeft=32;
     }
     lastModeRan = "teleop";
     shooterStateMachine.shootOne = false;
@@ -262,6 +282,8 @@ public class Robot extends TimedRobot {
     RobotLogData();
     commonPeriodic();
     navXRoll.update(navx.getRoll());
+    useVision = buttonBox1.getRawButton(12);
+    configVision();
 
     stopWhiteBelt = buttonBox1.getRawButton(10);
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
@@ -272,6 +294,7 @@ public class Robot extends TimedRobot {
     double requestedSpeed = speedAxis.get();
     double requestedTurn = turnAxis.get();
     SmartDashboard.putNumber("Joystick Value", requestedSpeed);
+    SmartDashboard.putNumber("Returned Speed", driveTrain.getVelocity());
 
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
@@ -282,10 +305,17 @@ public class Robot extends TimedRobot {
     povLeftShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 270;
     povRightShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 90;
 
-    autoLockHoop = controllerDriver.getRawButton(Constants.kDriverAutoTurnToTarget);
+    autoLockHoop = controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
     SmartDashboard.putBoolean("Intake Out:", intakeButton);
+
+
+
+    if(buttonBox1.getRawButtonPressed(Constants.kButtonBoxErrorButton) 
+    || autoLockHoop){
+      takeSnapshot();
+    }
 
     abortShootButton = controllerOperator.getRawButton(Constants.kOperatorAbortShot) ||
         buttonBox1.getRawButton(Constants.kButtonBoxAbortShot);
@@ -315,14 +345,14 @@ public class Robot extends TimedRobot {
       intake.idle();
     }
     if (controllerDriver.getRawButtonPressed(Constants.kDriverToggleBallLight)) {
-      lightRing.set(!lightRing.get());
+      shootLimeLight.set(!shootLimeLight.get());
     }
 
     if (buttonBox1.getRawButton(Constants.kTestButtonBoxDisableCompressor)) {
       pneumaticHub.disableCompressor();
     }
 
-    if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget) && confidenceCounter > 0) {
+    if (autoLockHoop && confidenceCounter > 0) {
       aimController.setAimMode(AimMode.robotShoot);
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)) {
       aimController.setAimMode(AimMode.driver);
@@ -335,9 +365,11 @@ public class Robot extends TimedRobot {
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoBarLock)) {
       aimController.setAimMode(AimMode.driver);
     }
-    // if(stopWhiteBelt){
-    // climbStateMachine.isClimbing();
-    // }
+
+    if(stopWhiteBelt){
+      climbStateMachine.isClimbing();
+    }
+
     DriveParameters dp = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle,
         climbStateMachine.leadHookContactLeft, climbStateMachine.leadHookContactRight, requestedSpeed);
 
@@ -362,6 +394,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     visiontable.getEntry("Enable Log").setBoolean(false);
+    ledMode.setNumber(0);
   }
 
   @Override
@@ -390,7 +423,15 @@ public class Robot extends TimedRobot {
   public void commonInit() {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
+    useVision = buttonBox1.getRawButton(12);
+
+    if (useLimeLight){
+      ledMode.setNumber(3);
+
+    }
+    else{
     shootLimeLight.set(true);
+    }
     visiontable.getEntry("Enable Log").setBoolean(false);
     intake.idle();
   }
@@ -410,7 +451,7 @@ public class Robot extends TimedRobot {
       horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
     } else {
       verticalAngle = (Double) limelighTable.getEntry("ty").getNumber(-5000) + Constants.kCameraVerticalAngle;
-      horizontalAngle = cleanAngle((Double) limelighTable.getEntry("tx").getNumber(-5000));
+      horizontalAngle = targetSamples.update(cleanAngle((Double) limelighTable.getEntry("tx").getNumber(-5000)));
     }
     targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
 
@@ -562,6 +603,24 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.LogData();
     aimController.LogData();
     navXRoll.LogData();
+  }
+
+  public void configVision(){
+    if (useVision){
+      ledMode.setNumber(3);
+      camMode.setNumber(0);
+
+    }else{
+      ledMode.setNumber(1);
+      camMode.setNumber(1);
+    }
+  }
+
+  public static void takeSnapshot(){
+    if(snapshotCounterLeft > 0){
+      snapshot.setNumber(1);
+      snapshotCounterLeft--;
+    }
   }
 
 }

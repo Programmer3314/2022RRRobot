@@ -65,6 +65,10 @@ public class MMDiffDriveTrain {
         return rpm/maxRpm;
     }
 
+    public double getVelocity(){
+        return ((leftMG.getVelocity() + rightMG.getVelocity())/2.0)/60.0;
+    }
+
     public void resetEncoders() {
         leftMG.resetEncoders();
         rightMG.resetEncoders();

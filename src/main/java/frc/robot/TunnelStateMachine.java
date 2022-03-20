@@ -60,6 +60,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     double whiteBeltGoal;
     boolean ignoreColorSensor;
     double whiteBeltNormalSpeed = 0.275;
+    boolean trident;
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
@@ -193,6 +194,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
             counter++;
+            tunnelBelt.resetEncoders();
         }
         if (isTransitionTo(TunnelStates.RejectBall)) {
             tunnelWheels.setPower(-.4);
@@ -240,5 +242,9 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         Logger.doubles(tunnelBeltRPM, tunnelWheelsRPM, red, blue, tunnelBelt.getRevolutions());
         Logger.booleans(isRed, isBlue, desiredBall, tunnelBreakBeamBroken);
         Logger.singleEnum(currentState);
+    }
+
+    public void stopBelt(){
+        trident = true;
     }
 }

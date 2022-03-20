@@ -88,7 +88,8 @@ public class Constants {
   public static double krpmMargin = 100;
   public static double kangleMargin = 10;
 
-  public static double kCameraVerticalAngle = 34;// 33.5
+  //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa
+  public static double kCameraVerticalAngle = 34.5;// 33.5
   public static double ktargetHeight = 104 / 12.0;
   public static double kTargetCameraHeight = 39 / 12.0;
   public static double kTargetingHeightDiff = ktargetHeight - kTargetCameraHeight;
@@ -154,13 +155,13 @@ public class Constants {
 
   public static double kPRobotTargetTurn = 5;
   public static double kIRobotTargetTurn = 0;
-  public static double kDRobotTargetTurn = 0;
-  public static double kRobotAimTolerance = 0;
+  public static double kDRobotTargetTurn = 0.5;
+  public static double kRobotAimTolerance = 2;
 
   public static double kMaxRobotTurn = 400;
   public static double kMaxAutoTurn = 300;
   public static double kMinRobotTurn = 22.5;
-  public static double kToleranceRobotTurn = 0;
+  public static double kToleranceRobotTurn = 5;
 
   public static double kPTurretTargetTurn = 2;
 

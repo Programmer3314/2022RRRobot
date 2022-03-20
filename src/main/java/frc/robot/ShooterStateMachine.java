@@ -14,6 +14,7 @@ import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
 
+
 /**
  * Expected Hardware configuration (No Turret):
  * Break Beam sensor in ball path to detect when ball is ready/gone
@@ -283,7 +284,9 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
         if (isTransitionTo(ShooterStates.Shooting1)) {
             Robot.queueStateMachine.shooterBallRequest();
+            Robot.takeSnapshot();
         }
+
         if (isTransitionTo(ShooterStates.Idle)) {
             shooter.setPower(0);
             camAngle.setPower(0);
