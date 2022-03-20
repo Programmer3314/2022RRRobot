@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -125,6 +123,11 @@ public class Robot extends TimedRobot {
     adjustShooterDistance = .5;
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
+
+    // TODO Transfer Shooting to Driver Control:
+    // A button will align and then shoot all high. 
+    // Left Trigger will do Low Batter Shot
+    // Right Trigger will do High Batter Shot (point blank)
 
     // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
