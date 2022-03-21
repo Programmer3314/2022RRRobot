@@ -55,8 +55,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public boolean climbing;
     public boolean tunnelBreakBeamBroken;
     double whiteBeltCurrent;
-    double whiteBeltOffset = 2.0-1.61;
-    double whiteBeltSensorOffset=1.61;
+    double whiteBeltOffset = 2.0 - 1.61;
+    double whiteBeltSensorOffset = 1.61;
     double whiteBeltGoal;
     boolean ignoreColorSensor;
     double whiteBeltNormalSpeed = 0.275;
@@ -66,7 +66,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         super(TunnelStates.Start);
         tunnelWheels = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelWheels));
         tunnelBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCTunnelBelt)
-        .setBrakeMode(true));
+                .setBrakeMode(true));
         // breakBeamOne = new DigitalInput(Constants.kDIOTunnelBreakBeam);
         frontColorSensor = new ColorSensorV3(Port.kMXP);
         tunnelBreakInput = new DigitalInput(Constants.kDIOTunnelBreakBeam);
@@ -74,7 +74,6 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void update() {
-        // TODO make desired ball laggy
         red = frontColorSensor.getRed();
         blue = frontColorSensor.getBlue();
         tunnelBreakBeamBroken = !tunnelBreakInput.get();
@@ -132,12 +131,10 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                         nextState = TunnelStates.EncoderDelay;
                     }
                     break;
-                
                 case EncoderDelay:
-                    
-                if (whiteBeltCurrent >= whiteBeltGoal) {
-                    nextState = TunnelStates.BallInPosition;
-                }
+                    if (whiteBeltCurrent >= whiteBeltGoal) {
+                        nextState = TunnelStates.BallInPosition;
+                    }
                     break;
                 case BallInPosition:
                     if (desiredBall) {
@@ -146,7 +143,6 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                         nextState = TunnelStates.Idle;
                     }
                     break;
-
                 case BallDetected:
                     if (!queueIsFull) {
                         nextState = TunnelStates.MoveToQueue;
@@ -160,37 +156,30 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                 case RejectBall:
                     if (!Robot.tacoBell) {
                         nextState = TunnelStates.Idle;
-
                     }
+                    break;
             }
         }
     }
 
     @Override
     public void doTransition() {
-        // The FROM on the next line was correct. The Green wheels don't turn on until
-        // the Queue is ready. The problem seems to be that we're not moving to
-        // MoveToQueue
-        // or we are but there is another problem
-
-
-
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
             tunnelWheels.setPower(0.6);
         }
-        if(isTransitionFrom(TunnelStates.BallInPosition)){
+        if (isTransitionFrom(TunnelStates.BallInPosition)) {
             desiredBall = false;
         }
-        
+
         if (isTransitionTo(TunnelStates.BallIsLive)) {
             whiteBeltGoal = whiteBeltCurrent + whiteBeltSensorOffset;
-           }
+        }
         if (isTransitionTo(TunnelStates.EncoderDelay)) {
             whiteBeltGoal = whiteBeltCurrent + whiteBeltOffset;
             desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed)
-            || (Robot.alliance == Alliance.Red && isRed && !isBlue) || ignoreColorSensor);
-           }
+                    || (Robot.alliance == Alliance.Red && isRed && !isBlue) || ignoreColorSensor);
+        }
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
             counter++;
@@ -200,7 +189,6 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
             tunnelWheels.setPower(-.4);
             tunnelBelt.setPower(.4);
         }
-
     }
 
     @Override
@@ -212,7 +200,6 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     baseBlue = blue;
                 case Idle:
                     tunnelBelt.setPower(whiteBeltNormalSpeed);
-
                     break;
                 case BallDetected:
                     tunnelBelt.setPower(0.0);
@@ -221,10 +208,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     break;
             }
         } else {
-
             tunnelBelt.setPower(0);
         }
-
     }
 
     public void resetState() {
@@ -244,7 +229,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         Logger.singleEnum(currentState);
     }
 
-    public void stopBelt(){
+    public void stopBelt() {
         trident = true;
     }
 }

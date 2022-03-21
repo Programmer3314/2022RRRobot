@@ -6,8 +6,6 @@ package frc.robot.utility;
 
 import edu.wpi.first.wpilibj.Timer;
 
-// TODO Add secondsInState and cyclesInState variables
-
 /**
  * Generic State Machine
  */

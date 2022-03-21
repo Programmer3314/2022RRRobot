@@ -25,11 +25,14 @@ public class MMBCDReturn {
 
         if(bit1){
             returnedBinary+=1;
-        }if(bit2){
+        }
+        if(bit2){
             returnedBinary+=2;
-        }if(bit3){
+        }
+        if(bit3){
             returnedBinary+=4;
-        }if(bit4){
+        }
+        if(bit4){
             returnedBinary+=8;
         }
 

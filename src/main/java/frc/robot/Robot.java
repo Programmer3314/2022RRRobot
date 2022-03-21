@@ -125,9 +125,9 @@ public class Robot extends TimedRobot {
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
     // TODO Transfer Shooting to Driver Control:
-    // A button will align and then shoot all high. 
-    // Left Trigger will do Low Batter Shot
-    // Right Trigger will do High Batter Shot (point blank)
+    // Driver's A button will align and then shoot all high. (see note below ~line 357)
+    // Driver's Left Trigger will do Low Batter Shot
+    // Driver's Right Trigger will do High Batter Shot (point blank)
 
     // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
@@ -335,7 +335,6 @@ public class Robot extends TimedRobot {
 
     if (shootAllButton) {
       shooterStateMachine.shootAll();
-
     } else if (shootOneButton) {
       shooterStateMachine.shootOne();
     }
@@ -355,6 +354,8 @@ public class Robot extends TimedRobot {
       pneumaticHub.disableCompressor();
     }
 
+    // TODO Make autoLockHoop also trigger a FireAll. 
+    // TODO Also make FireAll deal with one ball. 
     if (autoLockHoop && confidenceCounter > 0) {
       aimController.setAimMode(AimMode.robotShoot);
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)) {
@@ -485,7 +486,6 @@ public class Robot extends TimedRobot {
     if (haveTarget) {
       autocorrectTargetAngle = cleanAngle(currentAngle + horizontalAngle +
           (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
-
       confidenceCounter = 500;
     } else {
       if (confidenceCounter > 0) {

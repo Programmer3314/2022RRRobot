@@ -12,21 +12,16 @@ public class TargetSamples {
     public double sum;
     public double average;
 
-
-    public TargetSamples(){
+    public TargetSamples() {
         counter = 0;
     }
 
-    public double update(double newHValue){
-        sum-= targetSamples[counter];
+    public double update(double newHValue) {
+        sum -= targetSamples[counter];
         targetSamples[counter] = newHValue;
-        counter=(counter+1)%20;
-        sum+= newHValue;
-        average = sum/20.0;
-        
+        counter = (counter + 1) % 20;
+        sum += newHValue;
+        average = sum / 20.0;
         return average;
-
-
-
     }
 }

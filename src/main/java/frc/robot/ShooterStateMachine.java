@@ -14,7 +14,6 @@ import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
 import frc.robot.utility.MMStateMachine;
 
-
 /**
  * Expected Hardware configuration (No Turret):
  * Break Beam sensor in ball path to detect when ball is ready/gone
@@ -63,7 +62,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     double feedRPM;
     double camRevs;
     boolean queueIsFull;
-    
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
@@ -94,7 +92,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         camhomed = !camlimitswitch.get();
         queueIsFull = Robot.queueStateMachine.isFull();
         // airBall = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxAirBall);
-        airBall = !ballGoneBreakBeam.get()||Robot.controllerOperator.getRawButton(3);//manual override for airball
+        airBall = !ballGoneBreakBeam.get() || Robot.controllerOperator.getRawButton(3);// manual override for airball
         SmartDashboard.putBoolean("shootAll", shootAll);
         SmartDashboard.putBoolean("ShootOne", shootOne);
         SmartDashboard.putBoolean("CamHOMED", homed);
@@ -145,7 +143,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         SmartDashboard.putBoolean("Shooter Abort", abortShot);
     }
 
-
     @Override
     public void CalcNextState() {
         if (Robot.tacoBell) {
@@ -160,12 +157,13 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     nextState = ShooterStates.Home;
                     break;
                 case Home:
-                    if (homed/**  && Robot.aimController.isHomed()*/) {
+                    if (homed/** && Robot.aimController.isHomed() */
+                    ) {
                         nextState = ShooterStates.Idle;
                     }
                     break;
                 case Idle:
-                    if (((target != null && target.active)||Robot.autoSelect==3) && (shootOne || shootAll)) {
+                    if (((target != null && target.active) || Robot.autoSelect == 3) && (shootOne || shootAll)) {
                         nextState = ShooterStates.Preparing;
                     }
                     break;
@@ -191,14 +189,15 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
                     SmartDashboard.putNumber("Auto correct Target angle", Robot.autocorrectTargetAngle);
                     SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
-                    
+
                     if (target.active && queueIsFull
-                            && closeEnough(camRevs, target.angle,
-                                    Constants.kangleMargin)
+                            && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
-                            && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin)
-                            || Robot.pointBlankButton || Robot.bottomBasket||Robot.povRightShot||Robot.povLeftShot||Robot.autoSelect ==3)
+                            && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle,
+                                    target.turretMargin)
+                                    || Robot.pointBlankButton || Robot.bottomBasket || Robot.povRightShot
+                                    || Robot.povLeftShot || Robot.autoSelect == 3)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
                         passThroughCounter++;
@@ -213,7 +212,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                         passThroughCounter = 0;
                     }
 
-                    if (abortShot){
+                    if (abortShot) {
                         nextState = ShooterStates.Idle;
                         abortShot = false;
                     }
@@ -222,7 +221,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     if (!airBall) {
                         nextState = ShooterStates.Shooting2;
                     }
-                    if (abortShot){
+                    if (abortShot) {
                         nextState = ShooterStates.Idle;
                         abortShot = false;
                     }
@@ -237,24 +236,22 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             shootOne = false;
                             shootAll = false;
                             nextState = ShooterStates.Idle;
-                    
+
                         }
                     }
-                    if (abortShot){
+                    if (abortShot) {
                         nextState = ShooterStates.Idle;
                         abortShot = false;
                     }
                     break;
                 case RejectBall:
-                if(!Robot.tacoBell){
-                    nextState = ShooterStates.Idle;
-                    
-                }
-            }
+                    if (!Robot.tacoBell) {
+                        nextState = ShooterStates.Idle;
 
+                    }
+            }
         }
         // }
-
     }
 
     @Override
@@ -292,8 +289,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             camAngle.setPower(0);
             feed.setPower(0);
         }
-      
-        if(isTransitionTo(ShooterStates.RejectBall)){
+
+        if (isTransitionTo(ShooterStates.RejectBall)) {
             shooter.setPower(-.3);
             feed.setPower(-.3);
         }
@@ -327,7 +324,6 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         // passThroughCounter = 0;
     }
 
-
     public void resetState() {
         currentState = ShooterStates.Start;
         shootAll = false;
@@ -351,16 +347,17 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         shootAll = false;
         shootOne = false;
     }
-    public void LogHeader(){
+
+    public void LogHeader() {
         Logger.Header("FeedRPM, ShooterRPM, CamAngle,"
-        +"BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
-        +"ShooterState,"
-        );
+                + "BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
+                + "ShooterState,");
     }
-    
-    public void LogData(){
-        Logger.doubles(feedRPM,shooterRPM, camRevs);
-        Logger.booleans(airBall, camhomed,queueIsFull,Robot.pointBlankButton, Robot.bottomBasket, Robot.povLeftShot, Robot.povRightShot, shootOne, shootAll);
+
+    public void LogData() {
+        Logger.doubles(feedRPM, shooterRPM, camRevs);
+        Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankButton, Robot.bottomBasket, Robot.povLeftShot,
+                Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
     }
 }

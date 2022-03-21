@@ -65,6 +65,7 @@ public class MMDiffDriveTrain {
         return rpm/maxRpm;
     }
 
+    // TODO fix getVelocity... it is returning RPS, but should return feet/sec
     public double getVelocity(){
         return ((leftMG.getVelocity() + rightMG.getVelocity())/2.0)/60.0;
     }
