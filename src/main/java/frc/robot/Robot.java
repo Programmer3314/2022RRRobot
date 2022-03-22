@@ -127,11 +127,6 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-    // TODO Transfer Shooting to Driver Control:
-    // Driver's A button will align and then shoot all high. (see note below ~line 357)
-    // Driver's Left Trigger will do Low Batter Shot
-    // Driver's Right Trigger will do High Batter Shot (point blank)
-
     // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
