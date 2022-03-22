@@ -231,7 +231,13 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                         if (shootAll) {
                             nextState = ShooterStates.Preparing;
                             shootAll = false;
-                            shootOne = true;
+                            if (Robot.tunnelStateMachine.currentState == TunnelStates.BallDetected
+                            ||Robot.tunnelStateMachine.currentState == TunnelStates.MoveToQueue) {
+                                shootOne = true;
+                            } else {
+                                shootOne = false;
+                                nextState = ShooterStates.Idle;
+                            }
                         } else if (shootOne) {
                             shootOne = false;
                             shootAll = false;

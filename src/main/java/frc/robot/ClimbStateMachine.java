@@ -225,6 +225,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         SmartDashboard.putBoolean("Deflection Red B", deflectionRedB);
         SmartDashboard.putString("Climb State: ", currentState.toString());
         SmartDashboard.putBoolean("Manual Lead Hook Override", overrideLeadHooks);
+        SmartDashboard.putBoolean("StopWhiteBelt", climbing);
     }
 
     @Override
@@ -723,7 +724,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     public void LogHeader() {
         Logger.Header("climbMotorRevs,climbMotorRPM,"
                 + "climberHomed,startClimb,overrideLeadHooks,manualHome,lowLimitSwitch,RaiseLeadH, lowerLeadH, LeftLead, RightLead, DEFA, RedDEFB, WhiteDEFB, RedDEFC, WhiteDEFC,"
-                + "Bar2Pressed, Bar2Released,"
+                + "Bar2Pressed, Bar2Released,Trident,"
                 +"ClimbState,"
                 );
     }
@@ -731,7 +732,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     public void LogData() {
         Logger.doubles(climbMotorRevs, climbMotorRPM);
         Logger.booleans(climberHomed,startClimb,overrideLeadHooks,manualHome,lowLimitSwitch, raiseLeadHooks, lowerLeadHooks, leadHookContactLeft, leadHookContactRight,
-                deflectionA, deflectionRedB, deflectionWhiteB, deflectionRedC, deflectionWhiteC, highBarPressed, highBarReleased);
+                deflectionA, deflectionRedB, deflectionWhiteB, deflectionRedC, deflectionWhiteC, highBarPressed, highBarReleased, climbing);
         Logger.singleEnum(currentState);
     }
 

@@ -112,6 +112,9 @@ public class Robot extends TimedRobot {
   public static NetworkTableEntry camMode;
   public static NetworkTableEntry snapshot;
   public static TargetSamples targetSamples;
+  public static boolean driverShootHigh;
+  public static boolean driverShootLow;
+
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -285,10 +288,10 @@ public class Robot extends TimedRobot {
     RobotLogData();
     commonPeriodic();
     navXRoll.update(navx.getRoll());
-    useVision = buttonBox1.getRawButton(12);
+    useVision = !buttonBox1.getRawButton(12);
     configVision();
 
-    stopWhiteBelt = buttonBox1.getRawButton(10);
+    stopWhiteBelt = buttonBox1.getRawButtonPressed(10);
     shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
     shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
     logEvent = buttonBox1.getRawButton(Constants.kButtonBoxErrorButton);
@@ -302,8 +305,10 @@ public class Robot extends TimedRobot {
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
-    pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPOV) == 0;
-    bottomBasket = controllerOperator.getPOV(Constants.kOperatorPOV) == 180;
+    driverShootLow=controllerDriver.getRawAxis(2)>.7;
+    driverShootHigh = controllerDriver.getRawAxis(3)>.7;
+    pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPOV) == 0||driverShootHigh;
+    bottomBasket = controllerOperator.getPOV(Constants.kOperatorPOV) == 180||driverShootLow;
 
     povLeftShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 270;
     povRightShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 90;
@@ -333,7 +338,7 @@ public class Robot extends TimedRobot {
       shooterStateMachine.abortShot();
     }
 
-    if (shootAllButton) {
+    if (shootAllButton||driverShootHigh||driverShootLow) {
       shooterStateMachine.shootAll();
     } else if (shootOneButton) {
       shooterStateMachine.shootOne();
@@ -358,6 +363,7 @@ public class Robot extends TimedRobot {
     // TODO Also make FireAll deal with one ball. 
     if (autoLockHoop && confidenceCounter > 0) {
       aimController.setAimMode(AimMode.robotShoot);
+      shooterStateMachine.shootAll();
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoTurnToTarget)) {
       aimController.setAimMode(AimMode.driver);
     } else if (controllerDriver.getRawButtonPressed(Constants.kDriverAutoBallPickup)) {
@@ -371,7 +377,7 @@ public class Robot extends TimedRobot {
     }
 
     if(stopWhiteBelt){
-      climbStateMachine.isClimbing();
+     tunnelStateMachine.toggleBelt();
     }
 
     DriveParameters dp = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle,
@@ -427,7 +433,7 @@ public class Robot extends TimedRobot {
   public void commonInit() {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
-    useVision = buttonBox1.getRawButton(12);
+    useVision = !buttonBox1.getRawButton(12);
 
     if (useLimeLight){
       ledMode.setNumber(3);

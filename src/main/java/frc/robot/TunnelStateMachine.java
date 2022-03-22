@@ -77,8 +77,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         red = frontColorSensor.getRed();
         blue = frontColorSensor.getBlue();
         tunnelBreakBeamBroken = !tunnelBreakInput.get();
-        isRed = red > blue * 2;
-        isBlue = blue > red * 2;
+        isRed = red > blue * 1.75;//deux
+        isBlue = blue > red * 1.75;//dos
         whiteBeltCurrent = tunnelBelt.getRevolutions();
         ignoreColorSensor = Robot.buttonBox1.getRawButton(Constants.kButtonBoxIgnoreColorSensor);
         // isRed = red > baseRed*1.05;
@@ -193,7 +193,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doCurrentState() {
-        if (!climbing) {
+        if (!climbing&&!trident) {
             switch (currentState) {
                 case Start:
                     baseRed = red;
@@ -215,11 +215,12 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void resetState() {
         desiredBall = false;
         currentState = TunnelStates.Start;
+        trident = false;
     }
 
     public void LogHeader() {
         Logger.Header("TunnelBeltRPM,tunnelWheelsRPM, red, blue, TunnelEncoder,"
-                + "colorSensorRed, colorSensorBlue,desiredBall,tunnelbreakbeam,"
+                + "isRed, isBlue,desiredBall,tunnelbreakbeam,"
                 + "TunnelState,");
     }
 
@@ -229,7 +230,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         Logger.singleEnum(currentState);
     }
 
-    public void stopBelt() {
-        trident = true;
+    public void toggleBelt() {
+        trident = !trident;
     }
 }
