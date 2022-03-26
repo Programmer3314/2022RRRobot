@@ -131,7 +131,6 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-
     // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
