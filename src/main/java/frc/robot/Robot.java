@@ -56,13 +56,13 @@ public class Robot extends TimedRobot {
   public static Solenoid lightRing4;
   public static NetworkTableInstance nt;
   public static NetworkTable visiontable;
-  public static NetworkTable limelighTable;
+  public static NetworkTable limelightTable;
   public static AHRS navx;
-  public static double autocorrectTargetAngle;
+  public static double hubTargetAngle;
   public static int confidenceCounter;
-  public static double currentAngle;
-  public static double verticalAngle;
-  public static double horizontalAngle;
+  public static double currentRobotAngle;
+  public static double hubVerticalAngle;
+  public static double hubHorizontalAngle;
   public static MMAutonomous autonomous;
   public static boolean autoBallPickup;
   public static Alliance alliance;
@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
   public static boolean intakeButton;
   public static boolean ejectButton;
   public static boolean autoLockHoop;
-  public static boolean pointBlankButton;
+  public static boolean pointBlankHigh;
   public static boolean shootOneButton;
   public static boolean povLeftShot;
   public static boolean povRightShot;
@@ -97,16 +97,16 @@ public class Robot extends TimedRobot {
   public static boolean teststopTunnel;
   public static double currentShooterAngle;
   public static String lastModeRan;
-  public static boolean bottomBasket;
+  public static boolean pointBlankLow;
   public static double targetpovdistance;
   public static boolean logEvent;
   public static boolean autoLockBar;
   public static int autoSelect;
   public static MMBCDReturn bcdReturn;
-  public static Position position;
+  public static Position tarmacPosition;
   public static NavXRoll navXRoll;
-  public static boolean useLimeLight=true;
-  public static double snapshotCounterLeft=32;
+  public static boolean useLimeLight = true;
+  public static double snapshotCounterLeft = 32;
   public static boolean useVision;
   public static NetworkTableEntry ledMode;
   public static NetworkTableEntry camMode;
@@ -114,7 +114,11 @@ public class Robot extends TimedRobot {
   public static TargetSamples targetSamples;
   public static boolean driverShootHigh;
   public static boolean driverShootLow;
-
+  public static boolean povUpShot;
+  public static boolean povDownShot;
+  public static Number[] llpython;
+  public static MMBCDReturn pipelineDial;
+  public static boolean targetBallConfidence;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -127,10 +131,6 @@ public class Robot extends TimedRobot {
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-    // TODO Transfer Shooting to Driver Control:
-    // Driver's A button will align and then shoot all high. (see note below ~line 357)
-    // Driver's Left Trigger will do Low Batter Shot
-    // Driver's Right Trigger will do High Batter Shot (point blank)
 
     // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
@@ -150,11 +150,11 @@ public class Robot extends TimedRobot {
     // define variables use throughout code
     nt = NetworkTableInstance.getDefault();
     visiontable = nt.getTable("Retroreflective Tape Target");
-    limelighTable = nt.getTable("limelight");
+    limelightTable = nt.getTable("limelight");
 
-    ledMode = limelighTable.getEntry("ledMode");
-    camMode = limelighTable.getEntry("camMode");
-    snapshot = limelighTable.getEntry("snapshot");
+    ledMode = limelightTable.getEntry("ledMode");
+    camMode = limelightTable.getEntry("camMode");
+    snapshot = limelightTable.getEntry("snapshot");
 
     // Define devices that do not belong to a specific system
     navx = new AHRS(Port.kMXP);
@@ -173,7 +173,8 @@ public class Robot extends TimedRobot {
     // Create Systems
     shooterFormula = new ShooterFormula();
     navXRoll = new NavXRoll();
-    bcdReturn = new MMBCDReturn();
+    bcdReturn = new MMBCDReturn(buttonBox1, 13, 14, 15, 16);
+    pipelineDial = new MMBCDReturn(buttonBox2, 10, 11, 12, -1);
     intake = new Intake();
     targetSamples = new TargetSamples();
     queueStateMachine = new QueueStateMachine();
@@ -205,7 +206,6 @@ public class Robot extends TimedRobot {
         ),
         Constants.kNewRevPerFoot, Constants.kNewChassisRadius);
 
-    
     // Misc that should probably be better organized
     confidenceCounter = 0;
     pneumaticHub.enableCompressorDigital();
@@ -220,7 +220,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    snapshotCounterLeft=32;
+    snapshotCounterLeft = 32;
     Logger.OpenLog("Auto");
     RobotLogHeader();
     commonInit();
@@ -236,17 +236,16 @@ public class Robot extends TimedRobot {
 
     configVision();
 
-
     if (buttonBox2.getRawButton(13)) {
-      position = Position.Left;
+      tarmacPosition = Position.Left;
     } else {
       if (buttonBox2.getRawButton(14)) {
-        position = Position.Right;
+        tarmacPosition = Position.Right;
       } else {
-        position = Position.Center;
+        tarmacPosition = Position.Center;
       }
     }
-    autonomous = new TwoBallAuto(position, autoSelect);
+    autonomous = new TwoBallAuto(tarmacPosition, autoSelect);
     Logger.EndLine();
   }
 
@@ -275,7 +274,7 @@ public class Robot extends TimedRobot {
       queueStateMachine.resetState();
       shooterStateMachine.resetState();
       aimController.resetTurret();
-      snapshotCounterLeft=32;
+      snapshotCounterLeft = 32;
     }
     lastModeRan = "teleop";
     shooterStateMachine.shootOne = false;
@@ -288,7 +287,7 @@ public class Robot extends TimedRobot {
     RobotLogData();
     commonPeriodic();
     navXRoll.update(navx.getRoll());
-    useVision = !buttonBox1.getRawButton(12);
+    useVision = !buttonBox1.getRawButton(Constants.kButtonBoxIgnoreVision);
     configVision();
 
     stopWhiteBelt = buttonBox1.getRawButtonPressed(10);
@@ -305,23 +304,23 @@ public class Robot extends TimedRobot {
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
-    driverShootLow=controllerDriver.getRawAxis(2)>.7;
-    driverShootHigh = controllerDriver.getRawAxis(3)>.7;
-    pointBlankButton = controllerOperator.getPOV(Constants.kOperatorPOV) == 0||driverShootHigh;
-    bottomBasket = controllerOperator.getPOV(Constants.kOperatorPOV) == 180||driverShootLow;
+    driverShootLow = controllerDriver.getRawAxis(2) > .7;
+    driverShootHigh = controllerDriver.getRawAxis(3) > .7;
+    pointBlankHigh = driverShootHigh;
+    pointBlankLow = driverShootLow;
 
     povLeftShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 270;
     povRightShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 90;
+    povUpShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 0;
+    povDownShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 180;
 
     autoLockHoop = controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
     SmartDashboard.putBoolean("Intake Out:", intakeButton);
 
-
-
-    if(buttonBox1.getRawButtonPressed(Constants.kButtonBoxErrorButton) 
-    || autoLockHoop){
+    if (buttonBox1.getRawButtonPressed(Constants.kButtonBoxErrorButton)
+        || autoLockHoop) {
       takeSnapshot();
     }
 
@@ -338,7 +337,7 @@ public class Robot extends TimedRobot {
       shooterStateMachine.abortShot();
     }
 
-    if (shootAllButton||driverShootHigh||driverShootLow) {
+    if (shootAllButton || driverShootHigh || driverShootLow) {
       shooterStateMachine.shootAll();
     } else if (shootOneButton) {
       shooterStateMachine.shootOne();
@@ -359,8 +358,7 @@ public class Robot extends TimedRobot {
       pneumaticHub.disableCompressor();
     }
 
-    // TODO Make autoLockHoop also trigger a FireAll. 
-    // TODO Also make FireAll deal with one ball. 
+
     if (autoLockHoop && confidenceCounter > 0) {
       aimController.setAimMode(AimMode.robotShoot);
       shooterStateMachine.shootAll();
@@ -376,11 +374,11 @@ public class Robot extends TimedRobot {
       aimController.setAimMode(AimMode.driver);
     }
 
-    if(stopWhiteBelt){
-     tunnelStateMachine.toggleBelt();
+    if (stopWhiteBelt) {
+      tunnelStateMachine.toggleBelt();
     }
 
-    DriveParameters dp = aimController.calculate(requestedTurn, autocorrectTargetAngle, currentAngle, ballChaseAngle,
+    DriveParameters dp = aimController.calculate(requestedTurn, hubTargetAngle, currentRobotAngle, ballChaseAngle,
         climbStateMachine.leadHookContactLeft, climbStateMachine.leadHookContactRight, requestedSpeed);
 
     requestedTurn = dp.turn;
@@ -435,12 +433,11 @@ public class Robot extends TimedRobot {
     navx.resetDisplacement();
     useVision = !buttonBox1.getRawButton(12);
 
-    if (useLimeLight){
+    if (useLimeLight) {
       ledMode.setNumber(3);
 
-    }
-    else{
-    shootLimeLight.set(true);
+    } else {
+      shootLimeLight.set(true);
     }
     visiontable.getEntry("Enable Log").setBoolean(false);
     intake.idle();
@@ -453,19 +450,30 @@ public class Robot extends TimedRobot {
 
     // TODO Let's clean up variable names to make them clearer...
     // There are several angles, so maybe currentAngle should be currentRobotAngle
-    currentAngle = cleanAngle(navx.getYaw());
+    currentRobotAngle = cleanAngle(navx.getYaw());
     currentShooterAngle = cleanAngle(
-        currentAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
+        currentRobotAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
     if (!useLimeLight) {
-      verticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + Constants.kCameraVerticalAngle;
-      horizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
+      hubVerticalAngle = (Double) visiontable.getEntry("Vertical Angle").getNumber(-5000) + Constants.kCameraVerticalAngle;
+      hubHorizontalAngle = cleanAngle((Double) visiontable.getEntry("Horizontal Angle").getNumber(-5000));
     } else {
-      verticalAngle = (Double) limelighTable.getEntry("ty").getNumber(-5000) + Constants.kCameraVerticalAngle;
-      horizontalAngle = targetSamples.update(cleanAngle((Double) limelighTable.getEntry("tx").getNumber(-5000)));
-    }
-    targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(verticalAngle));
+      // verticalAngle = (Double) limelighTable.getEntry("ty").getNumber(-5000) +
+      // Constants.kCameraVerticalAngle;
+      // horizontalAngle = targetSamples.update(cleanAngle((Double)
+      // limelighTable.getEntry("tx").getNumber(-5000)));
+      llpython = limelightTable.getEntry("llpython").getNumberArray(new Number[] { 0, 0, 0 });
+      if (llpython.length > 2) {
+        hubVerticalAngle = (Double) llpython[2] + Constants.kCameraVerticalAngle;
+        hubHorizontalAngle = targetSamples.update((Double) llpython[1]);
+      } else {
+        hubVerticalAngle = 0;
+        hubHorizontalAngle = 0;
+      }
 
-    boolean targetConfidence = nt.getTable("Ball Target")
+    }
+    targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(hubVerticalAngle));
+
+    targetBallConfidence = nt.getTable("Ball Target")
         .getEntry(alliance == Alliance.Blue ? "Blue Target Confidence" : "Red Target Confidence").getBoolean(false);
     ballChaseAngle = (Double) nt.getTable("Ball Target")
         .getEntry(alliance == Alliance.Blue ? "Blue Angle to Ball" : "Red Angle to Ball").getNumber(0);
@@ -487,10 +495,12 @@ public class Robot extends TimedRobot {
     if (!useLimeLight) {
       haveTarget = visiontable.getEntry("Confidence").getBoolean(false);
     } else {
-      haveTarget = (Double) limelighTable.getEntry("tv").getNumber(0) == 1.0;
+      // haveTarget = (Double) limelighTable.getEntry("tv").getNumber(0) == 1.0;
+      haveTarget = llpython.length>0 && (Double) llpython[0] == 1.0;
+      
     }
     if (haveTarget) {
-      autocorrectTargetAngle = cleanAngle(currentAngle + horizontalAngle +
+      hubTargetAngle = cleanAngle(currentRobotAngle + hubHorizontalAngle +
           (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
       confidenceCounter = 500;
     } else {
@@ -503,8 +513,9 @@ public class Robot extends TimedRobot {
     // TODO add condition for confidence and send inactive firing solution if there
     // is no confidence
     SmartDashboard.putNumber("Adjust Shooter Distance", adjustShooterDistance);
-    SmartDashboard.putBoolean("Point Blank Button", pointBlankButton);
-    SmartDashboard.putBoolean("Bottom Basket Button", bottomBasket);
+    SmartDashboard.putBoolean("Point Blank Button", pointBlankHigh);
+    SmartDashboard.putBoolean("Bottom Basket Button", pointBlankLow);
+    SmartDashboard.putBoolean("HaveBallTarget:", targetBallConfidence);
 
     // TargetPoint firingSolution = shooterFormula
     // .calculate(pointBlankButton ? 0 : targetDistance + adjustShooterDistance);
@@ -515,21 +526,25 @@ public class Robot extends TimedRobot {
     // then set it to a fixed value it one of the following overrides applies
     // It will have a cleaner feel - I hope.
     if (lastModeRan == "auto" && autoSelect == 3) {
-      if (position == Position.Left || position == Position.Right) {
+      if (tarmacPosition == Position.Left || tarmacPosition == Position.Right) {
         targetpovdistance = 9;
       } else {
         targetpovdistance = 13;
       }
 
     }
-    if (pointBlankButton) {
+    if (pointBlankHigh) {
       targetpovdistance = 0;
-    } else if (bottomBasket) {
+    } else if (pointBlankLow) {
       targetpovdistance = -5;
     } else if (povRightShot) {
       targetpovdistance = -2;
-    } else if (povRightShot) {
+    } else if (povLeftShot) {
       targetpovdistance = -1;
+    } else if (povUpShot) {
+      targetpovdistance = -3;
+    } else if (povDownShot) {
+      targetpovdistance = -4;
     } else {
       targetpovdistance = targetDistance + adjustShooterDistance;
     }
@@ -544,7 +559,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
 
-      if (confidenceCounter > 0 || pointBlankButton || bottomBasket || povRightShot || povLeftShot) {
+      if (confidenceCounter > 0 || pointBlankHigh || pointBlankLow || povRightShot || povLeftShot) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;
@@ -561,11 +576,11 @@ public class Robot extends TimedRobot {
     queueStateMachine.update();
     shooterStateMachine.update();
 
-    SmartDashboard.putNumber("Navx Angle", currentAngle);
+    SmartDashboard.putNumber("Navx Angle", currentRobotAngle);
     SmartDashboard.putNumber("Position X: ", navx.getDisplacementX());
     SmartDashboard.putNumber("Position Y", navx.getDisplacementY());
-    SmartDashboard.putNumber("Vertical Angle", verticalAngle);
-    SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+    SmartDashboard.putNumber("Vertical Angle", hubVerticalAngle);
+    SmartDashboard.putNumber("Horizontal Angle", hubHorizontalAngle);
     SmartDashboard.putNumber("Target Distance", targetDistance);
     SmartDashboard.putNumber("TargetBallAngle", ballChaseAngle);
     SmartDashboard.putNumber("RobotDistance", driveTrain.getDistanceFeet());
@@ -577,6 +592,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ConfidenceCounter", confidenceCounter);
     SmartDashboard.putNumber("encoder value", driveTrain.getRevolutions());
     SmartDashboard.putString("Alliance Type", alliance.toString());
+    SmartDashboard.putNumber("pipeline", pipelineDial.GetDial());
     // SmartDashboard.putNumber("Time:", value);
 
     // SmartDashboard.putString("CurrentState", autonomous.currentState.toString());
@@ -602,8 +618,8 @@ public class Robot extends TimedRobot {
 
   public void RobotLogData() {
     Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton,
-        pointBlankButton, povLeftShot, povRightShot,
-        bottomBasket, autoLockHoop, increaseDistance, decreaseDistance);
+        pointBlankHigh, povLeftShot, povRightShot,
+        pointBlankLow, autoLockHoop, increaseDistance, decreaseDistance);
     Logger.doubles(navx.getYaw(), navx.getPitch(), navx.getRoll());
     climbStateMachine.LogData();
     intake.LogData();
@@ -614,19 +630,22 @@ public class Robot extends TimedRobot {
     navXRoll.LogData();
   }
 
-  public void configVision(){
-    if (useVision){
+  public void configVision() {
+    if (useVision) {
       ledMode.setNumber(3);
       camMode.setNumber(0);
+      int pipeline = pipelineDial.GetDial();
+      limelightTable.getEntry("pipeline").setNumber(pipeline);
 
-    }else{
+    } else {
       ledMode.setNumber(1);
-      camMode.setNumber(1);
+      limelightTable.getEntry("pipeline").setNumber(2);
+      // camMode.setNumber(1);
     }
   }
 
-  public static void takeSnapshot(){
-    if(snapshotCounterLeft > 0){
+  public static void takeSnapshot() {
+    if (snapshotCounterLeft > 0) {
       snapshot.setNumber(1);
       snapshotCounterLeft--;
     }

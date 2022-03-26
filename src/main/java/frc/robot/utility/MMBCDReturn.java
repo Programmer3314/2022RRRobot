@@ -4,6 +4,7 @@
 
 package frc.robot.utility;
 
+import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Robot;
 
 /** Add your docs here. */
@@ -11,17 +12,26 @@ import frc.robot.Robot;
 
 public class MMBCDReturn {
 
+    int dialButton1, dialButton2, dialButton3, dialButton4;
+    Joystick bb;
+
     boolean bit1, bit2, bit3, bit4;
-    public MMBCDReturn(){
+    public MMBCDReturn(Joystick ButtonBox, int button1, int button2, int button3, int button4){
+        bb = ButtonBox;
+        dialButton1 = button1;
+        dialButton2 = button2;
+        dialButton3 = button3;
+        dialButton4 = button4;
   
     }
+
     public int GetDial(){
         //13, 14, 15,16
         int returnedBinary = 0;
-        bit1 = Robot.buttonBox1.getRawButton(13);
-        bit2 = Robot.buttonBox1.getRawButton(14);
-        bit3 = Robot.buttonBox1.getRawButton(15);
-        bit4 = Robot.buttonBox1.getRawButton(16);
+        bit1 = dialButton1 > 0 && bb.getRawButton(dialButton1);
+        bit2 =  dialButton2 > 0 && bb.getRawButton(dialButton2);
+        bit3 =  dialButton3 > 0 && bb.getRawButton(dialButton3);
+        bit4 =  dialButton4 > 0 && bb.getRawButton(dialButton4);
 
         if(bit1){
             returnedBinary+=1;

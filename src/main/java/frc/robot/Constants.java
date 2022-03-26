@@ -81,7 +81,7 @@ public class Constants {
   public static int kOperatorAxisShootAll = 3;
 
 
-
+  public static double kTurnReduction = 0.5;
   public static double kMaxSpeed = -15;
   public static double kMaxTurnRate = 400;
 
@@ -89,7 +89,7 @@ public class Constants {
   public static double kangleMargin = 10;
 
   //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa
-  public static double kCameraVerticalAngle = 34.5;// 33.5
+  public static double kCameraVerticalAngle = 31;// 33.5 LOOKEHEREAVII
   public static double ktargetHeight = 104 / 12.0;
   public static double kTargetCameraHeight = 39 / 12.0;
   public static double kTargetingHeightDiff = ktargetHeight - kTargetCameraHeight;
@@ -151,7 +151,7 @@ public class Constants {
 
   public static int kShooterCounter = 5;
 
-  public static double kPRobotBallTurn = 3;
+  public static double kPRobotBallTurn = 6;//3
 
   public static double kPRobotTargetTurn = 5;
   public static double kIRobotTargetTurn = 0;
@@ -184,6 +184,7 @@ public class Constants {
   public static int kButtonBoxAbortShot = 9;
   public static int kButtonBoxManualHome = 10;
   public static int kButtonBoxIgnoreColorSensor = 11;
+  public static int kButtonBoxIgnoreVision = 12;
   public static int kButtonBoxErrorButton = 2;
 
   // public static int kShooterLimeLight = 4;

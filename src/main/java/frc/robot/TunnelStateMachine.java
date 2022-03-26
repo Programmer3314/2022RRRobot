@@ -106,6 +106,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         SmartDashboard.putNumber("Green Tunnel Wheels", tunnelWheelsRPM);
         SmartDashboard.putBoolean("TunnelBreakBeam", tunnelBreakBeamBroken);
         SmartDashboard.putBoolean("RawTunnelBreakBeam", tunnelBreakInput.get());
+        SmartDashboard.putBoolean("ColorSensorFailed", turnOffSensor());
 
         super.update();
     }
@@ -178,7 +179,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         if (isTransitionTo(TunnelStates.EncoderDelay)) {
             whiteBeltGoal = whiteBeltCurrent + whiteBeltOffset;
             desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed)
-                    || (Robot.alliance == Alliance.Red && isRed && !isBlue) || ignoreColorSensor);
+                    || (Robot.alliance == Alliance.Red && isRed && !isBlue) || ignoreColorSensor||turnOffSensor());
         }
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
@@ -232,5 +233,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     public void toggleBelt() {
         trident = !trident;
+    }
+    boolean turnOffSensor(){
+        return red==0&&blue==0;
     }
 }

@@ -184,19 +184,19 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             Constants.kangleMargin));
 
                     SmartDashboard.putBoolean("Close to target Angle",
-                            closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle, target.turretMargin));
+                            closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle, target.turretMargin));
                     SmartDashboard.putBoolean("Target Active", target == null ? false : target.active);
 
-                    SmartDashboard.putNumber("Auto correct Target angle", Robot.autocorrectTargetAngle);
+                    SmartDashboard.putNumber("Auto correct Target angle", Robot.hubTargetAngle);
                     SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
 
                     if (target.active && queueIsFull
                             && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
-                            && (closeEnough(Robot.currentShooterAngle, Robot.autocorrectTargetAngle,
+                            && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
                                     target.turretMargin)
-                                    || Robot.pointBlankButton || Robot.bottomBasket || Robot.povRightShot
+                                    || Robot.pointBlankHigh || Robot.pointBlankLow || Robot.povRightShot
                                     || Robot.povLeftShot || Robot.autoSelect == 3)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
@@ -362,7 +362,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     public void LogData() {
         Logger.doubles(feedRPM, shooterRPM, camRevs);
-        Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankButton, Robot.bottomBasket, Robot.povLeftShot,
+        Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankHigh, Robot.pointBlankLow, Robot.povLeftShot,
                 Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
     }

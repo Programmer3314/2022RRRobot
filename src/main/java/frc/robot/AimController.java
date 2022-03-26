@@ -83,7 +83,8 @@ public class AimController {
             }
                 break;
             case driver:
-                turn = DriverTurn;
+                double scale = ((Constants.kMaxSpeed-(drive*Constants.kTurnReduction))/Constants.kMaxSpeed);
+                turn = DriverTurn*scale;
                 break;
             case robotShoot: {
                 // double currentError = targetAngle - currentAngle;
