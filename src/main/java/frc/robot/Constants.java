@@ -186,6 +186,8 @@ public class Constants {
   public static int kButtonBoxIgnoreColorSensor = 11;
   public static int kButtonBoxIgnoreVision = 12;
   public static int kButtonBoxErrorButton = 2;
+  public static int kButtonBoxIncreaseCam=1;
+  public static int kButtonBoxDecreaseCam=4;
 
   // public static int kShooterLimeLight = 4;
   public static int kShooterLimeLight = 1;

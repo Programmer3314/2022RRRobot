@@ -66,7 +66,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public ShooterStateMachine() {
         super(ShooterStates.Start);
         shooter = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterShoot)
-                .setInverted(InvertType.InvertMotorOutput)
+                .setInverted(InvertType.None)
                 .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
                         Constants.kFXShooterWheelsD,
                         Constants.kFXShooterWheelsF));
@@ -76,6 +76,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                         Constants.kFXCamF)
                 .setInverted(InvertType.InvertMotorOutput));
         feed = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterFeed)
+            .setInverted(InvertType.InvertMotorOutput)
                 .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
                         Constants.kFXShooterWheelsD,
                         Constants.kFXShooterWheelsF));
@@ -163,7 +164,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     }
                     break;
                 case Idle:
-                    if (((target != null && target.active) || Robot.autoSelect == 3) && (shootOne || shootAll)) {
+                    if (((target != null && target.active) || !Robot.useVision) && (shootOne || shootAll)) {
                         nextState = ShooterStates.Preparing;
                     }
                     break;
@@ -196,8 +197,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
                             && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
                                     target.turretMargin)
-                                    || Robot.pointBlankHigh || Robot.pointBlankLow || Robot.povRightShot
-                                    || Robot.povLeftShot || Robot.autoSelect == 3)
+                                    || Robot.shotType!=ShotType.Vision|| !Robot.useVision)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
                         passThroughCounter++;
@@ -206,7 +206,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             nextState = ShooterStates.Shooting1;
                         }
                     } else {
-                        if (!target.active) {
+                        if (!target.active&&Robot.shotType==ShotType.Vision) {
                             nextState = ShooterStates.Idle;
                         }
                         passThroughCounter = 0;
@@ -266,7 +266,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             // Robot.aimController.setAimMode(AimMode.driver);
         }
         if (isTransitionTo(ShooterStates.Home)) {
-            camAngle.setPower(-.4);
+            camAngle.setPower(-.1);
             target = null;
             // move turret
         }

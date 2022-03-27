@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utility.MMAutonomous;
 import frc.robot.utility.MMBCDReturn;
 import frc.robot.utility.MMDiffDriveTrain;
+import frc.robot.utility.MMEdgeTrigger;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
@@ -37,6 +38,9 @@ import frc.robot.utility.MMMotorGroup;
 
 enum Position {
   Left, Right, Center
+}//13/16-4 3/8= TODO 5.385
+enum ShotType{
+  PointBlankLow, PointBlankHigh, Vision, OperatorUp, OperatorLeft, OperatorRight, OperatorDown
 }
 
 public class Robot extends TimedRobot {
@@ -112,13 +116,23 @@ public class Robot extends TimedRobot {
   public static NetworkTableEntry camMode;
   public static NetworkTableEntry snapshot;
   public static TargetSamples targetSamples;
-  public static boolean driverShootHigh;
-  public static boolean driverShootLow;
+  // public static boolean driverShootHigh;
+  // public static boolean driverShootLow;
   public static boolean povUpShot;
   public static boolean povDownShot;
   public static Number[] llpython;
   public static MMBCDReturn pipelineDial;
   public static boolean targetBallConfidence;
+  public static boolean increaseCam;
+  public static boolean decreaseCam;
+  public static MMEdgeTrigger pointBlanklowgoalAxis;
+  public static MMEdgeTrigger pointBlankHighGoalAxis;
+  public static MMEdgeTrigger povOperatorLeft;
+  public static MMEdgeTrigger povOperatorRight;  
+  public static MMEdgeTrigger povOperatorUp;
+  public static MMEdgeTrigger povOperatorDown;
+  public static boolean driverLockHoop;
+  public static ShotType shotType;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -168,6 +182,13 @@ public class Robot extends TimedRobot {
     turnAxis = new MMJoystickAxis(4, 4, .05, Constants.kMaxTurnRate);
     buttonBox1 = new Joystick(1);
     buttonBox2 = new Joystick(2);
+
+    pointBlankHighGoalAxis = new MMEdgeTrigger();
+    pointBlanklowgoalAxis = new MMEdgeTrigger();
+    povOperatorLeft= new MMEdgeTrigger();
+    povOperatorRight= new MMEdgeTrigger();  
+    povOperatorUp= new MMEdgeTrigger();
+    povOperatorDown= new MMEdgeTrigger();
 
     // Create Systems
     shooterFormula = new ShooterFormula();
@@ -290,9 +311,12 @@ public class Robot extends TimedRobot {
     configVision();
 
     stopWhiteBelt = buttonBox1.getRawButtonPressed(10);
-    shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
-    shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
+    // shootOneButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootOne) > .7;
+    // shootAllButton = controllerOperator.getRawAxis(Constants.kOperatorAxisShootAll) > .7;
     logEvent = buttonBox1.getRawButton(Constants.kButtonBoxErrorButton);
+
+    increaseCam = buttonBox1.getRawButton(Constants.kButtonBoxIncreaseCam);
+    decreaseCam = buttonBox1.getRawButton(Constants.kButtonBoxDecreaseCam);
 
     tacoBell = buttonBox1.getRawButton(Constants.kButtonBoxTacobell);
     double requestedSpeed = speedAxis.get();
@@ -303,15 +327,13 @@ public class Robot extends TimedRobot {
     autoBallPickup = controllerDriver.getRawButton(Constants.kDriverAutoBallPickup);
     intakeButton = controllerDriver.getRawButton(Constants.kDriverIntake);
     ejectButton = controllerDriver.getRawButton(Constants.kDriverEject);
-    driverShootLow = controllerDriver.getRawAxis(2) > .7;
-    driverShootHigh = controllerDriver.getRawAxis(3) > .7;
-    pointBlankHigh = driverShootHigh;
-    pointBlankLow = driverShootLow;
+    pointBlankLow = pointBlanklowgoalAxis.update(controllerDriver.getRawAxis(2) > .7).transitionHigh();
+    pointBlankHigh = pointBlankHighGoalAxis.update(controllerDriver.getRawAxis(3) > .7).transitionHigh();
 
-    povLeftShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 270;
-    povRightShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 90;
-    povUpShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 0;
-    povDownShot = controllerOperator.getPOV(Constants.kOperatorPOV) == 180;
+    povLeftShot = povOperatorLeft.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 270).transitionHigh();
+    povRightShot = povOperatorRight.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 90).transitionHigh();
+    povUpShot = povOperatorRight.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 0).transitionHigh();
+    povDownShot = povOperatorDown.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 180).transitionHigh();
 
     autoLockHoop = controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
@@ -336,11 +358,11 @@ public class Robot extends TimedRobot {
       shooterStateMachine.abortShot();
     }
 
-    if (shootAllButton || driverShootHigh || driverShootLow) {
-      shooterStateMachine.shootAll();
-    } else if (shootOneButton) {
-      shooterStateMachine.shootOne();
-    }
+    // if (shootAllButton || driverShootHigh || driverShootLow) {
+    //   shooterStateMachine.shootAll();
+    // } else if (shootOneButton) {
+    //   shooterStateMachine.shootOne();
+    // }
 
     if (intakeButton) {
       intake.intake();
@@ -372,6 +394,14 @@ public class Robot extends TimedRobot {
     } else if (controllerDriver.getRawButtonReleased(Constants.kDriverAutoBarLock)) {
       aimController.setAimMode(AimMode.driver);
     }
+
+    // if(increaseCam){
+    //   shooterStateMachine.camAngle.setPower(.1);
+    // }else if(decreaseCam){
+    //   shooterStateMachine.camAngle.setPower(-.1);
+    // }else{
+    //   shooterStateMachine.camAngle.setPower(0);
+    // }
 
     if (stopWhiteBelt) {
       tunnelStateMachine.toggleBelt();
@@ -431,6 +461,7 @@ public class Robot extends TimedRobot {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
     useVision = !buttonBox1.getRawButton(12);
+    shotType=ShotType.Vision;
 
     if (useLimeLight) {
       ledMode.setNumber(3);
@@ -530,22 +561,52 @@ public class Robot extends TimedRobot {
       } else {
         targetpovdistance = 13;
       }
-
     }
     if (pointBlankHigh) {
-      targetpovdistance = 0;
+      shotType= ShotType.PointBlankHigh;
+      shooterStateMachine.shootAll();
     } else if (pointBlankLow) {
-      targetpovdistance = -5;
+      shotType= ShotType.PointBlankLow;
+      shooterStateMachine.shootAll();
     } else if (povRightShot) {
-      targetpovdistance = -2;
+      shotType= ShotType.OperatorRight;
+      shooterStateMachine.shootAll();
     } else if (povLeftShot) {
-      targetpovdistance = -1;
+      shotType= ShotType.OperatorLeft;
+      shooterStateMachine.shootAll();
     } else if (povUpShot) {
-      targetpovdistance = -3;
+      shotType= ShotType.OperatorUp;
+      shooterStateMachine.shootAll();
     } else if (povDownShot) {
-      targetpovdistance = -4;
-    } else {
+      shotType= ShotType.OperatorDown;
+      shooterStateMachine.shootAll();
+    } else if(autoLockHoop){
+      shotType = ShotType.Vision;
+      shooterStateMachine.shootAll();
+    }
+
+    switch(shotType){
+      case PointBlankHigh:
+      targetpovdistance = 0;
+      break;
+      case PointBlankLow:
+      targetpovdistance = -5;
+      break;
+      case Vision:
       targetpovdistance = targetDistance + adjustShooterDistance;
+      break;
+      case OperatorUp:
+      targetpovdistance = -3;
+      break;
+      case OperatorDown:
+      targetpovdistance = -2;
+      break;
+      case OperatorLeft:
+      targetpovdistance = -1;
+      break;
+      case OperatorRight:
+      targetpovdistance = -4;
+      break;
     }
     TargetPoint firingSolution = shooterFormula
         .calculate(targetpovdistance);
