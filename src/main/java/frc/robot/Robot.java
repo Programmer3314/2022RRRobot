@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.SPI.Port;
@@ -335,6 +336,7 @@ public class Robot extends TimedRobot {
     povUpShot = povOperatorRight.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 0).transitionHigh();
     povDownShot = povOperatorDown.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 180).transitionHigh();
 
+    // TODO consider rumbling stick if autoLookHoop and no target active (or confidenceCounter==0)
     autoLockHoop = controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);
@@ -580,7 +582,7 @@ public class Robot extends TimedRobot {
     } else if (povDownShot) {
       shotType= ShotType.OperatorDown;
       shooterStateMachine.shootAll();
-    } else if(autoLockHoop){
+    } else if(autoLockHoop){ // TODO Look at other references. The drive mode only changes when confidenceCounter is >0 maybe this should be like that too.
       shotType = ShotType.Vision;
       shooterStateMachine.shootAll();
     }
