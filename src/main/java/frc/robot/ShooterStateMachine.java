@@ -76,7 +76,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                         Constants.kFXCamF)
                 .setInverted(InvertType.InvertMotorOutput));
         feed = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterFeed)
-            .setInverted(InvertType.InvertMotorOutput)
+                .setInverted(InvertType.InvertMotorOutput)
                 .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
                         Constants.kFXShooterWheelsD,
                         Constants.kFXShooterWheelsF));
@@ -176,6 +176,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     // && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
 
+                    // TODO get rid of this one time debug and the one below inside the if.
                     SmartDashboard.putString("In Preparing ", "Yessir");
                     SmartDashboard.putBoolean("close to shooter velocity",
                             closeEnough(shooterRPM, target.rpm, Constants.krpmMargin));
@@ -191,6 +192,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     SmartDashboard.putNumber("Auto correct Target angle", Robot.hubTargetAngle);
                     SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
                     SmartDashboard.putString("ShotType", Robot.shotType.toString());
+
                     // double marginScale=1;
                     // if(Robot.shotType==ShotType.PointBlankLow){
                     // marginScale=1.5;
@@ -199,9 +201,9 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
-                            && (target.active&&(closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
+                            && (target.active && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
                                     target.turretMargin))
-                                    || Robot.shotType!=ShotType.Vision|| !Robot.useVision)
+                                    || Robot.shotType != ShotType.Vision || !Robot.useVision)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {
                         passThroughCounter++;
@@ -210,7 +212,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             nextState = ShooterStates.Shooting1;
                         }
                     } else {
-                        if (!target.active&&Robot.shotType==ShotType.Vision) {
+                        if (!target.active && Robot.shotType == ShotType.Vision) {
                             nextState = ShooterStates.Idle;
                         }
                         passThroughCounter = 0;
@@ -236,7 +238,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             nextState = ShooterStates.Preparing;
                             shootAll = false;
                             if (Robot.tunnelStateMachine.currentState == TunnelStates.BallDetected
-                            ||Robot.tunnelStateMachine.currentState == TunnelStates.MoveToQueue) {
+                                    || Robot.tunnelStateMachine.currentState == TunnelStates.MoveToQueue) {
                                 shootOne = true;
                             } else {
                                 shootOne = false;
@@ -315,7 +317,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     camAngle.setPower(0);
                     camAngle.resetEncoders();
                 }
-                SmartDashboard.putString("HOMECheck:", "YESSIRE");
+                //SmartDashboard.putString("HOMECheck:", "YESSIRE");
                 homed = camhomed;
                 break;
             case Preparing:
