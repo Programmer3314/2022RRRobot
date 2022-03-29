@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveLeft1)
-                .setStatorCurrentLimit(true, 40, 45, .5)
+                //.setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
                 .setBrakeMode(false)),
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveRight1)
-                .setStatorCurrentLimit(true, 40, 45, .5)
+                //.setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
