@@ -190,13 +190,17 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
                     SmartDashboard.putNumber("Auto correct Target angle", Robot.hubTargetAngle);
                     SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
-
-                    if (target.active && queueIsFull
+                    SmartDashboard.putString("ShotType", Robot.shotType.toString());
+                    // double marginScale=1;
+                    // if(Robot.shotType==ShotType.PointBlankLow){
+                    // marginScale=1.5;
+                    // }
+                    if (queueIsFull
                             && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
-                            && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
-                                    target.turretMargin)
+                            && (target.active&&(closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
+                                    target.turretMargin))
                                     || Robot.shotType!=ShotType.Vision|| !Robot.useVision)
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
                     ) {

@@ -55,8 +55,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public boolean climbing;
     public boolean tunnelBreakBeamBroken;
     double whiteBeltCurrent;
-    double whiteBeltOffset = 2.0 - 1.61;
-    double whiteBeltSensorOffset = 1.61;
+    double whiteBeltOffset = 2.0 - 2.18;//1.61
+    double whiteBeltSensorOffset = 2.18;//1.61
     double whiteBeltGoal;
     boolean ignoreColorSensor;
     double whiteBeltNormalSpeed = 0.275;

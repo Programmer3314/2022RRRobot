@@ -43,7 +43,7 @@ public class Constants {
   public static double kFXShooterWheelsP = 0.1;
   public static double kFXShooterWheelsI = 0;
   public static double kFXShooterWheelsD = 1;
-  public static double kFXShooterWheelsF = 0.0495;
+  public static double kFXShooterWheelsF = .0450;//0.0495;
   public static double kFXShooterWheelsIZ = 0;
   public static double kFXShooterWheelsMin = -1;
   public static double kFXShooterWheelsMax = +1;
@@ -85,7 +85,7 @@ public class Constants {
   public static double kMaxSpeed = -15;
   public static double kMaxTurnRate = 400;
 
-  public static double krpmMargin = 100;
+  public static double krpmMargin = 75;
   public static double kangleMargin = 10;
 
   //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa

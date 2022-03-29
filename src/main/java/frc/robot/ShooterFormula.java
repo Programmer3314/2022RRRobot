@@ -52,17 +52,17 @@ public class ShooterFormula {
         targetPointsHigh.add(new TargetPoint(-1.8, 2000, 0, 2500, 5));
         targetPointsHigh.add(new TargetPoint(-1.2, 2000, 0, 2500, 5));
         targetPointsHigh.add(new TargetPoint(-0.8, 2000, 0, 2500, 5));
-        targetPointsHigh.add(new TargetPoint(-0.2, 3800, 2, 3000, 5));
-        targetPointsHigh.add(new TargetPoint(0.2, 3800, 2, 3000, 5));//24pointblank
+        targetPointsHigh.add(new TargetPoint(-0.2, 3800, 0.1, 3000, 5));
+        targetPointsHigh.add(new TargetPoint(0.2, 3800, 0.1, 3000, 5));//24pointblank
         targetPointsHigh.add(new TargetPoint(3, 3640, 0, 2548, 5));
         targetPointsHigh.add(new TargetPoint(4, 3600, 0, 2625, 5));
-        targetPointsHigh.add(new TargetPoint(7.5, 4100, 3.9, 2730, 5));
-        targetPointsHigh.add(new TargetPoint(11, 5500, 3.9, 4300, 5));
-        targetPointsHigh.add(new TargetPoint(13.5, 5000, 3.9, 4000, 5));
-        targetPointsHigh.add(new TargetPoint(16, 4800, 3.9, 3360, 5));
-        targetPointsHigh.add(new TargetPoint(20, 5000, 3.9, 3500, 5));
-        targetPointsHigh.add(new TargetPoint(23, 6000, 3.9, 4200, 5));
-        targetPointsHigh.add(new TargetPoint(25, 6000, 3.9, 4200, 5));
+        targetPointsHigh.add(new TargetPoint(7.5, 4500, 3.9, 3000, 5));
+        targetPointsHigh.add(new TargetPoint(11, 5500, 1.9, 4300, 5));
+        targetPointsHigh.add(new TargetPoint(13.5, 5000, 1.9, 4000, 5));
+        targetPointsHigh.add(new TargetPoint(16, 4800, 1.9, 3360, 5));
+        targetPointsHigh.add(new TargetPoint(20, 5000, 1.9, 3500, 5));
+        targetPointsHigh.add(new TargetPoint(23, 6000, 1.9, 4200, 5));
+        targetPointsHigh.add(new TargetPoint(25, 6000, 1.9, 4200, 5));
     }
 
     public TargetPoint calculate(double targetDistance) {
