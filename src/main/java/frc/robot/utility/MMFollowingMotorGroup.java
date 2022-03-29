@@ -77,4 +77,8 @@ public class MMFollowingMotorGroup extends MMMotorGroup {
         enc.setEncoderRevolutions(revs);
         
     }
+    @Override
+    public double getCurrent() {
+        return lead.getCurrent();
+    }
 }

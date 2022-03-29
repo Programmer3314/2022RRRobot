@@ -135,6 +135,11 @@ public class MMFXMotorController extends MMMotorController {
         setEncoder(revs * kMMFalconTicksPerRev);
     }
 
+    @Override
+    public double getCurrent() {
+        return mc.getSupplyCurrent();
+    }
+
     public MMFXMotorController setStatorCurrentLimit(boolean enabled, double currentAmpLimit,
             double triggerAmpThreshold, double triggerThresholdSeconds) {
         mc.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold,

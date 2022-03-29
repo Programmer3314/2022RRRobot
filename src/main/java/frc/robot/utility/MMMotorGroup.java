@@ -54,5 +54,7 @@ public abstract class MMMotorGroup {
     public abstract double getVelocity();
 
     public abstract void setEncoderRevolutions(double revs);
+
+    public abstract double getCurrent();
 }
 

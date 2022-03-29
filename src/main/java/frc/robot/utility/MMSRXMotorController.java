@@ -104,5 +104,9 @@ public class MMSRXMotorController extends MMMotorController {
         
     }
 
+    @Override
+    public double getCurrent() {
+        return mc.getSupplyCurrent();
+    }
 
 }

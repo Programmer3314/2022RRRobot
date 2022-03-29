@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
     driveTrain = new MMDiffDriveTrain(
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveLeft1)
-                //.setStatorCurrentLimit(true, 40, 45, .5)
+                .setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
                 .setBrakeMode(false)),
         new MMFollowingMotorGroup(
             new MMFXMotorController(Constants.kCanMCDriveRight1)
-                //.setStatorCurrentLimit(true, 40, 45, .5)
+                .setStatorCurrentLimit(true, 40, 45, .5)
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
@@ -669,6 +669,7 @@ public class Robot extends TimedRobot {
     Logger.Header(
         "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, POVLeft, POVRight, BottomBasket, Aimbot, UpDistance, DownDistance,Yaw,Pitch,Roll,");
     // aimController.LogHeader();
+    driveTrain.LogHeadder();
     climbStateMachine.LogHeader();
     intake.LogHeader();
     queueStateMachine.LogHeader();
@@ -683,6 +684,7 @@ public class Robot extends TimedRobot {
         pointBlankHigh, povLeftShot, povRightShot,
         pointBlankLow, autoLockHoop, increaseDistance, decreaseDistance);
     Logger.doubles(navx.getYaw(), navx.getPitch(), navx.getRoll());
+    driveTrain.LogData();
     climbStateMachine.LogData();
     intake.LogData();
     queueStateMachine.LogData();

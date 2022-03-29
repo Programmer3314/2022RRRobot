@@ -89,4 +89,9 @@ public class MMSparkMaxMotorController extends MMMotorController {
     public void setEncoderRevolutions(double revs) {
         setEncoder(revs);
     }
+
+    @Override
+    public double getCurrent() {
+        return mc.getOutputCurrent();
+    }
 }

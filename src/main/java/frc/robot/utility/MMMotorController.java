@@ -56,4 +56,5 @@ public abstract class MMMotorController {
 
     public abstract void setEncoder(double ticks);
     public abstract void setEncoderRevolutions(double revs);
+    public abstract double getCurrent();
 }

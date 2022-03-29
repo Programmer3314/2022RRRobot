@@ -5,6 +5,7 @@
 package frc.robot.utility;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Logger;
 
 /**
  * Differential Drive Train
@@ -73,5 +74,12 @@ public class MMDiffDriveTrain {
     public void resetEncoders() {
         leftMG.resetEncoders();
         rightMG.resetEncoders();
+    }
+
+    public void LogHeadder() {
+        Logger.Header("LeftDrivetrainCurrent,RightDrivetrainCurrent,");
+    }
+    public void LogData() {
+        Logger.doubles(leftMG.getCurrent(),rightMG.getCurrent());
     }
 }
