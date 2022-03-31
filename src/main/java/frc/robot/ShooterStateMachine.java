@@ -65,11 +65,14 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
-        shooter = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterShoot)
+        shooter = new MMFollowingMotorGroup(
+            new MMFXMotorController(Constants.kCanMCShooterShoot)
                 .setInverted(InvertType.None)
                 .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
                         Constants.kFXShooterWheelsD,
-                        Constants.kFXShooterWheelsF));
+                        Constants.kFXShooterWheelsF),
+            new MMFXMotorController(Constants.kCanMCShooterTwo)
+                .setInverted(InvertType.OpposeMaster));
 
         camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam)
                 .setPIDFParameters(Constants.kFXCamP, Constants.kFXCamI, Constants.kFXCamD,
@@ -77,9 +80,9 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 .setInverted(InvertType.InvertMotorOutput));
         feed = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterFeed)
             .setInverted(InvertType.InvertMotorOutput)
-                .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
-                        Constants.kFXShooterWheelsD,
-                        Constants.kFXShooterWheelsF));
+                .setPIDFParameters(Constants.kFXFeedWheelsP, Constants.kFXShooterWheelsI,
+                        Constants.kFXFeedWheelsD,
+                        Constants.kFXFeedWheelsF));
 
         camlimitswitch = new DigitalInput(Constants.kDIOCamLimitSwitch);
         ballGoneBreakBeam = new DigitalInput(Constants.kDIOShooterBallGone);
@@ -180,7 +183,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     SmartDashboard.putBoolean("close to shooter velocity",
                             closeEnough(shooterRPM, target.rpm, Constants.krpmMargin));
                     SmartDashboard.putBoolean("close to feed velocity",
-                            closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin));
+                            closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin));
                     SmartDashboard.putBoolean("Close to cam angle", closeEnough(camRevs, target.angle,
                             Constants.kangleMargin));
 
@@ -198,7 +201,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     if (queueIsFull
                             && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
-                            && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
+                            && closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin)
                             && (target.active&&(closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
                                     target.turretMargin))
                                     || Robot.shotType!=ShotType.Vision|| !Robot.useVision)

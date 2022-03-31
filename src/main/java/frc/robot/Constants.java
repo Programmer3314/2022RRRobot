@@ -40,10 +40,14 @@ public class Constants {
   public static int kNeoShooterCAMStallLimit = 40;
   public static int kNeoShooterCAMFreeLimit = 40;
 
-  public static double kFXShooterWheelsP = 0.1;
+  public static double kFXFeedWheelsP=0.05;
+  public static double kFXFeedWheelsF = 0.0488;
+  public static double kFXFeedWheelsD = 0.5;
+  public static double kFXShooterWheelsP = 0.025;//0.13;  
   public static double kFXShooterWheelsI = 0;
-  public static double kFXShooterWheelsD = 1;
-  public static double kFXShooterWheelsF = .0450;//0.0495;
+  public static double kFXShooterWheelsD = 0;//1
+  public static double kFXShooterWheelsF = .0462;//0.0475;
+
   public static double kFXShooterWheelsIZ = 0;
   public static double kFXShooterWheelsMin = -1;
   public static double kFXShooterWheelsMax = +1;
@@ -85,7 +89,8 @@ public class Constants {
   public static double kMaxSpeed = -15;
   public static double kMaxTurnRate = 400;
 
-  public static double krpmMargin = 75;
+  public static double krpmMargin = 50;//75
+  public static double krpmFeedMargin = 75;
   public static double kangleMargin = 10;
 
   //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa
@@ -94,7 +99,7 @@ public class Constants {
   public static double kTargetCameraHeight = 39 / 12.0;
   public static double kTargetingHeightDiff = ktargetHeight - kTargetCameraHeight;
 
-  public static double kRevPerFoot = 4.67;
+  public static double kRevPerFoot = 5.5448;//4.67
   public static double kChassisRadius = 1.04;
 
   public static double kNewRevPerFoot = 8;
@@ -118,6 +123,7 @@ public class Constants {
 
   // Shooter
   //public static int kCanMCShooterTurret = 15;
+  public static int kCanMCShooterTwo=15;
   public static int kCanMCShooterFeed = 16;
   public static int kCanMCShooterShoot = 17;
   public static int kCanMCShooterCam = 18;

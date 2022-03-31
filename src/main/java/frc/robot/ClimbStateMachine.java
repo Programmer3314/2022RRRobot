@@ -86,11 +86,11 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean startClimb;
     double revolutionsToBar1 = 74;
     double revolutionsToBar1slow = 70;
-    double revolutionsToBar2 = 53;
+    double revolutionsToBar2 = 51;//53
     double revolutionsToSafeBar2 = 11;
     double revolutionsNearBar2 = 28;
     double revolutionsNearBar3 = 28;
-    double revolutionsToBar3 = 53;
+    double revolutionsToBar3 = 51;//53
     double revolutionsPastHookA = 44;
     double revolutionsToHookA = 31;
     double revolutionsToHookC = 8;
@@ -594,6 +594,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             climbMotor.setPower(homePower);
             // climberPosition.set(Value.kForward);
         }
+        if(isTransitionTo(ClimbStates.AnglePause1, ClimbStates.AnglePause2)){
+            climbMotor.setPower(0);
+        }
         if(isTransitionTo(ClimbStates.Bar2SafetyExtend, ClimbStates.Bar3SafetyExtend)){
             climbMotor.setPower(pwrForBarExtendslow);
         }
@@ -656,6 +659,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         if (isTransitionTo(ClimbStates.ExtendToBar1fast)) {
             // climbMotor.setVelocity(rpmForBarExtend);
             climbMotor.setPower(pwrForBarExtend);
+            Robot.shooterStateMachine.resetState();
         }
         if (isTransitionTo(ClimbStates.ExtendToBar1slow)) {
             climbMotor.setPower(pwrForBarExtendslow);
@@ -672,7 +676,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             climbMotor.setPower(pwrForBarExtend);
         }
         if (isTransitionTo(ClimbStates.ExtendPastA, ClimbStates.ExtendPastA2)) {
-            climbMotor.setPower(pwrForBarExtendslow);
+            climbMotor.setPower(pwrForBarExtendslow);//pwrforbarextendslow
         }
         if (isTransitionTo(ClimbStates.PulltoHookB)) {
             climbMotor.setPower(pwrForBarPull);

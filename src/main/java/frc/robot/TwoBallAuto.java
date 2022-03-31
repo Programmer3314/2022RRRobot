@@ -31,12 +31,12 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     int autoDial;
     double StartAngle;
     double StartDistance;
-    double desiredCenterTurn = 10;// ACTUALVALUE60
-    double desiredCenterBack = -2;// ACTUALVALUE-7
+    double desiredCenterTurn = 60;// ACTUALVALUE60
+    double desiredCenterBack = -7;// ACTUALVALUE-7
     double desiredRightTurn = 90;
     double desiredCenterForward = 2;
     double desiredRightForward = 2;
-    double desiredRightBack = -2;// ACTUALVALUE-10
+    double desiredRightBack = -10;// ACTUALVALUE-10
     double counter;
     public TwoBallAuto(Position position, int autoDial) {
         super(TBautoStates.Start);
@@ -51,7 +51,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     @Override
     public void periodic() {
         if (position == Position.Center) {
-            autoMoveBack = -2;// ACTUALVALUE-7.5
+            autoMoveBack = -7.5;// ACTUALVALUE-7.5
         } else {
             autoMoveBack = -3.5;
         }

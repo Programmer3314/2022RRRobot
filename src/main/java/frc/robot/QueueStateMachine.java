@@ -86,7 +86,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
         if (isTransitionTo(QueueStates.DrawBallIn)) {
             // queueBelt.setVelocity(200);
-            queueBelt.setPower(.6);
+            queueBelt.setPower(.5);//.6
             takeBallFromTunnel = false;
 
         }

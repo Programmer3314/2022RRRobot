@@ -134,6 +134,7 @@ public class Robot extends TimedRobot {
   public static MMEdgeTrigger povOperatorDown;
   public static boolean driverLockHoop;
   public static ShotType shotType;
+  public static int noTargetRumble;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -142,11 +143,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    adjustShooterDistance = .5;
+    adjustShooterDistance = 0;//.5
     Logger.Enabled = true;
     // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
 
-    // TODO On-Hold optimize ball camera
     // TODO ON-HOLD create custom PIDF controller that includes:
     // - small amount of error around zero to be ignored
     // - minimum correction to apply (if any +/- correction use at least a minimum
@@ -397,6 +397,8 @@ public class Robot extends TimedRobot {
       aimController.setAimMode(AimMode.driver);
     }
 
+
+
     // if(increaseCam){
     //   shooterStateMachine.camAngle.setPower(.1);
     // }else if(decreaseCam){
@@ -501,7 +503,6 @@ public class Robot extends TimedRobot {
         hubVerticalAngle = 0;
         hubHorizontalAngle = 0;
       }
-
     }
     targetDistance = Constants.kTargetingHeightDiff / Math.tan(Math.toRadians(hubVerticalAngle));
 
@@ -585,8 +586,18 @@ public class Robot extends TimedRobot {
     } else if(autoLockHoop){ // TODO Look at other references. The drive mode only changes when confidenceCounter is >0 maybe this should be like that too.
       shotType = ShotType.Vision;
       shooterStateMachine.shootAll();
+      if(!shooterStateMachine.target.active){
+        controllerDriver.setRumble(RumbleType.kRightRumble, 1);
+        noTargetRumble=50;
+      }
     }
 
+    if(noTargetRumble>0){
+      noTargetRumble--;
+    }
+    if(noTargetRumble==1){
+      controllerDriver.setRumble(RumbleType.kRightRumble, 0);
+    }
     switch(shotType){
       case PointBlankHigh:
       targetpovdistance = 0;
@@ -598,7 +609,7 @@ public class Robot extends TimedRobot {
       targetpovdistance = targetDistance + adjustShooterDistance;
       break;
       case OperatorUp:
-      targetpovdistance = -3;
+      targetpovdistance = 7.5;
       break;
       case OperatorDown:
       targetpovdistance = -2;
