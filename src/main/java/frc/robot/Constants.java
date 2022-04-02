@@ -91,7 +91,7 @@ public class Constants {
 
   public static double krpmMargin = 100;//75
   public static double krpmFeedMargin = 100;//75
-  public static double kangleMargin = 10;
+  public static double kangleMargin = 1;// 10 This is huge!!!!
 
   //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa
   public static double kCameraVerticalAngle = 31;// 33.5 LOOKEHEREAVII

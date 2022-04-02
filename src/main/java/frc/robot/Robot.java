@@ -41,7 +41,7 @@ enum Position {
   Left, Right, Center
 }//13/16-4 3/8= TODO 5.385
 enum ShotType{
-  PointBlankLow, PointBlankHigh, Vision, OperatorUp, OperatorLeft, OperatorRight, OperatorDown
+  PointBlankLow, PointBlankHigh, Vision, OperatorUp, OperatorLeft, OperatorRight, OperatorDown,Blind
 }
 
 public class Robot extends TimedRobot {
@@ -273,8 +273,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Logger.StartLine();
-    RobotLogData();
     commonPeriodic();
+
+    shotType = useVision?ShotType.Vision:ShotType.Blind;
+
+    RobotLogData();
+
     autonomous.periodic();
     commonUpdate();
     SmartDashboard.putNumber("Driver Distance", driveTrain.getDistanceFeet());
@@ -308,7 +312,6 @@ public class Robot extends TimedRobot {
     RobotLogData();
     commonPeriodic();
     navXRoll.update(navx.getRoll());
-    useVision = !buttonBox1.getRawButton(Constants.kButtonBoxIgnoreVision);
     configVision();
 
     stopWhiteBelt = buttonBox1.getRawButtonPressed(10);
@@ -464,12 +467,11 @@ public class Robot extends TimedRobot {
   public void commonInit() {
     alliance = DriverStation.getAlliance();
     navx.resetDisplacement();
-    useVision = !buttonBox1.getRawButton(12);
+    useVision = !buttonBox1.getRawButton(Constants.kButtonBoxIgnoreVision);
     shotType=ShotType.Vision;
 
     if (useLimeLight) {
       ledMode.setNumber(3);
-
     } else {
       shootLimeLight.set(true);
     }
@@ -481,6 +483,7 @@ public class Robot extends TimedRobot {
     // searchButton =
     // controllerOperator.getRawButton(Constants.kOperatorSearchButton);
     resetRobot = buttonBox1.getRawButton(Constants.kButtonBoxResetRobot);
+    useVision = !buttonBox1.getRawButton(Constants.kButtonBoxIgnoreVision);
 
     // TODO Let's clean up variable names to make them clearer...
     // There are several angles, so maybe currentAngle should be currentRobotAngle
@@ -691,9 +694,9 @@ public class Robot extends TimedRobot {
   }
 
   public void RobotLogData() {
-    Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton,
-        pointBlankHigh, povLeftShot, povRightShot,
-        pointBlankLow, autoLockHoop, increaseDistance, decreaseDistance );
+    Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell);
+    Logger.booleans(autoBallPickup, intakeButton, ejectButton, pointBlankHigh);
+    Logger.booleans(povLeftShot, povRightShot, pointBlankLow, autoLockHoop, increaseDistance, decreaseDistance);
     Logger.doubles(navx.getYaw(), navx.getPitch(), navx.getRoll(),targetpovdistance);
     driveTrain.LogData();
     climbStateMachine.LogData();

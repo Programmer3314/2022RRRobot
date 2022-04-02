@@ -180,7 +180,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
 
                     // TODO get rid of this one time debug and the one below inside the if.
-                    SmartDashboard.putString("In Preparing ", "Yessir");
+                    //SmartDashboard.putString("In Preparing ", "Yessir");
                     SmartDashboard.putBoolean("close to shooter velocity",
                             closeEnough(shooterRPM, target.rpm, Constants.krpmMargin));
                     SmartDashboard.putBoolean("close to feed velocity",
@@ -204,13 +204,12 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                             && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
                             && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
-                            && (target.active && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
-                                    target.turretMargin))
-                                    || Robot.shotType != ShotType.Vision || !Robot.useVision)
-                    // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)
+                            && (target.active && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,target.turretMargin))
+                                || Robot.shotType != ShotType.Vision 
+                                || !Robot.useVision)
                     ) {
                         passThroughCounter++;
-                        SmartDashboard.putString("In Preparing/ passed If: ", "Yessir");
+                        //SmartDashboard.putString("In Preparing/ passed If: ", "Yessir");
                         if (passThroughCounter > Constants.kShooterCounter) {
                             nextState = ShooterStates.Shooting1;
                         }
@@ -366,19 +365,21 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     }
 
     public void LogHeader() {
-        Logger.Header("FeedRPM, ShooterRPM, CamAngle, TargetFeed, TargetShooter, TargetAngle,"
+        Logger.Header("FeedRPM, ShooterRPM, CamAngle,CurrentShooterAngle, TargetFeed, TargetShooter, TargetAngle,TargetActive,HubTargetAngle,PassThroughCounter,"
                 + "BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
                 + "ShooterState,");
     }
 
     public void LogData() {
-        Logger.doubles(feedRPM, shooterRPM, camRevs);//target.feedrpm,target.rpm,target.angle);
-        if (target == null){
-            Logger.doubles(0,0,0);
-        }
-        else{
+        Logger.doubles(feedRPM, shooterRPM, camRevs,Robot.currentShooterAngle);//target.feedrpm,target.rpm,target.angle);
+        if (target == null) {
+            Logger.doubles(0.0,0.0,0.0);
+            Logger.booleans(false);
+        } else {
             Logger.doubles(target.feedrpm,target.rpm,target.angle);
+            Logger.booleans(target.active);
         }
+        Logger.doubles(Robot.hubTargetAngle,passThroughCounter);
         Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankHigh, Robot.pointBlankLow, Robot.povLeftShot,
                 Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
