@@ -43,6 +43,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     boolean homed;
     TargetPoint target;
+    TargetPoint prepTarget;
     boolean airBall;// true when beam is not broken, ball not there
     MMMotorGroup shooter;
     MMMotorGroup camAngle;
@@ -66,20 +67,20 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     public ShooterStateMachine() {
         super(ShooterStates.Start);
         shooter = new MMFollowingMotorGroup(
-            new MMFXMotorController(Constants.kCanMCShooterShoot)
-                .setInverted(InvertType.None)
-                .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
-                        Constants.kFXShooterWheelsD,
-                        Constants.kFXShooterWheelsF),
-            new MMFXMotorController(Constants.kCanMCShooterTwo)
-                .setInverted(InvertType.OpposeMaster));
+                new MMFXMotorController(Constants.kCanMCShooterShoot)
+                        .setInverted(InvertType.None)
+                        .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
+                                Constants.kFXShooterWheelsD,
+                                Constants.kFXShooterWheelsF),
+                new MMFXMotorController(Constants.kCanMCShooterTwo)
+                        .setInverted(InvertType.OpposeMaster));
 
         camAngle = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterCam)
                 .setPIDFParameters(Constants.kFXCamP, Constants.kFXCamI, Constants.kFXCamD,
                         Constants.kFXCamF)
                 .setInverted(InvertType.InvertMotorOutput));
         feed = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterFeed)
-            .setInverted(InvertType.InvertMotorOutput)
+                .setInverted(InvertType.InvertMotorOutput)
                 .setPIDFParameters(Constants.kFXFeedWheelsP, Constants.kFXShooterWheelsI,
                         Constants.kFXFeedWheelsD,
                         Constants.kFXFeedWheelsF));
@@ -172,52 +173,54 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     }
                     break;
                 case Preparing:
-                    // if (target.active && Robot.queueStateMachine.isFull()
-                    // && closeEnough(camAngle.getRevolutions(), target.angle,
-                    // Constants.kangleMargin)
-                    // && closeEnough(shooter.getVelocity(), target.rpm, Constants.krpmMargin)
-                    // && closeEnough(feed.getVelocity(), target.feedrpm, Constants.krpmMargin)
-                    // && closeEnough(Robot.aimController.turretError(), 0, target.turretMargin)) {
-
-                    // TODO get rid of this one time debug and the one below inside the if.
-                    //SmartDashboard.putString("In Preparing ", "Yessir");
-                    SmartDashboard.putBoolean("close to shooter velocity",
-                            closeEnough(shooterRPM, target.rpm, Constants.krpmMargin));
-                    SmartDashboard.putBoolean("close to feed velocity",
-                            closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin));
-                    SmartDashboard.putBoolean("Close to cam angle", closeEnough(camRevs, target.angle,
-                            Constants.kangleMargin));
-
-                    SmartDashboard.putBoolean("Close to target Angle",
-                            closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle, target.turretMargin));
-                    SmartDashboard.putBoolean("Target Active", target == null ? false : target.active);
-
                     SmartDashboard.putNumber("Auto correct Target angle", Robot.hubTargetAngle);
-                    SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
                     SmartDashboard.putString("ShotType", Robot.shotType.toString());
+                    if (target != null) {
+                        // added check just in case...
+                        // SmartDashboard.putString("In Preparing ", "Yessir");
+                        SmartDashboard.putBoolean("close to shooter velocity",
+                                closeEnough(shooterRPM, target.rpm, Constants.krpmMargin));
+                        SmartDashboard.putBoolean("close to feed velocity",
+                                closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin));
+                        SmartDashboard.putBoolean("Close to cam angle",
+                                closeEnough(camRevs, target.angle, Constants.kangleMargin));
+                        SmartDashboard.putBoolean("Close to target Angle",
+                                closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle, target.turretMargin));
+                        SmartDashboard.putBoolean("Target Active", target.active);
+                        SmartDashboard.putNumber("Target Margin WW", target.turretMargin);
 
-                    // double marginScale=1;
-                    // if(Robot.shotType==ShotType.PointBlankLow){
-                    // marginScale=1.5;
-                    // }
-                    if (queueIsFull
-                            && closeEnough(camRevs, target.angle, Constants.kangleMargin)
-                            && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
-                            && closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin)
-                            && (target.active && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,target.turretMargin))
-                                || Robot.shotType != ShotType.Vision 
-                                || !Robot.useVision)
-                    ) {
-                        passThroughCounter++;
-                        //SmartDashboard.putString("In Preparing/ passed If: ", "Yessir");
-                        if (passThroughCounter > Constants.kShooterCounter) {
-                            nextState = ShooterStates.Shooting1;
+                        // double marginScale=1;
+                        // if(Robot.shotType==ShotType.PointBlankLow){
+                        // marginScale=1.5;
+                        // }
+
+                        if (queueIsFull
+                                && closeEnough(camRevs, target.angle, Constants.kangleMargin)
+                                && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
+                                && closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin)
+                                && ((target.active && closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
+                                        target.turretMargin))
+                                        || Robot.shotType != ShotType.Vision
+                                        || !Robot.useVision)) {
+                            passThroughCounter++;
+                            // SmartDashboard.putString("In Preparing/ passed If: ", "Yessir");
+                            if (passThroughCounter > Constants.kShooterCounter) {
+                                nextState = ShooterStates.Shooting1;
+                            }
+                        } else {
+                            if (!target.active && Robot.shotType == ShotType.Vision) {
+                                nextState = ShooterStates.Idle;
+                            }
+                            passThroughCounter = 0;
                         }
                     } else {
-                        if (!target.active && Robot.shotType == ShotType.Vision) {
-                            nextState = ShooterStates.Idle;
-                        }
                         passThroughCounter = 0;
+                        SmartDashboard.putBoolean("close to shooter velocity", false);
+                        SmartDashboard.putBoolean("close to feed velocity", false);
+                        SmartDashboard.putBoolean("Close to cam angle", false);
+                        SmartDashboard.putBoolean("Close to target Angle", false);
+                        SmartDashboard.putBoolean("Target Active", false);
+                        SmartDashboard.putNumber("Target Margin WW", 0);
                     }
 
                     if (abortShot) {
@@ -321,7 +324,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     camAngle.setPower(0);
                     camAngle.resetEncoders();
                 }
-                //SmartDashboard.putString("HOMECheck:", "YESSIRE");
+                // SmartDashboard.putString("HOMECheck:", "YESSIRE");
                 homed = camhomed;
                 break;
             case Preparing:
@@ -365,23 +368,25 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     }
 
     public void LogHeader() {
-        Logger.Header("FeedRPM, ShooterRPM, CamAngle,CurrentShooterAngle, TargetFeed, TargetShooter, TargetAngle,TargetActive,HubTargetAngle,PassThroughCounter,"
-                + "BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
-                + "ShooterState,");
+        Logger.Header(
+                "FeedRPM, ShooterRPM, CamAngle,CurrentShooterAngle, TargetFeed, TargetShooter, TargetAngle,TargetActive,HubTargetAngle,PassThroughCounter,"
+                        + "BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
+                        + "ShooterState,ShotType,");
     }
 
     public void LogData() {
-        Logger.doubles(feedRPM, shooterRPM, camRevs,Robot.currentShooterAngle);//target.feedrpm,target.rpm,target.angle);
+        Logger.doubles(feedRPM, shooterRPM, camRevs, Robot.currentShooterAngle);// target.feedrpm,target.rpm,target.angle);
         if (target == null) {
-            Logger.doubles(0.0,0.0,0.0);
+            Logger.doubles(0.0, 0.0, 0.0);
             Logger.booleans(false);
         } else {
-            Logger.doubles(target.feedrpm,target.rpm,target.angle);
+            Logger.doubles(target.feedrpm, target.rpm, target.angle);
             Logger.booleans(target.active);
         }
-        Logger.doubles(Robot.hubTargetAngle,passThroughCounter);
+        Logger.doubles(Robot.hubTargetAngle, passThroughCounter);
         Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankHigh, Robot.pointBlankLow, Robot.povLeftShot,
                 Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
+        Logger.singleEnum(Robot.shotType);
     }
 }
