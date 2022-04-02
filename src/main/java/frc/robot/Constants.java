@@ -89,8 +89,8 @@ public class Constants {
   public static double kMaxSpeed = -15;
   public static double kMaxTurnRate = 400;
 
-  public static double krpmMargin = 50;//75
-  public static double krpmFeedMargin = 75;
+  public static double krpmMargin = 100;//75
+  public static double krpmFeedMargin = 100;//75
   public static double kangleMargin = 10;
 
   //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa

@@ -377,9 +377,9 @@ public class Robot extends TimedRobot {
       shootLimeLight.set(!shootLimeLight.get());
     }
 
-    if (buttonBox1.getRawButton(Constants.kTestButtonBoxDisableCompressor)) {
-      pneumaticHub.disableCompressor();
-    }
+    // if (buttonBox1.getRawButton(Constants.kTestButtonBoxDisableCompressor)) {
+    //   pneumaticHub.disableCompressor();
+    // }
 
 
     if (autoLockHoop && confidenceCounter > 0) {
@@ -678,7 +678,7 @@ public class Robot extends TimedRobot {
 
   public void RobotLogHeader() {
     Logger.Header(
-        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, POVLeft, POVRight, BottomBasket, Aimbot, UpDistance, DownDistance,Yaw,Pitch,Roll,");
+        "EVENT, ShootOne, ShootAll, TACOBELL, AutoPickup, IntakeButton, EjectButton, PointBlank, POVLeft, POVRight, BottomBasket, Aimbot, UpDistance, DownDistance,Yaw,Pitch,Roll,targetPOVData,");
     // aimController.LogHeader();
     driveTrain.LogHeadder();
     climbStateMachine.LogHeader();
@@ -693,8 +693,8 @@ public class Robot extends TimedRobot {
   public void RobotLogData() {
     Logger.booleans(logEvent, shootOneButton, shootAllButton, tacoBell, autoBallPickup, intakeButton, ejectButton,
         pointBlankHigh, povLeftShot, povRightShot,
-        pointBlankLow, autoLockHoop, increaseDistance, decreaseDistance);
-    Logger.doubles(navx.getYaw(), navx.getPitch(), navx.getRoll());
+        pointBlankLow, autoLockHoop, increaseDistance, decreaseDistance );
+    Logger.doubles(navx.getYaw(), navx.getPitch(), navx.getRoll(),targetpovdistance);
     driveTrain.LogData();
     climbStateMachine.LogData();
     intake.LogData();
@@ -703,6 +703,7 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.LogData();
     aimController.LogData();
     navXRoll.LogData();
+    
   }
 
   public void configVision() {

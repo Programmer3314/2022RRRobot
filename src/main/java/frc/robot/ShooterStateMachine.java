@@ -308,6 +308,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         if (isTransitionTo(ShooterStates.RejectBall)) {
             shooter.setPower(-.3);
             feed.setPower(-.3);
+            shootOne = false;
+            shootAll = false;
         }
     }
 
@@ -364,13 +366,19 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     }
 
     public void LogHeader() {
-        Logger.Header("FeedRPM, ShooterRPM, CamAngle,"
+        Logger.Header("FeedRPM, ShooterRPM, CamAngle, TargetFeed, TargetShooter, TargetAngle,"
                 + "BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
                 + "ShooterState,");
     }
 
     public void LogData() {
-        Logger.doubles(feedRPM, shooterRPM, camRevs);
+        Logger.doubles(feedRPM, shooterRPM, camRevs);//target.feedrpm,target.rpm,target.angle);
+        if (target == null){
+            Logger.doubles(0,0,0);
+        }
+        else{
+            Logger.doubles(target.feedrpm,target.rpm,target.angle);
+        }
         Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankHigh, Robot.pointBlankLow, Robot.povLeftShot,
                 Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);

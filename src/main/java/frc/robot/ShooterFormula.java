@@ -42,8 +42,8 @@ public class ShooterFormula {
         // Distance, ShooterRpm, CamAngle, FeedRpm, TargetError
         // targetPointsHigh.add(new TargetPoint(-5.2, 2000, 20, 2500, 5));
         // targetPointsHigh.add(new TargetPoint(-4.8, 2000, 20, 2500, 5));
-        targetPointsHigh.add(new TargetPoint(-5.2, 1750, 3.9, 1750, 5));
-        targetPointsHigh.add(new TargetPoint(-4.8, 1750, 3.9, 1750, 5));
+        targetPointsHigh.add(new TargetPoint(-5.2, 1850, 3.9, 1750, 5));//1750 for the shooter
+        targetPointsHigh.add(new TargetPoint(-4.8, 1850, 3.9, 1750, 5));//1750 for the shooter
         targetPointsHigh.add(new TargetPoint(-4.2, 2000, 0, 2500, 5));
         targetPointsHigh.add(new TargetPoint(-3.8, 2000, 0, 2500, 5)); 
         targetPointsHigh.add(new TargetPoint(-3.2, 2000, 0, 2500, 5));
