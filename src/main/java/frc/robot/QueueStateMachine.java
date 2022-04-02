@@ -40,53 +40,57 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
 
     @Override
     public void CalcNextState() {
-        if (Robot.tacoBell){
+        if (Robot.tacoBell) {
             nextState = QueueStates.RejectBall;
-        } else { 
-        switch (currentState) {
-            case Start:
-                nextState = QueueStates.WaitForBall;
-                break;
-            case WaitForBall:
-                if (takeBallFromTunnel) {
-                    nextState = QueueStates.DrawBallIn;
-                }
-                break;
-            case DrawBallIn:
-                if (ballPositionInQueue) {
-                    nextState = QueueStates.GotBall;
-                }
-                break;
-            case GotBall:
-                if (shooterBallRequest) {
-                    nextState = QueueStates.SendingBall;
-                }
-                break;
-            case SendingBall:
-                if (!ballPositionInQueue) {
+        } else {
+            switch (currentState) {
+                case Start:
+                    if (ballPositionInQueue) {
+                        nextState = QueueStates.GotBall;
+                    }else{
                     nextState = QueueStates.WaitForBall;
-                }
-                break;
-            case RejectBall:
-                if (!Robot.tacoBell){
-                    nextState = QueueStates.WaitForBall;
-                }
-                
+                    }
+                    break;
+                case WaitForBall:
+                    if (takeBallFromTunnel) {
+                        nextState = QueueStates.DrawBallIn;
+                    }
+                    break;
+                case DrawBallIn:
+                    if (ballPositionInQueue) {
+                        nextState = QueueStates.GotBall;
+                    }
+                    break;
+                case GotBall:
+                    if (shooterBallRequest) {
+                        nextState = QueueStates.SendingBall;
+                    }
+                    break;
+                case SendingBall:
+                    if (!ballPositionInQueue) {
+                        nextState = QueueStates.WaitForBall;
+                    }
+                    break;
+                case RejectBall:
+                    if (!Robot.tacoBell) {
+                        nextState = QueueStates.WaitForBall;
+                    }
+
+            }
         }
-    }
 
     }
 
     @Override
     public void doTransition() {
-        if (isTransitionFrom(QueueStates.RejectBall)){
+        if (isTransitionFrom(QueueStates.RejectBall)) {
             takeBallFromTunnel = false;
             shooterBallRequest = false;
         }
 
         if (isTransitionTo(QueueStates.DrawBallIn)) {
             // queueBelt.setVelocity(200);
-            queueBelt.setPower(.5);//.6
+            queueBelt.setPower(.5);// .6
             takeBallFromTunnel = false;
 
         }
@@ -106,17 +110,17 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
             // queueBelt.setVelocity(0);
             queueBelt.setPower(0);
             queueFull = false;
-        
+
         }
-        if (isTransitionTo(QueueStates.RejectBall)){
+        if (isTransitionTo(QueueStates.RejectBall)) {
             queueBelt.setPower(-.4);
         }
-     
+
     }
 
     @Override
     public void doCurrentState() {
-        
+
     }
 
     public void takeBallFromTunnel() {
@@ -131,27 +135,30 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
     public boolean isFull() {
         return queueFull;
     }
-    
-    public void resetState(){
+
+    public void resetState() {
         currentState = QueueStates.Start;
     }
 
     @Override
-    public void update(){
+    public void update() {
         ballPositionInQueue = !ballInQueue.get();
         SmartDashboard.putBoolean("BallinQueue", ballPositionInQueue);
-        //ballPositionInQueue = Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxQueuePosition);
+        // ballPositionInQueue =
+        // Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxQueuePosition);
         super.update();
         SmartDashboard.putString("QueueState Machine", currentState.toString());
         SmartDashboard.putBoolean("QueueIsFull", queueFull);
-     //   SmartDashboard.putNumber("", value)
+        // SmartDashboard.putNumber("", value)
     }
-    public void LogHeader(){
+
+    public void LogHeader() {
         Logger.Header("QueueBeltSpeed,"
-        +"ballPositionInQueue,TakeBallRequest,shooterBallRequest,queueFull,"
-        +"QueueState,");
+                + "ballPositionInQueue,TakeBallRequest,shooterBallRequest,queueFull,"
+                + "QueueState,");
     }
-    public void LogData(){
+
+    public void LogData() {
         Logger.doubles(queueBelt.getRevolutions());
         Logger.booleans(ballPositionInQueue, takeBallFromTunnel, shooterBallRequest, queueFull);
         Logger.singleEnum(currentState);

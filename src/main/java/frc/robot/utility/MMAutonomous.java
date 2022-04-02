@@ -13,4 +13,6 @@ public abstract class MMAutonomous<T> extends MMStateMachine<T> {
 
     public abstract void init();
     public abstract void periodic();
+    public abstract void LogHeader();
+    public abstract void LogData();
 }

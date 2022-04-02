@@ -268,6 +268,7 @@ public class Robot extends TimedRobot {
       }
     }
     autonomous = new TwoBallAuto(tarmacPosition, autoSelect);
+    autonomous.LogHeader();
     Logger.EndLine();
   }
 
@@ -279,6 +280,8 @@ public class Robot extends TimedRobot {
     shotType = useVision ? ShotType.Vision : ShotType.Blind;
 
     RobotLogData();
+
+    autonomous.LogData();
 
     autonomous.periodic();
     commonUpdate();
@@ -293,6 +296,8 @@ public class Robot extends TimedRobot {
     RobotLogHeader();
 
     aimController.setAimMode(AimMode.driver);
+    shooterStateMachine.abortShot();
+    
     if (lastModeRan == "teleop") {
       climbStateMachine.currentState = ClimbStates.Start;
       climbStateMachine.resetState();
@@ -691,6 +696,7 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.LogHeader();
     aimController.LogHeader();
     navXRoll.LogHeader();
+    
   }
 
   public void RobotLogData() {

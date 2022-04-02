@@ -95,18 +95,18 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     double revolutionsToHookA = 31;
     double revolutionsToHookC = 8;
     double revolutionsToHookB = 15;
-    double revolutionsPastHookB = 5;// 3.25
+    double revolutionsPastHookB = 3.25;// 3.25
     double revolutionsToSafeBar3 = 11;
     boolean navxCalm = true;
     double rpmForBarExtend = 100;
-    double pwrForBarExtend = .3;
+    double pwrForBarExtend = .3;//.3
     double pwrForBarExtendslow = .1;
-    double pwrForBarExtendFast = .5;
+    double pwrForBarExtendFast = .5;//.5
     double rpmForBarPull = -200;
     double pwrForBarPull = -.7;
     double pwrForBarFastPull = -.7;
     double rpmForPullPast = -150;
-    double pwrForPullPast = -.5;
+    double pwrForPullPast = -.4;//-.5
     double homePower = -0.15;
     // DoubleSolenoid climberPosition;
     ClimbStates pauseState;

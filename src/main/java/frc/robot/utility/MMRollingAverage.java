@@ -10,8 +10,10 @@ public class MMRollingAverage {
     public int pointer;
     public double sum;
     public double average;
+    public int count;
 
     public MMRollingAverage(int sampleCount) {
+        count = sampleCount;
         samples = new double[sampleCount];
     }
 
@@ -19,8 +21,8 @@ public class MMRollingAverage {
         sum -= samples[pointer];
         sum += value;
         samples[pointer] = value;
-        pointer = (pointer + 1) % 20;
-        average = sum / 20.0;
+        pointer = (pointer + 1) % count;
+        average = sum / count;
         return average;
     }
 }
