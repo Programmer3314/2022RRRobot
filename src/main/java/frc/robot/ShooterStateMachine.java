@@ -203,7 +203,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                     if (queueIsFull
                             && closeEnough(camRevs, target.angle, Constants.kangleMargin)
                             && closeEnough(shooterRPM, target.rpm, Constants.krpmMargin)
-                            && closeEnough(feedRPM, target.feedrpm, Constants.krpmMargin)
+                            && closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin)
                             && (target.active && (closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,target.turretMargin))
                                 || Robot.shotType != ShotType.Vision 
                                 || !Robot.useVision)
