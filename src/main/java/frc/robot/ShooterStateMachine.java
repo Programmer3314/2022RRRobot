@@ -12,6 +12,7 @@ import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMJoystickAxis;
 import frc.robot.utility.MMMotorGroup;
+import frc.robot.utility.MMRollingAverage;
 import frc.robot.utility.MMStateMachine;
 
 /**
@@ -63,6 +64,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
     double feedRPM;
     double camRevs;
     boolean queueIsFull;
+    double smoothedShooterRPM;
+    double smoothedFeedRPM;
+    MMRollingAverage rollingShooterRPM;
+    MMRollingAverage rollingFeedRPM;
 
     public ShooterStateMachine() {
         super(ShooterStates.Start);
@@ -90,6 +95,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         camPower = new MMJoystickAxis(Constants.kJoystickOperator, 5, .1, 1);
         shootAll = false;
         shootOne = false;
+        rollingFeedRPM = new MMRollingAverage(10);
+        rollingShooterRPM = new MMRollingAverage(10);
     }
 
     @Override
@@ -128,6 +135,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
         shooterRPM = shooter.getVelocity();
         feedRPM = feed.getVelocity();
         camRevs = camAngle.getRevolutions();
+
+        smoothedFeedRPM = rollingFeedRPM.update(feedRPM);
+        smoothedShooterRPM = rollingShooterRPM.update(shooterRPM);
+
         super.update();
 
         // camAngle.setPower(camPower.get());
@@ -369,7 +380,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
     public void LogHeader() {
         Logger.Header(
-                "FeedRPM, ShooterRPM, CamAngle,CurrentShooterAngle, TargetFeed, TargetShooter, TargetAngle,TargetActive,HubTargetAngle,PassThroughCounter,"
+                "FeedRPM, ShooterRPM, CamAngle,CurrentShooterAngle,TargetFeed,TargetShooter,TargetAngle,TargetActive,"
+                        + "HubTargetAngle,PassThroughCounter,smoothedFeedRPM,smoothedShooterRPM,"
                         + "BallGone, camhomed, QueueFull,pointBlankButton,bottomBasket,povLeft, povRight, shootOne, shootAll,"
                         + "ShooterState,ShotType,");
     }
@@ -384,6 +396,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
             Logger.booleans(target.active);
         }
         Logger.doubles(Robot.hubTargetAngle, passThroughCounter);
+        Logger.doubles(smoothedFeedRPM, smoothedShooterRPM);
         Logger.booleans(airBall, camhomed, queueIsFull, Robot.pointBlankHigh, Robot.pointBlankLow, Robot.povLeftShot,
                 Robot.povRightShot, shootOne, shootAll);
         Logger.singleEnum(currentState);
