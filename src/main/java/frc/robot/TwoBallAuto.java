@@ -215,7 +215,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         }
         if(isTransitionTo(TBautoStates.DrivePastBall)){
             StartDistance = Robot.driveTrain.getDistanceFeet();
-            Robot.driveTrain.Drive(-3, 0);
+            Robot.driveTrain.Drive(-3.5, 0);
         }
         if (isTransitionTo(TBautoStates.RightTurn)) {
             StartAngle = Robot.currentRobotAngle;
@@ -259,6 +259,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         }
         if (isTransitionTo(TBautoStates.GetBall, TBautoStates.RightGetBall)) {
             // Robot.driveTrain.Drive(-1, 0);
+            StartDistance = Robot.driveTrain.getDistanceFeet();
             Robot.aimController.setAimMode(AimMode.ballChase);
             Robot.intake.intake();
         }
