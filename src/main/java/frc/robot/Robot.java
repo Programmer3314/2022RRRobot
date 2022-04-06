@@ -268,6 +268,7 @@ public class Robot extends TimedRobot {
       }
     }
     autonomous = new TwoBallAuto(tarmacPosition, autoSelect);
+    // autonomous = new AdditionalAuto(tarmacPosition, autoSelect);
     autonomous.LogHeader();
     Logger.EndLine();
   }
@@ -285,6 +286,7 @@ public class Robot extends TimedRobot {
 
     autonomous.periodic();
     commonUpdate();
+    SmartDashboard.putString("NewAutoState", autonomous.currentState.toString());
     SmartDashboard.putNumber("Driver Distance", driveTrain.getDistanceFeet());
     Logger.EndLine();
   }

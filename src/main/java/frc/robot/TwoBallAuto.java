@@ -8,6 +8,8 @@ import static frc.robot.Robot.hubTargetAngle;
 
 import java.nio.channels.NetworkChannel;
 
+import javax.swing.JSpinner.NumberEditor;
+
 import static frc.robot.Robot.currentRobotAngle;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +18,7 @@ import frc.robot.utility.MMAutonomous;
 enum TBautoStates {
     Start, DriveBack, Buffer, Shoot, Done, CenterTurn, CenterBack, GetBall, RightGetBall, Delay, RightPullForward,
     RightTurn, DrivePastBall,
-    RightPullBack, moveToTarget, secondShoot, RightTerminalTurn
+    RightPullBack, moveToTarget, secondShoot, RightTerminalTurn, LeftMoveForward
 };
 
 /**
@@ -40,6 +42,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
     double desiredRightForward = 2;
     double desiredRightBack;// ACTUALVALUE-10
     double counter;
+    double desiredLeftForward = 1.5;
 
     public TwoBallAuto(Position position, int autoDial) {
         super(TBautoStates.Start);
@@ -73,7 +76,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 break;
             case DriveBack:
                 if (Robot.driveTrain.getDistanceFeet() <= autoMoveBack) {
-                    nextState = TBautoStates.Buffer;
+                    nextState = TBautoStates.LeftMoveForward;
                 }
                 break;
             case Buffer:
@@ -83,9 +86,9 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                 break;
             case Shoot:
                 if (!Robot.shooterStateMachine.shootOne && !Robot.shooterStateMachine.shootAll) {
-                    if (autoDial == 0 || position == Position.Left) {
+                    if (autoDial == 0||position == Position.Left){
                         nextState = TBautoStates.Done;
-                    } else {
+                    }else {
                         if (position == Position.Right) {
                             nextState = TBautoStates.RightPullForward;
                         } else if (position == Position.Center) {
@@ -95,6 +98,11 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
                     }
                 }
                 break;
+            case LeftMoveForward:
+            if(Robot.driveTrain.getDistanceFeet() > StartDistance + desiredLeftForward){
+                nextState = TBautoStates.Buffer;
+            }
+            break;
             case Done:
                 break;
             case CenterTurn:
@@ -203,7 +211,7 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         if (isTransitionFrom(TBautoStates.RightTerminalTurn)) {
             Robot.driveTrain.Drive(0, 0);
         }
-        if (isTransitionFrom(TBautoStates.CenterBack)) {
+        if (isTransitionFrom(TBautoStates.CenterBack, TBautoStates.LeftMoveForward)) {
             Robot.driveTrain.Drive(0, 0);
         }
         if (isTransitionFrom(TBautoStates.moveToTarget)) {
@@ -216,6 +224,10 @@ public class TwoBallAuto extends MMAutonomous<TBautoStates> {
         if(isTransitionTo(TBautoStates.DrivePastBall)){
             StartDistance = Robot.driveTrain.getDistanceFeet();
             Robot.driveTrain.Drive(-3.5, 0);
+        }
+        if(isTransitionTo(TBautoStates.LeftMoveForward)){
+            StartDistance = Robot.driveTrain.getDistanceFeet();
+            Robot.driveTrain.Drive(2, 0);
         }
         if (isTransitionTo(TBautoStates.RightTurn)) {
             StartAngle = Robot.currentRobotAngle;
