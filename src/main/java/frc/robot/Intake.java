@@ -27,7 +27,7 @@ public class Intake {
 
     public void intake() {
         intakePosition.set(Value.kForward);
-        intakeMotor.setPower(.5);
+        intakeMotor.setPower(1.0);//.5
     }
 
     public void eject() {//TODO add delay between pneumatics going out first and setting the motor power

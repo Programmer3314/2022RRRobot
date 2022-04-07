@@ -85,7 +85,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean lowerLeadHooks;
     boolean startClimb;
     double revolutionsToBar1 = 74;
-    double revolutionsToBar1slow = 70;
+    double revolutionsToBar1slow = 67;//70
     double revolutionsToBar2 = 55;// 51
     double revolutionsToSafeBar2 = 11;
     double revolutionsNearBar2 = 28;
@@ -668,7 +668,7 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         }
         if (isTransitionTo(ClimbStates.ExtendToBar1fast)) {
             // climbMotor.setVelocity(rpmForBarExtend);
-            climbMotor.setPower(pwrForBarExtend);
+            climbMotor.setPower(pwrForBarExtendFast);
             Robot.shooterStateMachine.resetState();
         }
         if (isTransitionTo(ClimbStates.ExtendToBar1slow)) {
