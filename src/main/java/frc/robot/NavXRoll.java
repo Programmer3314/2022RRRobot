@@ -12,12 +12,13 @@ public class NavXRoll {
     int downcount;
     double centerBarAng = 60;
     int cyclesAbove = 10;
-    double[] samples = new double[50];
+    double[] samples = new double[25];
     int pointer;
     double minsample;
     double maxsample;
     boolean calm;
     double margin = 1;
+    int downCountTwo;
 
     public NavXRoll() {
         pointer = 0;
@@ -28,6 +29,11 @@ public class NavXRoll {
             downcount++;
         } else {
             downcount = 0;
+        }
+        if (roll > lastRoll) {
+            downCountTwo++;
+        } else {
+            downCountTwo = 0;
         }
         samples[pointer]= roll;
         minsample = roll;
@@ -41,12 +47,15 @@ public class NavXRoll {
             }
         }
         lastRoll = roll;
-        pointer=(pointer+1)%50;
+        pointer=(pointer+1)%samples.length;
         smartdashboards(roll);
     }
 
     public boolean isApproachingBar() {
         return downcount > cyclesAbove;
+    }
+    public boolean isGoingDown(){
+        return downCountTwo > cyclesAbove;
     }
     public boolean isBelowBar(double centerBarAngle){
         return lastRoll>centerBarAngle;

@@ -362,7 +362,8 @@ public class Robot extends TimedRobot {
     }
 
     abortShootButton = controllerOperator.getRawButton(Constants.kOperatorAbortShot) ||
-        buttonBox1.getRawButton(Constants.kButtonBoxAbortShot);
+        buttonBox1.getRawButton(Constants.kButtonBoxAbortShot)
+        || controllerDriver.getRawButton(7);
     if (increaseDistance) {
       adjustShooterDistance += .5;
     }

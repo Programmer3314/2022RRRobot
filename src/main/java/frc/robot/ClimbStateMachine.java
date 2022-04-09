@@ -66,7 +66,7 @@ enum ClimbStates {
     PulltoHookB2, PullPastHookB2, Pause2,
     ExtendNearBar3, ExtendToBar3CheckPressed, ExtendToBar3CheckReleased, ExtendPastBar3,
     PullToBar3CheckPresssed, PullToBar3CheckReleased, PullBar3ToStatHooksC,
-    PullBar3PastStatHooksC, Bar3SafetyExtend,
+    PullBar3PastStatHooksC, Bar3SafetyExtend, extendNearNearBar2, extendNearNearBar3,
     // ExtendBar3Swing, WaitForCalm, ExtendBar3Calm, ExtendToBar3Check, PullupBar3,
     Done, Pause, Manual
 }
@@ -136,6 +136,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
     boolean highBarPressed;
     boolean highBarReleased;
     boolean climbing;
+    double revolutionsNearNearBar2 = 25;
+    double revolutionsNearNearBar3 = 25;
 
     /*
      * go up to 72 revs
@@ -361,9 +363,15 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 break;
             case Pause1:
                 // if(Robot.navx.getRoll()<40){
-                nextState = ClimbStates.ExtendNearBar2;
+                nextState = ClimbStates.extendNearNearBar2;
                 // }
                 break;
+            case extendNearNearBar2:
+                if (climbMotorRevs >= revolutionsNearNearBar2){
+                    nextState = ClimbStates.ExtendNearBar2;
+                }
+                break;
+
             case ExtendNearBar2:
                 if (climbMotorRevs >= revolutionsNearBar2) {
                     // nextState = ClimbStates.ExtendToBar2Check;
@@ -458,9 +466,15 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
             case Pause2:
                 // if(Robot.navx.getRoll()<40){
-                nextState = ClimbStates.ExtendNearBar3;
+                nextState = ClimbStates.extendNearNearBar3;
                 // }
                 break;
+            case extendNearNearBar3:
+                if(climbMotorRevs >= revolutionsNearNearBar3){
+                    nextState = ClimbStates.ExtendNearBar3;
+
+            }
+            break;
             // if (!deflectionWhiteB && !deflectionRedB) {
             // nextState = ClimbStates.ExtendNearBar3;
             // }
@@ -499,7 +513,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                 }
                 break;
             case ExtendToBar3CheckPressed:
-                if (/* highBarPressed */Robot.navXRoll.isApproachingBar()) {
+                if (/* highBarPressed */Robot.navXRoll.isApproachingBar()){
+                //|| (Robot.navXRoll.isGoingDown() && Robot.navx.getRoll() > 70)) {
                     nextState = ClimbStates.ExtendToBar3CheckReleased;
                 }
                 break;
@@ -567,6 +582,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
             climbMotor.setPower(0);
         }
         if (isTransitionFrom(ClimbStates.PullPastHookB)) {
+            climbMotor.setPower(0);
+        }
+        if (isTransitionFrom(ClimbStates.extendNearNearBar2, ClimbStates.extendNearNearBar3)) {
             climbMotor.setPower(0);
         }
         if (isTransitionFrom(ClimbStates.ExtendNearBar2, ClimbStates.ExtendNearBar3)) {
@@ -647,6 +665,9 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         // }
         if (isTransitionTo(ClimbStates.PulltoHookB2)) {
             climbMotor.setPower(pwrForBarPull);
+        }
+        if (isTransitionTo(ClimbStates.extendNearNearBar2, ClimbStates.extendNearNearBar3)){
+            climbMotor.setPower(pwrForBarExtend);
         }
         if (isTransitionTo(ClimbStates.PullPastHookB2)) {
             climbMotor.setPower(pwrForPullPast);
