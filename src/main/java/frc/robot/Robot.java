@@ -299,7 +299,7 @@ public class Robot extends TimedRobot {
 
     aimController.setAimMode(AimMode.driver);
     shooterStateMachine.abortShot();
-    
+
     if (lastModeRan == "teleop") {
       climbStateMachine.currentState = ClimbStates.Start;
       climbStateMachine.resetState();
@@ -500,7 +500,6 @@ public class Robot extends TimedRobot {
     currentRobotAngle = cleanAngle(navx.getYaw());
     currentShooterAngle = cleanAngle(
         currentRobotAngle + (/* aimController.turret.getRevolutions() */ 0 * Constants.kTurretDegreesPerRev));
-    
 
     targetBallConfidence = nt.getTable("Ball Target")
         .getEntry(alliance == Alliance.Blue ? "Blue Target Confidence" : "Red Target Confidence").getBoolean(false);
@@ -646,7 +645,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("TargetRPM", firingSolution.rpm);
       SmartDashboard.putNumber("TargetAngle", firingSolution.angle);
 
-      if (confidenceCounter > 0 || shotType!=ShotType.Vision) {
+      if (confidenceCounter > 0 || shotType != ShotType.Vision) {
         firingSolution.active = true;
       } else {
         firingSolution.active = false;
@@ -702,7 +701,7 @@ public class Robot extends TimedRobot {
     tunnelStateMachine.LogHeader();
     aimController.LogHeader();
     navXRoll.LogHeader();
-    
+
   }
 
   public void RobotLogData() {

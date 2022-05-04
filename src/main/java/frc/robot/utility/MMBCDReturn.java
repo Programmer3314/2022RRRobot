@@ -12,7 +12,6 @@ public class MMBCDReturn {
 
     int dialButton1, dialButton2, dialButton3, dialButton4;
     Joystick bb;
-
     boolean bit1, bit2, bit3, bit4;
 
     public MMBCDReturn(Joystick ButtonBox, int button1, int button2, int button3, int button4) {
@@ -21,7 +20,6 @@ public class MMBCDReturn {
         dialButton2 = button2;
         dialButton3 = button3;
         dialButton4 = button4;
-
     }
 
     public int GetDial() {
