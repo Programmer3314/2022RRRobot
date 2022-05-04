@@ -334,7 +334,8 @@ public class Robot extends TimedRobot {
 
     tacoBell = buttonBox1.getRawButton(Constants.kButtonBoxTacobell);
     double requestedSpeed = speedAxis.get();
-    double requestedTurn = turnAxis.get();
+    // double requestedTurn = turnAxis.get();
+    double requestedTurn = turnAxis.getSquared();
     SmartDashboard.putNumber("Joystick Value", requestedSpeed);
     SmartDashboard.putNumber("Returned Speed", driveTrain.getVelocity());
 
