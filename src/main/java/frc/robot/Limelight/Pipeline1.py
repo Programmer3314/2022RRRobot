@@ -89,7 +89,7 @@ def runPipeline(mat, llrobot):
     ma = 40
     mb = 40
     hsv = cv2.cvtColor(mat, cv2.COLOR_BGR2LAB)
-    inRangeHSV = cv2.inRange(hsv, (100,a+128-ma,b+128-mb),(255, a+128+ma, b+128+mb)) 
+    inRangeHSV = cv2.inRange(hsv, (25,a+128-ma,b+128-mb),(255, a+128+ma, b+128+mb)) 
     #lab(60.35, -16.06, 11.98)
     #lab(52.16, 16.59, -66.59)
 
@@ -161,7 +161,7 @@ def runPipeline(mat, llrobot):
         offset = offsetFromCenter(tp)
         horizontalAng = pixelToAngle(offset[0], 278.503)
         verticalAng = pixelToAngle(offset[1],258.03)
-        if len(BestChain) >= 3:
+        if len(BestChain) >= 2:
             cv2.circle(mat, tp, 12, (0,255,0), 1)
             
     confidenceNumber = 0
