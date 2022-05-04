@@ -4,16 +4,11 @@
 
 package frc.robot.utility;
 
-import frc.robot.Robot;
-
 /** Add your docs here. */
 public class MMEdgeTrigger {
     boolean lastValue;
     boolean currentValue;
 
-    public void MMEdgeTrigger(){
-
-    }
     public MMEdgeTrigger update(boolean value){
         lastValue= currentValue;
         currentValue = value;

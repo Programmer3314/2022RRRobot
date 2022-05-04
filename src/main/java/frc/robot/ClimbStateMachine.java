@@ -735,6 +735,8 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
                     climbMotor.setPower(pwrForBarExtendslow);
                 }
                 break;
+            default:
+                break;
         }
         // switch (currentState) {
         // case Manual:

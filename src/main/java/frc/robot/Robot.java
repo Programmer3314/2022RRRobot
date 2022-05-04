@@ -632,6 +632,8 @@ public class Robot extends TimedRobot {
       case OperatorRight:
         targetpovdistance = -4;
         break;
+      case Blind:
+        break;
     }
     TargetPoint firingSolution = shooterFormula
         .calculate(targetpovdistance);
