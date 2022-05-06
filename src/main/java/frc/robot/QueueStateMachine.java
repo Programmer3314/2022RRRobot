@@ -36,7 +36,7 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
         super(QueueStates.Start);
         ballInQueue = new DigitalInput(Constants.kDIOQueueBreakBeam);
         queueBelt = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCQueueBelt)
-        .setBrakeMode(true));
+                .setBrakeMode(true));
     }
 
     @Override
@@ -48,8 +48,8 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
                 case Start:
                     if (ballPositionInQueue) {
                         nextState = QueueStates.GotBall;
-                    }else{
-                    nextState = QueueStates.WaitForBall;
+                    } else {
+                        nextState = QueueStates.WaitForBall;
                     }
                     break;
                 case WaitForBall:

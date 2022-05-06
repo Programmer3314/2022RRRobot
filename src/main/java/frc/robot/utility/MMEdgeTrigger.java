@@ -4,6 +4,15 @@
 
 package frc.robot.utility;
 
+
+// TODO: rename this to MMBoolean and add additional functionality:
+// Add Debouncing - this would ignore "twitchy" rapid transisssions
+//  requiring that a value change for some amount of time/cycles so 
+//  that inputs such as sensors which might make/break/make/break/make 
+//  will not be seen as making or breaking until they stabalize. 
+//  This would be helpful in cases like the prox sensors on the climber
+//
+
 /** Add your docs here. */
 public class MMEdgeTrigger {
     boolean lastValue;
@@ -19,5 +28,8 @@ public class MMEdgeTrigger {
     }
     public boolean transitionLow(){
         return lastValue == true && currentValue == false;
+    }
+    public boolean value(){
+        return currentValue;
     }
 }

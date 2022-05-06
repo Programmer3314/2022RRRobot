@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utility.MMEdgeTrigger;
 import frc.robot.utility.MMFXMotorController;
 import frc.robot.utility.MMFollowingMotorGroup;
 import frc.robot.utility.MMMotorGroup;
@@ -50,17 +51,18 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     int baseRed;
     double tunnelBeltRPM;
     double tunnelWheelsRPM;
-    boolean queueIsFull;
+    MMEdgeTrigger queueIsFull = new MMEdgeTrigger();
     int red, blue;
     public boolean climbing;
     public boolean tunnelBreakBeamBroken;
     double whiteBeltCurrent;
-    double whiteBeltOffset = 2.0 - 2.18;//1.61
-    double whiteBeltSensorOffset = 2.18;//1.61
+    double whiteBeltOffset = 2.0 - 2.18;// 1.61
+    double whiteBeltSensorOffset = 2.18;// 1.61
     double whiteBeltGoal;
     boolean ignoreColorSensor;
     double whiteBeltNormalSpeed = 0.275;
     boolean trident;
+    //MMEdgeTrigger queueIsFullEdgeTrigger = new MMEdgeTrigger();
 
     public TunnelStateMachine() {
         super(TunnelStates.Start);
@@ -77,8 +79,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         red = frontColorSensor.getRed();
         blue = frontColorSensor.getBlue();
         tunnelBreakBeamBroken = !tunnelBreakInput.get();
-        isRed = red > blue * 1.75;//deux
-        isBlue = blue > red * 1.75;//dos
+        isRed = red > blue * 1.75;// deux
+        isBlue = blue > red * 1.75;// dos
         whiteBeltCurrent = tunnelBelt.getRevolutions();
         ignoreColorSensor = Robot.buttonBox1.getRawButton(Constants.kButtonBoxIgnoreColorSensor);
         // isRed = red > baseRed*1.05;
@@ -92,7 +94,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         // Robot.buttonBox1.getRawButton(Constants.kTestButtonBoxDesiredBall);
         tunnelBeltRPM = tunnelBelt.getVelocity();
         tunnelWheelsRPM = tunnelWheels.getVelocity();
-        queueIsFull = Robot.queueStateMachine.isFull();
+        queueIsFull.update(Robot.queueStateMachine.isFull());
         climbing = Robot.climbStateMachine.isClimbing();
 
         SmartDashboard.putBoolean("Ignore Color Sensor", ignoreColorSensor);
@@ -145,12 +147,12 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     }
                     break;
                 case BallDetected:
-                    if (!queueIsFull/*||Robot.queueStateMachine.currentState==QueueStates.SendingBall*/) {
+                    if (!queueIsFull.value()/* ||Robot.queueStateMachine.currentState==QueueStates.SendingBall */) { // Rich
                         nextState = TunnelStates.MoveToQueue;
                     }
                     break;
                 case MoveToQueue:
-                    if (queueIsFull) {
+                    if (queueIsFull.transitionHigh())  { //(queueIsFull) { //Rich
                         nextState = TunnelStates.Idle;
                     }
                     break;
@@ -179,7 +181,9 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
         if (isTransitionTo(TunnelStates.EncoderDelay)) {
             whiteBeltGoal = whiteBeltCurrent + whiteBeltOffset;
             desiredBall = ((Robot.alliance == Alliance.Blue && isBlue && !isRed)
-                    || (Robot.alliance == Alliance.Red && isRed && !isBlue) || ignoreColorSensor||turnOffSensor());
+                    || (Robot.alliance == Alliance.Red && isRed && !isBlue)
+                    || ignoreColorSensor
+                    || turnOffSensor());
         }
         if (isTransitionTo(TunnelStates.Idle)) {
             tunnelWheels.setPower(0);
@@ -194,7 +198,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
 
     @Override
     public void doCurrentState() {
-        if (!climbing&&!trident) {
+        if (!climbing && !trident) {
             switch (currentState) {
                 case Start:
                     baseRed = red;
@@ -234,7 +238,8 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void toggleBelt() {
         trident = !trident;
     }
-    boolean turnOffSensor(){
-        return red==0&&blue==0;
+
+    boolean turnOffSensor() {
+        return red == 0 && blue == 0;
     }
 }
