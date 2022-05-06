@@ -76,10 +76,8 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
                     if (!Robot.tacoBell) {
                         nextState = QueueStates.WaitForBall;
                     }
-
             }
         }
-
     }
 
     @Override
@@ -116,7 +114,6 @@ public class QueueStateMachine extends MMStateMachine<QueueStates> {
         if (isTransitionTo(QueueStates.RejectBall)) {
             queueBelt.setPower(-.4);
         }
-
     }
 
     @Override
