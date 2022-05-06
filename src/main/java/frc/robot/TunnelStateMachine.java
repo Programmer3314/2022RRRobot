@@ -145,7 +145,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     }
                     break;
                 case BallDetected:
-                    if (!queueIsFull) {
+                    if (!queueIsFull/*||Robot.queueStateMachine.currentState==QueueStates.SendingBall*/) {
                         nextState = TunnelStates.MoveToQueue;
                     }
                     break;

@@ -108,5 +108,9 @@ public class MMSRXMotorController extends MMMotorController {
     public double getCurrent() {
         return mc.getSupplyCurrent();
     }
-
+    
+    // @Override
+    // public void setNominal(){
+    //     mc.set
+    // }
 }

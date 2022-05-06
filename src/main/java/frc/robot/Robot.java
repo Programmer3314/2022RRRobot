@@ -211,7 +211,8 @@ public class Robot extends TimedRobot {
                 .setInverted(Constants.kLeftMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                .setBrakeMode(false),
+                .setBrakeMode(false)  
+                .setNominal(.05, -.05),
             new MMFXMotorController(Constants.kCanMCDriveLeft2)
                 .setInverted(Constants.kLeftMGInverted) // This MUST MATCH LEAD!
                 .setBrakeMode(false)),
@@ -221,7 +222,8 @@ public class Robot extends TimedRobot {
                 .setInverted(Constants.kRightMGInverted)
                 .setPIDFParameters(Constants.kfalconDrivetrainKP, Constants.kfalconDrivetrainKI,
                     Constants.kfalconDrivetrainKD, Constants.kfalconDrivetrainKFF)
-                .setBrakeMode(false),
+                .setBrakeMode(false)
+                .setNominal(.05, -.05),
             new MMFXMotorController(Constants.kCanMCDriveRight2)
                 .setInverted(Constants.kRightMGInverted)
                 .setBrakeMode(false) // This MUST MATCH LEAD!

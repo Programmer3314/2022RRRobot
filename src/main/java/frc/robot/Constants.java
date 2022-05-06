@@ -43,10 +43,13 @@ public class Constants {
   public static double kFXFeedWheelsP=0.05;
   public static double kFXFeedWheelsF = 0.0488;
   public static double kFXFeedWheelsD = 0.5;
+  public static double kFXFeedWheelsI = .00025;
+  public static double kFXFeedWheelsIzone = 1000;
   public static double kFXShooterWheelsP = 0.025;//0.13;  
-  public static double kFXShooterWheelsI = 0;
+  public static double kFXShooterWheelsI = .00025;
   public static double kFXShooterWheelsD = 0;//1
   public static double kFXShooterWheelsF = .0462;//0.0475;
+  public static double kFXShooterWheelsIzone = 1000;
 
   public static double kFXShooterWheelsIZ = 0;
   public static double kFXShooterWheelsMin = -1;

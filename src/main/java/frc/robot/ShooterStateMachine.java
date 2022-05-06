@@ -76,7 +76,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                         .setInverted(InvertType.None)
                         .setPIDFParameters(Constants.kFXShooterWheelsP, Constants.kFXShooterWheelsI,
                                 Constants.kFXShooterWheelsD,
-                                Constants.kFXShooterWheelsF),
+                                Constants.kFXShooterWheelsF,
+                                Constants.kFXShooterWheelsIzone),
                 new MMFXMotorController(Constants.kCanMCShooterTwo)
                         .setInverted(InvertType.OpposeMaster));
 
@@ -86,9 +87,10 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 .setInverted(InvertType.InvertMotorOutput));
         feed = new MMFollowingMotorGroup(new MMFXMotorController(Constants.kCanMCShooterFeed)
                 .setInverted(InvertType.InvertMotorOutput)
-                .setPIDFParameters(Constants.kFXFeedWheelsP, Constants.kFXShooterWheelsI,
+                .setPIDFParameters(Constants.kFXFeedWheelsP, Constants.kFXFeedWheelsI,
                         Constants.kFXFeedWheelsD,
-                        Constants.kFXFeedWheelsF));
+                        Constants.kFXFeedWheelsF,
+                        Constants.kFXFeedWheelsIzone));
 
         camlimitswitch = new DigitalInput(Constants.kDIOCamLimitSwitch);
         ballGoneBreakBeam = new DigitalInput(Constants.kDIOShooterBallGone);
@@ -207,8 +209,8 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
 
                         if (queueIsFull
                                 && closeEnough(camRevs, target.angle, Constants.kangleMargin)
-                                && (this.cyclesInStates>80 ||closeEnough(shooterRPM, target.rpm, Constants.krpmMargin))
-                                && (this.cyclesInStates>80 ||closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin))
+                                && (/*this.cyclesInStates>80 ||*/closeEnough(shooterRPM, target.rpm, Constants.krpmMargin))
+                                && (/*this.cyclesInStates>80 ||*/closeEnough(feedRPM, target.feedrpm, Constants.krpmFeedMargin))
                                 && ((target.active && closeEnough(Robot.currentShooterAngle, Robot.hubTargetAngle,
                                         target.turretMargin))
                                         || Robot.shotType != ShotType.Vision
@@ -342,6 +344,7 @@ public class ShooterStateMachine extends MMStateMachine<ShooterStates> {
                 shooter.setVelocity(target.rpm);
                 camAngle.setPosition(target.angle);
                 feed.setVelocity(target.feedrpm);
+                SmartDashboard.putNumber("secondsInPreparing", secondsInState);
                 break;
             default:
                 break;

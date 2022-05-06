@@ -63,12 +63,19 @@ public class MMFXMotorController extends MMMotorController {
         return this;
     }
 
+    
     public MMFXMotorController setPIDFParameters(double p, double i, double d, double f) {
+        setPIDFParameters(p, i, d, f, 0);
+        return this;
+    }
+
+    public MMFXMotorController setPIDFParameters(double p, double i, double d, double f, double izone) {
         /* Config the Velocity closed loop gains in slot0 */
         mc.config_kF(0, f, kMMTimeoutMs);
         mc.config_kP(0, p, kMMTimeoutMs);
         mc.config_kI(0, i, kMMTimeoutMs);
         mc.config_kD(0, d, kMMTimeoutMs);
+        mc.config_IntegralZone(0, izone, kMMTimeoutMs);
         return this;
     }
 
@@ -151,6 +158,12 @@ public class MMFXMotorController extends MMMotorController {
             double triggerAmpThreshold, double triggerThresholdSeconds) {
         mc.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(enabled, currentAmpLimit, triggerAmpThreshold,
                 triggerThresholdSeconds));
+        return this;
+    }
+
+    public MMFXMotorController setNominal(double forward, double reverse){
+        mc.configNominalOutputForward(forward, kMMTimeoutMs);
+        mc.configNominalOutputReverse(reverse, kMMTimeoutMs);
         return this;
     }
 
