@@ -139,9 +139,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
      * (lower)Hook 1 =
      * Hook 2 =
      */
+    // 73 is our highest point
     public ClimbStateMachine() {
         super(ClimbStates.Start);
-        climbMotor = new MMFollowingMotorGroup(// TODO 73 is our highest point
+        climbMotor = new MMFollowingMotorGroup(
                 new MMFXMotorController(Constants.kCanMCClimber1)
                         .setPIDFParameters(Constants.kfalconClimbKP, Constants.kfalconClimbKI,
                                 Constants.kfalconClimbKD, Constants.kfalconClimbKFF)
