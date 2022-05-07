@@ -146,18 +146,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     adjustShooterDistance = 0;// .5
     Logger.Enabled = true;
-    // TODO IMMEDEYIT!!!!!!!!! BEFORE COMP
-
-    // TODO ON-HOLD create custom PIDF controller that includes:
-    // - small amount of error around zero to be ignored
-    // - minimum correction to apply (if any +/- correction use at least a minimum
-    // value)
-    // - maximum correction to apply
     // TODO On-Hold Organize all human inputs into a single class with and update()
     // call to
     // get data
     // convert button presses to more meaningful variables.
-    // TODO On-Hold Expanded MMPIDController with minOutput and maxOutput
     // TODO On-Hold CLEANUP Organize the init code to group simillar code
     // like Motor devices together, Human inputs together,
     // Sensors together, Data init, etc.
@@ -352,8 +344,6 @@ public class Robot extends TimedRobot {
     povUpShot = povOperatorRight.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 0).transitionHigh();
     povDownShot = povOperatorDown.update(controllerOperator.getPOV(Constants.kOperatorPOV) == 180).transitionHigh();
 
-    // TODO consider rumbling stick if autoLookHoop and no target active (or
-    // confidenceCounter==0)
     autoLockHoop = controllerDriver.getRawButtonPressed(Constants.kDriverAutoTurnToTarget);
     increaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxIncreaseDistance);
     decreaseDistance = buttonBox1.getRawButtonPressed(Constants.kButtonBoxDecreaseDistance);

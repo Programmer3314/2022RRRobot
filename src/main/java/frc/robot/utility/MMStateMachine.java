@@ -35,6 +35,7 @@ public abstract class MMStateMachine<T> {
                 startCurrentStateTime = Timer.getFPGATimestamp();
             }
         }
+        // TODO should this be the first line of the update method?
         secondsInState = Timer.getFPGATimestamp() - startCurrentStateTime;
         doCurrentState();
         cyclesInStates++;

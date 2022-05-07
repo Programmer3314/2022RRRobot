@@ -12,16 +12,7 @@
  * Existing IMU in NavX
  */
 
-// TODO Add a Pneumatic to shift the climber when extending the upper hooks
-// I've been told that there will be a pneumatic to shif the angle of the lift and the robot.
-// It's expected that the climber will start out leaning back and will need to be pushed forward 
-// durring "homing".  
-// TODO Add second motor (irl) and set it inverted to make sure that the inverted motor runs opposite
-// to the lead.
-// TODO Comment out the setVelocity calls and replace (for now at least) with set Power. 
-// We will probably want the velocity calls back in, but not knowing when we'll be tuning the lift,
-// I want to be safe by using power. Distance is critical, speed is not critical.  
-
+ 
 /**
  * Steps
  * 1) Start
@@ -170,19 +161,12 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
         deflectionBWhite = new DigitalInput(Constants.kNAVXBWhite);
 
         climblimit = new DigitalInput(Constants.kDIOClimbLimit);
-        // climberPosition = new DoubleSolenoid(Constants.kSolenoidModule,
-        // PneumaticsModuleType.CTREPCM,
-        // Constants.kSolenoidClimberBackward, Constants.kSolenoidClimberForward);
         climberHomed = false;
         climbing = false;
     }
 
     @Override
     public void update() {
-        // Manual buttons to move climber
-        // manualMoveClimberUp = Robot.buttonBox1.getRawButtonPressed(2);
-        // manualMoveClimberDown = Robot.buttonBox1.getRawButtonPressed(5);
-
         climbMotorRevs = climbMotor.getRevolutions();
         climbMotorRPM = climbMotor.getVelocity();
 
@@ -201,10 +185,10 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
         overrideLeadHooks = Robot.buttonBox1.getRawButton(5);
 
-        // TODO: double check this code for errors
         raiseLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorRaiseHooks);
         lowerLeadHooks = Robot.controllerOperator.getRawButton(Constants.kOperatorLowerHooksButton);
         startClimb = Robot.controllerOperator.getRawButton(Constants.kOperatorClimbButton);
+        // TODO These are the double check buttons. They can go, right?
         highBarPressed = Robot.controllerOperator.getRawButtonPressed(Constants.kOperatorHighBarResume);
         highBarReleased = Robot.controllerOperator.getRawButtonReleased(Constants.kOperatorHighBarResume);
 
@@ -212,8 +196,6 @@ public class ClimbStateMachine extends MMStateMachine<ClimbStates> {
 
         SmartDashboard.putNumber("Desired Climber Position: ", manualClimbPosition);
         SmartDashboard.putNumber("Returned Climber Position: ", climbMotor.getRevolutions());
-        // SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberUp);
-        // SmartDashboard.putBoolean("Climber UP Value: ", manualMoveClimberDown);
         SmartDashboard.putBoolean("Climber Limit: ", lowLimitSwitch);
         SmartDashboard.putBoolean("RaiseLeadHooks : ", raiseLeadHooks);
         SmartDashboard.putBoolean("LowerLeadHooks : ", lowerLeadHooks);

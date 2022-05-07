@@ -6,9 +6,6 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-//TODO add margin in parameters for rpm + angle in formula
-
-/** Add your docs here. */
 public class ShooterFormula {
     public ArrayList<TargetPoint> targetPointsLow;
     public ArrayList<TargetPoint> targetPointsHigh;
