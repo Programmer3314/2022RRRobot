@@ -147,7 +147,9 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
                     }
                     break;
                 case BallDetected:
-                    if (!queueIsFull.value()/* ||Robot.queueStateMachine.currentState==QueueStates.SendingBall */) { // Rich
+                    if (!queueIsFull.value() 
+                    ||(Robot.queueStateMachine.currentState==QueueStates.SendingBall && Robot.queueStateMachine.cyclesInStates >= 12)
+                    ) { 
                         nextState = TunnelStates.MoveToQueue;
                     }
                     break;
@@ -169,7 +171,7 @@ public class TunnelStateMachine extends MMStateMachine<TunnelStates> {
     public void doTransition() {
         if (isTransitionFrom(TunnelStates.BallDetected)) {
             Robot.queueStateMachine.takeBallFromTunnel();
-            tunnelWheels.setPower(0.6);
+            tunnelWheels.setPower(0.2);//0.6
         }
         if (isTransitionFrom(TunnelStates.BallInPosition)) {
             desiredBall = false;

@@ -43,10 +43,10 @@ public class Constants {
   public static double kFXFeedWheelsP=0.05;
   public static double kFXFeedWheelsF = 0.0488;
   public static double kFXFeedWheelsD = 0.5;
-  public static double kFXFeedWheelsI = .00025;
+  public static double kFXFeedWheelsI = .00030;//.00025
   public static double kFXFeedWheelsIzone = 1000;
   public static double kFXShooterWheelsP = 0.025;//0.13;  
-  public static double kFXShooterWheelsI = .00025;
+  public static double kFXShooterWheelsI = .00030;//.00025
   public static double kFXShooterWheelsD = 0;//1
   public static double kFXShooterWheelsF = .0462;//0.0475;
   public static double kFXShooterWheelsIzone = 1000;
@@ -92,8 +92,8 @@ public class Constants {
   public static double kMaxSpeed = -15;
   public static double kMaxTurnRate = 600;
 
-  public static double krpmMargin = 100;//75
-  public static double krpmFeedMargin = 100;//75
+  public static double krpmMargin = 75;//75
+  public static double krpmFeedMargin = 75;//75
   public static double kangleMargin = 0.25; //1;// 10 This is huge!!!!
 
   //RAISING THE ANGLE MEANS LOWERING THE OUTCOME and vice versa
