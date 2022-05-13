@@ -72,6 +72,7 @@ public class AimController {
 
     public DriveParameters calculate(double DriverTurn, double targetAngle, double currentAngle, double ballAngle, 
     boolean contactLeft, boolean contactRight, double drive) {
+        targetAngle-=3;
         double turn = 0;
         switch (aimMode) {
             case autonomous:

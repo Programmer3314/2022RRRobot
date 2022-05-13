@@ -44,7 +44,7 @@ def AnalyzeChains(CurrentCenter, CurrentChain, betterCenters):
         desiredDistanceY = testContour[3] + CurrentCenter[3]
         actualDistanceY = abs(testContour[1] - CurrentCenter[1])
 
-        if actualDistanceX > desiredDistanceX*.8 and actualDistanceX < desiredDistanceX*1.2 and actualDistanceY < desiredDistanceY*.8:
+        if actualDistanceX > desiredDistanceX*.8 and actualDistanceX < desiredDistanceX*1.2 and actualDistanceY < desiredDistanceY*.6:
             CurrentChain.append(testContour)
             del betterCenters[p]
             AnalyzeChains(testContour, CurrentChain, betterCenters)
@@ -89,7 +89,7 @@ def runPipeline(mat, llrobot):
     ma = 40
     mb = 40
     hsv = cv2.cvtColor(mat, cv2.COLOR_BGR2LAB)
-    inRangeHSV = cv2.inRange(hsv, (25,a+128-ma,b+128-mb),(255, a+128+ma, b+128+mb)) 
+    inRangeHSV = cv2.inRange(hsv, (100,a+128-ma,b+128-mb),(255, a+128+ma, b+128+mb))#[1]=25 
     #lab(60.35, -16.06, 11.98)
     #lab(52.16, 16.59, -66.59)
 
@@ -110,7 +110,7 @@ def runPipeline(mat, llrobot):
     
     for c in contours:
         x,y,w,h = cv2.boundingRect(c)
-        if w>= minWidth and w<= maxWidth and h >= minHeight and h <= maxHeight and w > h*.9 and w < 3*h:
+        if w>= minWidth and w<= maxWidth and h >= minHeight and h <= maxHeight and w > h*.9 and w < 4*h and y<(180):
             betterCenters.append(center(x,y,w,h))
             betterContours.append(c)
 
