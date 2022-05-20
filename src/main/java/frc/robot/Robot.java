@@ -612,10 +612,10 @@ public class Robot extends TimedRobot {
         targetpovdistance = targetDistance + adjustShooterDistance;
         break;
       case OperatorUp:
-        targetpovdistance = 7.5;
+        targetpovdistance = 11.7;//7.5
         break;
       case OperatorDown:
-        targetpovdistance = -2;
+        targetpovdistance = 7.5;//-2
         break;
       case OperatorLeft:
         targetpovdistance = -1;
